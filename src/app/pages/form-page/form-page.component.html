@@ -1,0 +1,36 @@
+<div>
+    <!-- Display information at the top -->
+    <h2>Número de Proceso:</h2>
+    <h2>Asunto:</h2>
+    <h2>Estudiante:</h2>
+    <h2>Docente:</h2>
+  
+    <!-- Tabs for Analysis and Evaluation -->
+    <div>
+      <button (click)="activeTab = 'analysis'" [class.active]="activeTab === 'analysis'">Análisis</button>
+      <button (click)="activeTab = 'evaluation'" [class.active]="activeTab === 'evaluation'">Evaluación</button>
+    </div>
+  
+    <!-- Analysis Tab -->
+    <div *ngIf="activeTab === 'analysis'">
+      <h3>Esquema de las argumentaciones</h3>
+      <form (submit)="submitForm()">
+        <label>Pregunta del problema - Cuestión normativa</label>
+        <textarea name="question" [(ngModel)]="analysisQuestion"></textarea>
+        <label>Respuesta o razones</label>
+        <textarea name="reasons" [(ngModel)]="analysisReasons"></textarea>
+        <div>
+          <label>Es válida la cuestión:</label>
+          <input type="radio" name="validQuestion" value="Si" [(ngModel)]="validQuestion"> Si
+          <input type="radio" name="validQuestion" value="No" [(ngModel)]="validQuestion"> No
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  
+    <!-- Evaluation Tab -->
+    <div *ngIf="activeTab === 'evaluation'">
+      <!-- Add content for Evaluation tab if needed -->
+    </div>
+  </div>
+  
