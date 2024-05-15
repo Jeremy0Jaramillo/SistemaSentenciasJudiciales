@@ -1,13 +1,17 @@
-<!-- card-list.component.html -->
 <div>
-<h2>Sistema Jurídico Avanzado de Sentencias de Primer Nivel en Ecuador</h2>
-</div>
-
-<div>
-<button (click)="redirectToThirdPage()">Nueva Sentencia</button>
-</div>
-
-
-<div class="card-list">
-        
-</div>
+    <h2>Sistema Jurídico Avanzado de Sentencias de Primer Nivel en Ecuador</h2>
+  </div>
+  
+  <div>
+    <button (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
+  </div>
+  
+  <div class="card-list">
+    <div *ngFor="let sentencia of sentencias$ | async" class="card">
+      <p><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
+      <p><strong>Asunto:</strong> {{ sentencia.asunto }}</p>
+      <p><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
+      <p><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
+    </div>
+  </div>
+  

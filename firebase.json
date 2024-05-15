@@ -7,7 +7,6 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "projectId": "sistemasentenciasjudiciales",
     "public": "dist/sistema-sentencias-judiciales",
     "ignore": [
       "firebase.json",

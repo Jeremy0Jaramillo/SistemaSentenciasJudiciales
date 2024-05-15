@@ -9,12 +9,16 @@ import { LoginPageComponent } from '../app/pages/login/login-page.component';
 import { FormsModule } from '@angular/forms';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { HeaderComponent } from '../app/components/header/header.component';
+import { SentenciasPageComponent } from '../app/pages/sentencias/sentencias-page.component.';
+import { PrincipalPageComponent } from '../app/pages/principal/principal-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginPageComponent,
-    HeaderComponent
+    HeaderComponent,
+    SentenciasPageComponent,
+    PrincipalPageComponent
   ],
   imports: [
     BrowserModule,
