@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { FormPageComponent } from './form-page.component';
 
 @NgModule({
-  declarations: [FormPageComponent],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule // Add FormsModule to the imports array

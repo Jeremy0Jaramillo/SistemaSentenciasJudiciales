@@ -15,7 +15,7 @@ interface Sentencia {
 @Component({
   selector: 'app-principal-page',
   templateUrl: './principal-page.component.html',
-  styleUrls: []
+  styleUrls: ['./principal-page.component.css']
 })
 export class PrincipalPageComponent implements OnInit {
   user: any = null;
@@ -63,7 +63,6 @@ export class PrincipalPageComponent implements OnInit {
       ).valueChanges()
     ]).pipe(
       map(([estudianteDocs, docenteDocs]) => {
-        // Combine and remove duplicates
         const combinedDocs = [...estudianteDocs, ...docenteDocs];
         const uniqueDocs = Array.from(new Set(combinedDocs.map(doc => doc.numero_proceso)))
           .map(numero_proceso => combinedDocs.find(doc => doc.numero_proceso === numero_proceso)!);
@@ -75,4 +74,14 @@ export class PrincipalPageComponent implements OnInit {
   redirectToNuevaSentencia() {
     this.router.navigate(['/nueva-sentencia']);
   }
+
+  redirectToFormPage(sentencia: Sentencia) {
+    this.router.navigate(['/form-page', {
+      numero_proceso: sentencia.numero_proceso,
+      asunto: sentencia.asunto,
+      estudiante: sentencia.nombre_estudiante,
+      docente: sentencia.nombre_docente
+    }]);
+  }
+  
 }

@@ -7,7 +7,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "dist/sistema-sentencias-judiciales",
+    "public": "dist/sistema-sentencias-judiciales/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

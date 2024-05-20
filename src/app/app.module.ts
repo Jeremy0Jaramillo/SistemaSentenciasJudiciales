@@ -11,6 +11,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { HeaderComponent } from '../app/components/header/header.component';
 import { SentenciasPageComponent } from '../app/pages/sentencias/sentencias-page.component.';
 import { PrincipalPageComponent } from '../app/pages/principal/principal-page.component';
+import { FormPageComponent } from './pages/form-page/form-page.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { PrincipalPageComponent } from '../app/pages/principal/principal-page.co
     LoginPageComponent,
     HeaderComponent,
     SentenciasPageComponent,
-    PrincipalPageComponent
+    PrincipalPageComponent,
+    FormPageComponent
   ],
   imports: [
     BrowserModule,
