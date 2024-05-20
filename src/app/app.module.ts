@@ -12,6 +12,7 @@ import { HeaderComponent } from '../app/components/header/header.component';
 import { SentenciasPageComponent } from '../app/pages/sentencias/sentencias-page.component.';
 import { PrincipalPageComponent } from '../app/pages/principal/principal-page.component';
 import { FormPageComponent } from './pages/form-page/form-page.component';
+import { CajaTextoComponent } from './components/header/caja-texto/caja-texto.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormPageComponent } from './pages/form-page/form-page.component';
     HeaderComponent,
     SentenciasPageComponent,
     PrincipalPageComponent,
-    FormPageComponent
+    FormPageComponent,
+    CajaTextoComponent
   ],
   imports: [
     BrowserModule,

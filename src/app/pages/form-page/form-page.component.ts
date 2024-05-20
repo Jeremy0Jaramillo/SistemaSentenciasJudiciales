@@ -90,4 +90,22 @@ export class FormPageComponent implements OnInit {
         console.error('Error submitting evaluation data: ', error);
       });
   }
+
+  formsNormativas = [{ analysisQuestion: '', analysisReasons: '', validQuestion: '' }];
+  formsFacticas = [{ factualQuestion: '', factualReasons: '', validQuestion: '' }];
+
+  agregarMasNormativa() {
+    this.formsNormativas.push({ analysisQuestion: '', analysisReasons: '', validQuestion: '' });
+  }
+
+  agregarMasFactica() {
+    this.formsFacticas.push({ factualQuestion: '', factualReasons: '', validQuestion: '' });
+  }
+
+  submitAllForms() {
+    // Lógica para manejar el envío de todas las formas
+    console.log('Normativas:', this.formsNormativas);
+    console.log('Fácticas:', this.formsFacticas);
+    // Aquí puedes agregar la lógica para enviar los datos al backend o procesarlos como necesites
+  }
 }
