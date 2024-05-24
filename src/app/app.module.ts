@@ -11,7 +11,10 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { HeaderComponent } from '../app/components/header/header.component';
 import { SentenciasPageComponent } from '../app/pages/sentencias/sentencias-page.component.';
 import { PrincipalPageComponent } from '../app/pages/principal/principal-page.component';
-import { FormPageComponent } from './pages/form-page/form-page.component';
+import { AnalisisComponent } from './pages/analisis/analisis.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { EvaluacionComponent } from './pages/evaluacion/evaluacion.component';
+import { Analisis2Component } from './pages/analisis2/analisis2.component';
 
 @NgModule({
   declarations: [
@@ -20,13 +23,16 @@ import { FormPageComponent } from './pages/form-page/form-page.component';
     HeaderComponent,
     SentenciasPageComponent,
     PrincipalPageComponent,
-    FormPageComponent
+    AnalisisComponent,
+    Analisis2Component,
+    EvaluacionComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase), // Initialize AngularFireModule here
     AngularFireAuthModule,
+    ReactiveFormsModule,
     FormsModule,
     AngularFirestoreModule
   ],
