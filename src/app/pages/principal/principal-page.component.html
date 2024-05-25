@@ -10,7 +10,6 @@
       <p class="dat-proc"><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
     </div>
 
-<<<<<<< HEAD
     <div class="datos">
       <p class="text-dat" ><strong>Asunto:</strong> {{ sentencia.asunto }}</p>
       <p class="text-dat" ><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
@@ -18,14 +17,5 @@
     </div>
 
     <button class="bttn-stnd" (click)="redirectToFormPage(sentencia)">Ver más</button>
-=======
-<div class="card-list">
-  <div *ngFor="let sentencia of sentencias$ | async" class="card">
-    <p><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
-    <p><strong>Asunto:</strong> {{ sentencia.asunto }}</p>
-    <p><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
-    <p><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
-    <button (click)="redirectToAnalisis(sentencia)">Ver más</button>
->>>>>>> a87354a1a276d92c1b39214c4c4cf7257622d3e8
   </div>
 </div>
