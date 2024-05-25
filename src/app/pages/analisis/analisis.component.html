@@ -1,0 +1,44 @@
+<h2>Número de Proceso: {{ numero_proceso }}</h2>
+<h2>Asunto: {{ asunto }}</h2>
+<h2>Estudiante: {{ estudiante }}</h2>
+<h2>Docente: {{ docente }}</h2>
+
+<form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
+  <div formArrayName="normativas">
+    <div *ngFor="let normativa of normativas.controls; let i=index" [formGroupName]="i">
+      <h3>Esquema de las argumentaciones - Cuestión normativa</h3>
+      <label>Pregunta del problema - Cuestión normativa</label>
+      <textarea formControlName="pregunta"></textarea>
+      <label>Respuesta o razones</label>
+      <textarea formControlName="respuesta"></textarea>
+      <div>
+        <label>Es válida la cuestión:</label>
+        <input type="radio" formControlName="valida" value="Si"> Si
+        <input type="radio" formControlName="valida" value="No"> No
+      </div>
+      <button type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
+    </div>
+  </div>
+  <button type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
+
+  <div formArrayName="facticas">
+    <div *ngFor="let factica of facticas.controls; let i=index" [formGroupName]="i">
+      <h3>Esquema de las argumentaciones - Cuestión fáctica</h3>
+      <label>Pregunta del problema - Cuestión fáctica</label>
+      <textarea formControlName="pregunta"></textarea>
+      <label>Respuesta o razones</label>
+      <textarea formControlName="respuesta"></textarea>
+      <div>
+        <label>Es válida la cuestión:</label>
+        <input type="radio" formControlName="valida" value="Si"> Si
+        <input type="radio" formControlName="valida" value="No"> No
+      </div>
+      <button type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
+    </div>
+  </div>
+  <button type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
+
+  <button type="submit">Guardar</button>
+</form>
+
+<button (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
