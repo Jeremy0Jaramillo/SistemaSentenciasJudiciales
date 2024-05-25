@@ -1,15 +1,39 @@
 <!-- login-page.component.html -->
-<div><h1>Sistema de Sentencias Judiciales</h1></div>
-
-
-<div>
-    <!-- Login Form -->
-    <form (ngSubmit)="login(email.value, password.value)">
-      <label for="email">Email:</label>
-      <input type="email" #email required>
-      <label for="password">Password:</label>
-      <input type="password" #password required>
-      <button type="submit">Login</button>
-    </form>
+<body class="inicio-sesion">
+  <div class="titulo">
+      <h2> SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR </h2>
   </div>
+  
+  <div class="flex-login">
+      <div class="login">
+          <div class="imputs-login">
+              <p class="titulo-login">Inicia sesion con tu correo <br> institucional</p>
+              <div *ngIf="alerta" class="alerta">
+                <p>Contraseña o correo incorrectos</p>
+              </div>
+              <form class="txt" (ngSubmit)="login(email.value, password.value)">
+                <label class="label-login" for="email">Email:</label> <br>
+                <input class="input-login" type="email" #email required> <br><br>
+                <label class="label-login" for="password">Password:</label> <br>
+                <input class="input-login" type="password" #password required> <br><br>
+                <button class="bttn-stnd" type="submit">Login</button>
+              </form>
+              
+              <a href="" class="termycon"> Términos y Condiciones </a>
+          </div>
+      </div>
+      <img src="../../../assets/images/logo-inicio.png" alt="">   
+  </div> 
+</body>
 
+
+    <!-- Registration Form TEMPORAL (Ignorar) -->
+  <!-- <div>
+    <form (ngSubmit)="register(regEmail.value, regPassword.value)">
+      <label for="regEmail">Email:</label>
+      <input type="email" #regEmail required>
+      <label for="regPassword">Password:</label>
+      <input type="password" #regPassword required>
+      <button type="submit">Register</button>
+    </form>
+  </div> -->

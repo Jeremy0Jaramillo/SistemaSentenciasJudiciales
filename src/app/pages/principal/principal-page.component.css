@@ -1,0 +1,60 @@
+.titulo {
+    flex-direction: column;
+    margin-top: -20px;
+}
+
+.bttn-stnd{
+    margin: 40px 0px 0px 75px;
+}
+
+.sentencias {
+    display: flex;
+    margin: 0px 40px 0px;
+    flex-wrap: wrap;
+}
+
+.sent {
+    width: 310px;
+    height: 330px;
+    flex-shrink: 0;
+    background-image: url('../../../assets/images/img-sentencias.png');
+    background-size: 230px;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    padding-top: 20px;
+    margin-top: 20px;
+    margin-right: 30px;
+}
+
+.proceso {
+    color: #000;
+    font-family: Poppins;
+    font-style: normal;
+    line-height: normal;
+    margin-left: 20px;
+    border-left: 5px solid #C761D8;
+    padding-left: 10px;
+}
+
+
+.datos {
+    color: #000;
+    text-align: justify;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin: 40px 10px 0px 20px;
+}
+
+.text-dat {
+    color: #000;
+    font-family: Poppins;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
