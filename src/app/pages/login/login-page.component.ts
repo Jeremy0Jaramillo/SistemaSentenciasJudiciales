@@ -6,9 +6,12 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: []
+  styleUrls: ['./login-page.component.css']
 })
 export class LoginPageComponent {
+
+  alerta: boolean = false;
+
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
@@ -32,6 +35,7 @@ export class LoginPageComponent {
       .catch(error => {
         // Handle login error
         console.error('Login error:', error);
+        this.alerta = true;
       });
   }
 }

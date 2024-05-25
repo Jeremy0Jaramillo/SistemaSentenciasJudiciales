@@ -1,14 +1,18 @@
-<!-- form-page.component.html -->
 <h1>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h1>
 <form (ngSubmit)="submitForm()">
   <label for="process">1. Numero de Proceso:</label><br>
   <input type="text" id="process" name="process" [(ngModel)]="sentencia.numero_proceso" required><br>
+  
   <label for="subject">2. Asunto:</label><br>
   <input type="text" id="subject" name="subject" [(ngModel)]="sentencia.asunto" required><br>
+  
   <label for="student">3. Estudiante:</label><br>
-  <input type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante" required><br>
+  <input type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante" readonly><br>
+  
   <label for="teacher">4. Docente:</label><br>
-  <input type="text" id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required><br><br>
+  <select id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
+    <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>
+  </select><br><br>
+  
   <button type="submit">Submit</button>
 </form>
-

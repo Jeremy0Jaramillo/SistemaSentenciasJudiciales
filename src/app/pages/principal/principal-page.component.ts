@@ -75,13 +75,15 @@ export class PrincipalPageComponent implements OnInit {
     this.router.navigate(['/nueva-sentencia']);
   }
 
-  redirectToFormPage(sentencia: Sentencia) {
-    this.router.navigate(['/form-page', {
-      numero_proceso: sentencia.numero_proceso,
-      asunto: sentencia.asunto,
-      estudiante: sentencia.nombre_estudiante,
-      docente: sentencia.nombre_docente
-    }]);
+  redirectToAnalisis(sentencia: Sentencia) {
+    this.router.navigate(['/analisis'], {
+      queryParams: {
+        numero_proceso: sentencia.numero_proceso,
+        asunto: sentencia.asunto,
+        estudiante: sentencia.nombre_estudiante,
+        docente: sentencia.nombre_docente
+      }
+    });
   }
   
 }

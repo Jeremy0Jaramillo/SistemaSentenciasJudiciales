@@ -1,0 +1,39 @@
+<h2>Número de Proceso: {{ numero_proceso }}</h2>
+<h2>Asunto: {{ asunto }}</h2>
+<h2>Estudiante: {{ estudiante }}</h2>
+<h2>Docente: {{ docente }}</h2>
+
+<form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
+  <div>
+    <label for="narracion_hechos">1. Narración de los hechos</label>
+    <textarea id="narracion_hechos" formControlName="narracion_hechos"></textarea>
+  </div>
+  <div>
+    <label for="problema_juridico">2. Problema jurídico</label>
+    <textarea id="problema_juridico" formControlName="problema_juridico"></textarea>
+  </div>
+  <div>
+    <label for="cuestiones_subcuestiones">3. Cuestiones o subcuestiones para solucionar el problema</label>
+    <textarea id="cuestiones_subcuestiones" formControlName="cuestiones_subcuestiones"></textarea>
+  </div>
+  <div>
+    <label for="respuesta_cuestiones">4. Respuesta de las cuestiones</label>
+    <textarea id="respuesta_cuestiones" formControlName="respuesta_cuestiones"></textarea>
+  </div>
+  <div>
+    <label for="ratio_decidendi">5. Ratio decidendi y obiter dictum</label>
+    <textarea id="ratio_decidendi" formControlName="ratio_decidendi"></textarea>
+  </div>
+  <div>
+    <label for="solucion_problema">6. Solución al problema</label>
+    <textarea id="solucion_problema" formControlName="solucion_problema"></textarea>
+  </div>
+  <div>
+    <label for="decision">7. Decisión</label>
+    <textarea id="decision" formControlName="decision"></textarea>
+  </div>
+  <button type="submit">Guardar</button>
+</form>
+
+<button (click)="redirectToAnalisis()">Anterior</button>
+<button (click)="redirectToEvaluacion()" [disabled]="!saved">Evaluación</button>
