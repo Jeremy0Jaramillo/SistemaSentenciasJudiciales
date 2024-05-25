@@ -1,21 +1,21 @@
 <nav class="navbar">
-  <div class="nav-left">
-    <button class="bttn-nav" routerLink="/principal">Inicio</button>
-    <button class="bttn-nav">E-SATJE</button>
-    <button class="bttn-nav" >UTPL</button>
-  </div>
-  
-  <div class="nav-right" *ngIf="user">
-    <div class="user-info" (click)="toggleLogoutMenu()">
-      <img [src]="user.photoURL || defaultProfilePic" alt="Profile Picture" class="profile-pic">
-      <div>
-        <span>{{ user.name }}</span>
-        <br>
-        <span>{{ user.role }}</span>
+    <div class="nav-left">
+      <button routerLink="/principal">Inicio</button>
+      <button>E-SATJE</button>
+      <button>UTPL</button>
+    </div>
+    <div class="nav-right" *ngIf="user">
+      <div class="user-info" (click)="toggleLogoutMenu()">
+        <img [src]="user.photoURL || defaultProfilePic" alt="Profile Picture" class="profile-pic">
+        <div>
+          <span>{{ user.name }}</span>
+          <br>
+          <span>{{ user.role }}</span>
+        </div>
+      </div>
+      <div *ngIf="showLogoutMenu" class="logout-menu">
+        <button (click)="logout()">Logout</button>
       </div>
     </div>
-    <div *ngIf="showLogoutMenu" class="logout-menu">
-      <button class="logout" (click)="logout()">Logout</button>
-    </div>
-  </div>
-</nav>
+  </nav>
+  
