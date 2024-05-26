@@ -1,47 +1,55 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+interface Sentencia {
+  numero_proceso: string;
+  asunto: string;
+  nombre_estudiante: string;
+  nombre_docente: string;
+}
 
 @Component({
   selector: 'app-sentencias-page',
   templateUrl: './sentencias-page.component.html',
-  styleUrls: []
+  styleUrls: ['./sentencias-page.component.css']
 })
-export class SentenciasPageComponent {
-  sentencia = {
+export class SentenciasPageComponent implements OnInit {
+  sentencia: Sentencia = {
     numero_proceso: '',
     asunto: '',
     nombre_estudiante: '',
     nombre_docente: ''
   };
+  docentes$: Observable<any[]> = new Observable<any[]>();
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private firestore: AngularFirestore
+  ) { }
 
-  async submitForm() {
-    try {
-      // Check if numero_proceso is unique
-      const snapshot = await this.firestore.collection('sentencias', ref => ref.where('numero_proceso', '==', this.sentencia.numero_proceso)).get().toPromise();
-
-      if (snapshot && !snapshot.empty) {
-        alert('El número de proceso ya existe.');
-        return;
+  ngOnInit(): void {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.firestore.collection('users').doc(user.uid).valueChanges().subscribe((userData: any) => {
+          this.sentencia.nombre_estudiante = userData.name;
+        });
       }
+    });
 
-      // Add the document to the collection
-      await this.firestore.collection('sentencias').add(this.sentencia);
-      alert('Sentencia guardada con éxito.');
-      this.resetForm();
-    } catch (error) {
-      console.error('Error al guardar la sentencia:', error);
-      alert('Ocurrió un error al guardar la sentencia.');
-    }
+    this.docentes$ = this.firestore.collection('users', ref => ref.where('role', '==', 'docente')).valueChanges();
   }
 
-  resetForm() {
-    this.sentencia = {
-      numero_proceso: '',
-      asunto: '',
-      nombre_estudiante: '',
-      nombre_docente: ''
-    };
+  submitForm() {
+    this.firestore.collection('sentencias').add(this.sentencia)
+      .then(() => {
+        console.log('Sentencia added successfully!');
+        // Clear the form or navigate to another page
+      })
+      .catch(error => {
+        console.error('Error adding sentencia: ', error);
+      });
   }
 }

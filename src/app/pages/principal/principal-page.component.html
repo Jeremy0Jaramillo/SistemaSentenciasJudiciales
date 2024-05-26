@@ -17,5 +17,12 @@
     </div>
 
     <button class="bttn-stnd" (click)="redirectToFormPage(sentencia)">Ver más</button>
+<div class="card-list">
+  <div *ngFor="let sentencia of sentencias$ | async" class="card">
+    <p><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
+    <p><strong>Asunto:</strong> {{ sentencia.asunto }}</p>
+    <p><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
+    <p><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
+    <button (click)="redirectToAnalisis(sentencia)">Ver más</button>
   </div>
 </div>
