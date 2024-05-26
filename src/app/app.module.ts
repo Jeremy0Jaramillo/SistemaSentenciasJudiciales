@@ -16,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { EvaluacionComponent } from './pages/evaluacion/evaluacion.component';
 import { Analisis2Component } from './pages/analisis2/analisis2.component';
 import { RouterModule } from '@angular/router';
+import { CajaTextoComponent } from './components/caja-texto/caja-texto.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { RouterModule } from '@angular/router';
     PrincipalPageComponent,
     AnalisisComponent,
     Analisis2Component,
-    EvaluacionComponent
+    EvaluacionComponent,
+    CajaTextoComponent
   ],
   imports: [
     BrowserModule,

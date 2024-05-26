@@ -1,7 +1,11 @@
-<h2>Número de Proceso: {{ numero_proceso }}</h2>
-<h2>Asunto: {{ asunto }}</h2>
-<h2>Estudiante: {{ estudiante }}</h2>
-<h2>Docente: {{ docente }}</h2>
+<app-header></app-header>
+
+<div class="datos-est">
+  <p class="dat"><strong> NÚMERO PROCESO: </strong> {{ numero_proceso }}</p>
+  <p class="dat"><strong> ASUNTO: </strong> {{ asunto }}</p>
+  <p class="dat"><strong> ESTUDIANTE: {{ estudiante }} </strong></p>
+  <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
+</div>
 
 <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
   <div>

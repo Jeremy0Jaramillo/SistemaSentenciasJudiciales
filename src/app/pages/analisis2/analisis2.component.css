@@ -1,0 +1,12 @@
+.datos-est {
+    color: var(--1, #172D5A);
+    text-align: center;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border-bottom: solid 7px #B3B3B3;
+    border-top: solid 7px #FFAB02;
+    margin: 15px 40px 15px 40px;
+}

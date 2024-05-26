@@ -1,44 +1,71 @@
-<h2>Número de Proceso: {{ numero_proceso }}</h2>
-<h2>Asunto: {{ asunto }}</h2>
-<h2>Estudiante: {{ estudiante }}</h2>
-<h2>Docente: {{ docente }}</h2>
+<app-header></app-header>
 
-<form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
-  <div formArrayName="normativas">
-    <div *ngFor="let normativa of normativas.controls; let i=index" [formGroupName]="i">
-      <h3>Esquema de las argumentaciones - Cuestión normativa</h3>
-      <label>Pregunta del problema - Cuestión normativa</label>
-      <textarea formControlName="pregunta"></textarea>
-      <label>Respuesta o razones</label>
-      <textarea formControlName="respuesta"></textarea>
-      <div>
-        <label>Es válida la cuestión:</label>
-        <input type="radio" formControlName="valida" value="Si"> Si
-        <input type="radio" formControlName="valida" value="No"> No
+<div class="datos-est">
+  <p class="dat"><strong> NÚMERO PROCESO: </strong> {{ numero_proceso }}</p>
+  <p class="dat"><strong> ASUNTO: </strong> {{ asunto }}</p>
+  <p class="dat"><strong> ESTUDIANTE: {{ estudiante }} </strong></p>
+  <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
+</div>
+
+<div class="info-analisis">
+  <h3 class="titulo-analisis">Esquema de las argumentaciones</h3>
+  <form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
+    <div formArrayName="normativas">
+      <div *ngFor="let normativa of normativas.controls; let i=index" [formGroupName]="i">
+        <div class="pa">
+          <div class="pregunta-container">
+            <h5 class="pregunta">Pregunta del problema - Cuestión normativa</h5>
+            <app-caja-texto></app-caja-texto>
+          </div>
+          <div class="razones-container">
+            <h5 class="pregunta">Respuesta o razones</h5>
+            <app-caja-texto></app-caja-texto>
+          </div>
+
+          <div class="validar">
+            <h5 class="pregunta">Es válida la cuestión:</h5>
+            <div class="si-no">
+              <input type="radio" formControlName="valida" value="Si" class="valida"> Si
+              <input type="radio" formControlName="valida" value="No" class="valida"> No
+            </div>
+          </div>
+        </div>
+
+        <button class="bttn-stnd" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
       </div>
-      <button type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
     </div>
-  </div>
-  <button type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
+    <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
 
-  <div formArrayName="facticas">
-    <div *ngFor="let factica of facticas.controls; let i=index" [formGroupName]="i">
-      <h3>Esquema de las argumentaciones - Cuestión fáctica</h3>
-      <label>Pregunta del problema - Cuestión fáctica</label>
-      <textarea formControlName="pregunta"></textarea>
-      <label>Respuesta o razones</label>
-      <textarea formControlName="respuesta"></textarea>
-      <div>
-        <label>Es válida la cuestión:</label>
-        <input type="radio" formControlName="valida" value="Si"> Si
-        <input type="radio" formControlName="valida" value="No"> No
+    <div formArrayName="facticas">
+      <div *ngFor="let factica of facticas.controls; let i=index" [formGroupName]="i">
+        <div class="pa">
+          <div class="pregunta-container">
+            <h5 class="pregunta">Pregunta del problema - Cuestión fáctica</h5>
+            <app-caja-texto></app-caja-texto>
+          </div>
+
+          <div class="razones-conteiner">
+            <h5 class="pregunta">Respuesta o razones</h5>
+            <app-caja-texto></app-caja-texto>
+          </div>
+
+          <div class="validar">
+            <h5 class="pregunta">Es válida la cuestión:</h5>
+            <div class="si-no">
+              <input type="radio" formControlName="valida" value="Si" class="valida" > Si
+              <input type="radio" formControlName="valida" value="No" class="valida" > No
+            </div>
+          </div>
+
+        </div>
+
+        <button class="bttn-stnd" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
       </div>
-      <button type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
     </div>
-  </div>
-  <button type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
+    <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
 
-  <button type="submit">Guardar</button>
-</form>
+    <button class="bttn-stnd" type="submit">Guardar</button>
+  </form>
 
-<button (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
+  <button class="bttn-stnd" (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
+</div>
