@@ -1,22 +1,11 @@
-<app-header></app-header>
-<div class="titulo">
+<div>
   <h2>Sistema Jurídico Avanzado de Sentencias de Primer Nivel en Ecuador</h2>
-  <button class="bttn-stnd" (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
 </div>
 
-<div class="sentencias">
-  <div *ngFor="let sentencia of sentencias$ | async" class="sent">
-    <div class="proceso">
-      <p class="dat-proc"><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
-    </div>
+<div>
+  <button (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
+</div>
 
-    <div class="datos">
-      <p class="text-dat" ><strong>Asunto:</strong> {{ sentencia.asunto }}</p>
-      <p class="text-dat" ><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
-      <p class="text-dat" ><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
-    </div>
-
-    <button class="bttn-stnd" (click)="redirectToFormPage(sentencia)">Ver más</button>
 <div class="card-list">
   <div *ngFor="let sentencia of sentencias$ | async" class="card">
     <p><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
