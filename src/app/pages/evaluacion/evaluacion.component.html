@@ -18,144 +18,154 @@
         <option class="op" value="Apariencia">Apariencia</option>
       </select>
     </div>
-  
+
     <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Inexistencia'" formGroupName="inexistencia">
-      
-      <div>       
+
+      <div>
         <app-caja-texto id="faltaFundamentacionNormativa" formControlName="faltaFundamentacionNormativa"
-        [titulo]="'Falta de Fundamentación Normativa'">
+          [titulo]="'Falta de Fundamentación Normativa'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoFundamentacionNormativa" formControlName="motivoFundamentacionNormativa"
-        [titulo]="'Motivo de la Fundamentación Normativa'">
+          [titulo]="'Motivo de la Fundamentación Normativa'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="faltaFundamentacionFactica" formControlName="faltaFundamentacionFactica"
-        [titulo]="'Falta de Fundamentación Fáctica'">
+          [titulo]="'Falta de Fundamentación Fáctica'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoFundamentacionFactica" formControlName="motivoFundamentacionFactica"
-        [titulo]="'Motivo de la Fundamentación Fáctica'">
+          [titulo]="'Motivo de la Fundamentación Fáctica'">
         </app-caja-texto>
       </div>
 
       <div>
-        <app-caja-texto id="deficitMotivacion" formControlName="deficitMotivacion"
-        [titulo]="'Déficit de Motivación'">
+        <app-caja-texto id="deficitMotivacion" formControlName="deficitMotivacion" [titulo]="'Déficit de Motivación'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoDeficitMotivacion" formControlName="motivoDeficitMotivacion"
-        [titulo]="'Motivo del Déficit de Motivación'">
+          [titulo]="'Motivo del Déficit de Motivación'">
         </app-caja-texto>
       </div>
 
     </div>
-  
+
     <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Insuficiencia'" formGroupName="insuficiencia">
       <div>
         <app-caja-texto id="faltaFundamentacionNormativa" formControlName="faltaFundamentacionNormativa"
-        [titulo]="'Falta de Fundamentación Normativa'">
+          [titulo]="'Falta de Fundamentación Normativa'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoFundamentacionNormativa" formControlName="motivoFundamentacionNormativa"
-        [titulo]="'Motivo de la Fundamentación Normativa'">
+          [titulo]="'Motivo de la Fundamentación Normativa'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="faltaFundamentacionFactica" formControlName="faltaFundamentacionFactica"
-        [titulo]="'Falta de Fundamentación Fáctica'">
+          [titulo]="'Falta de Fundamentación Fáctica'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoFundamentacionFactica" formControlName="motivoFundamentacionFactica"
-        [titulo]="'Motivo de la Fundamentación Fáctica'">
+          [titulo]="'Motivo de la Fundamentación Fáctica'">
         </app-caja-texto>
       </div>
 
       <div>
-        <app-caja-texto id="deficitMotivacion" formControlName="deficitMotivacion"
-        [titulo]="'Déficit de Motivación'">
+        <app-caja-texto id="deficitMotivacion" formControlName="deficitMotivacion" [titulo]="'Déficit de Motivación'">
         </app-caja-texto>
       </div>
 
       <div>
         <app-caja-texto id="motivoDeficitMotivacion" formControlName="motivoDeficitMotivacion"
-        [titulo]="'Motivo del Déficit de Motivación'">
+          [titulo]="'Motivo del Déficit de Motivación'">
         </app-caja-texto>
       </div>
     </div>
-  
+
     <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Apariencia'" formGroupName="apariencia">
       <div>
-        <label for="motivoApariencia">Motivo de la Apariencia</label>
-        <input id="motivoApariencia" formControlName="motivoApariencia">
+        <app-caja-texto id="motivoApariencia" formControlName="motivoApariencia" [titulo]="'Motivo de la apariencia'">
+        </app-caja-texto>
       </div>
+
       <div>
-        <label for="vicioMotivacional">Vicio Motivacional</label>
-        <select id="vicioMotivacional" formControlName="vicioMotivacional">
-          <option value="Incoherencia">Incoherencia</option>
-          <option value="Inatinencia">Inatinencia</option>
-          <option value="Imcomprensibilidad">Imcomprensibilidad</option>
-          <option value="Incongruencia">Incongruencia</option>
+        <h3 class="titulo" for="vicioMotivacional">Vicio Motivacional</h3>
+        <select class="motivaciones" id="vicioMotivacional" formControlName="vicioMotivacional">
+          <option class="op" value="Incoherencia">Incoherencia</option>
+          <option class="op" value="Inatinencia">Inatinencia</option>
+          <option class="op" value="Imcomprensibilidad">Imcomprensibilidad</option>
+          <option class="op" value="Incongruencia">Incongruencia</option>
         </select>
       </div>
-  
-      <div formGroupName="incoherenciaJuridica" *ngIf="evaluacionForm.get('apariencia.vicioMotivacional')?.value === 'Incoherencia'">
+
+      <div formGroupName="incoherenciaJuridica"
+        *ngIf="evaluacionForm.get('apariencia.vicioMotivacional')?.value === 'Incoherencia'">
         <div>
-          <label for="incoherenciaLogicaNormativa">Incoherencia Lógica Normativa</label>
-          <input id="incoherenciaLogicaNormativa" formControlName="incoherenciaLogicaNormativa">
+          <app-caja-texto id="incoherenciaLogicaNormativa" formControlName="incoherenciaLogicaNormativa"
+            [titulo]="'Incoherencia Lógica Normativa'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="motivoLogicaNormativa">Motivo Lógica Normativa</label>
-          <input id="motivoLogicaNormativa" formControlName="motivoLogicaNormativa">
+          <app-caja-texto id="motivoLogicaNormativa" formControlName="motivoLogicaNormativa"
+          [titulo]="'Motivo Lógica Normativa'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="incoherenciaDecisionalNormativa">Incoherencia Decisional Normativa</label>
-          <input id="incoherenciaDecisionalNormativa" formControlName="incoherenciaDecisionalNormativa">
+          <app-caja-texto id="incoherenciaDecisionalNormativa" formControlName="incoherenciaDecisionalNormativa"
+          [titulo]="'Incoherencia Decisional Normativa'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="motivoDecisionalNormativa">Motivo Decisional Normativa</label>
-          <input id="motivoDecisionalNormativa" formControlName="motivoDecisionalNormativa">
+          <app-caja-texto id="motivoDecisionalNormativa" formControlName="motivoDecisionalNormativa"
+          [titulo]="'Motivo Decisional Normativa'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="incoherenciaLogicaFactica">Incoherencia Lógica Fáctica</label>
-          <input id="incoherenciaLogicaFactica" formControlName="incoherenciaLogicaFactica">
+          <app-caja-texto id="incoherenciaLogicaFactica" formControlName="incoherenciaLogicaFactica"
+          [titulo]="'Incoherencia Lógica Fáctica'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="motivoLogicaFactica">Motivo Lógica Fáctica</label>
-          <input id="motivoLogicaFactica" formControlName="motivoLogicaFactica">
+          <app-caja-texto id="motivoLogicaFactica" formControlName="motivoLogicaFactica"
+          [titulo]="'Motivo Lógica Fáctica'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="incoherenciaDecisionalFactica">Incoherencia Decisional Fáctica</label>
-          <input id="incoherenciaDecisionalFactica" formControlName="incoherenciaDecisionalFactica">
+          <app-caja-texto id="incoherenciaDecisionalFactica" formControlName="incoherenciaDecisionalFactica"
+          [titulo]="'Incoherencia Decisional Fáctica'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="motivoDecisionalFactica">Motivo Decisional Fáctica</label>
-          <input id="motivoDecisionalFactica" formControlName="motivoDecisionalFactica">
+          <app-caja-texto id="motivoDecisionalFactica" formControlName="motivoDecisionalFactica"
+          [titulo]="'Motivo Decisional Fáctica'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="deficitMotivacion">Déficit de Motivación</label>
-          <input id="deficitMotivacion" formControlName="deficitMotivacion">
+          <app-caja-texto id="deficitMotivacion" formControlName="deficitMotivacion"
+          [titulo]="'Déficit de Motivación'">
+          </app-caja-texto>
         </div>
         <div>
-          <label for="motivoDeficitMotivacion">Motivo del Déficit de Motivación</label>
-          <input id="motivoDeficitMotivacion" formControlName="motivoDeficitMotivacion">
+          <app-caja-texto id="motivoDeficitMotivacion" formControlName="motivoDeficitMotivacion"
+          [titulo]="'Motivo del Déficit de Motivación'">
+          </app-caja-texto>
         </div>
       </div>
     </div>
-  
+
     <button type="submit">Guardar</button>
   </form>
 </div>
