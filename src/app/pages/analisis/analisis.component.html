@@ -15,11 +15,11 @@
         <div class="pa">
           <div class="pregunta-container">
             <h5 class="pregunta">Pregunta del problema - Cuestión normativa</h5>
-            <app-caja-texto></app-caja-texto>
+            <app-caja-texto formControlName="pregunta"></app-caja-texto>
           </div>
           <div class="razones-container">
             <h5 class="pregunta">Respuesta o razones</h5>
-            <app-caja-texto></app-caja-texto>
+            <app-caja-texto formControlName="respuesta"></app-caja-texto>
           </div>
 
           <div class="validar">
@@ -30,7 +30,6 @@
             </div>
           </div>
         </div>
-
         <button class="bttn-stnd" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
       </div>
     </div>
@@ -41,12 +40,12 @@
         <div class="pa">
           <div class="pregunta-container">
             <h5 class="pregunta">Pregunta del problema - Cuestión fáctica</h5>
-            <app-caja-texto></app-caja-texto>
+            <app-caja-texto formControlName="pregunta"></app-caja-texto>
           </div>
 
           <div class="razones-conteiner">
             <h5 class="pregunta">Respuesta o razones</h5>
-            <app-caja-texto></app-caja-texto>
+            <app-caja-texto formControlName="respuesta"></app-caja-texto>
           </div>
 
           <div class="validar">
@@ -64,8 +63,12 @@
     </div>
     <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
 
-    <button class="bttn-stnd" type="submit">Guardar</button>
+    <div class="bttns">
+      <button class="bttn-stnd" type="submit">Guardar</button>
+      <button class="bttn-sgt" (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
+    </div>
+  
   </form>
 
-  <button class="bttn-stnd" (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
+  
 </div>

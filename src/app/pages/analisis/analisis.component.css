@@ -89,3 +89,32 @@ border-top: solid 7px #FFAB02;
 margin: 15px 40px 15px 40px;
 }
 
+.bttn-sgt{
+  margin: 30px 0px 0px 10px;
+}
+
+.bttn-sgt {
+  color: #044170;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  background: none;
+  box-shadow: none;
+  border: none;
+  display: flex;
+}
+
+.bttn-sgt:hover {
+  background: none;
+  border-bottom: solid 1px #044170;
+}
+
+.bttns{
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
