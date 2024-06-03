@@ -45,7 +45,6 @@ export class AnalisisComponent implements OnInit {
       this.loadAnalisisData();
     });
   }
-  
 
   get normativas() {
     return this.analisisForm.get('normativas') as FormArray;
@@ -89,7 +88,7 @@ export class AnalisisComponent implements OnInit {
             this.analisisForm.patchValue({
               numero_proceso: analisis.numero_proceso
             });
-  
+
             analisis.normativas.forEach((normativa: any) => {
               this.normativas.push(this.fb.group({
                 pregunta: normativa.pregunta,
@@ -97,7 +96,7 @@ export class AnalisisComponent implements OnInit {
                 valida: normativa.valida
               }));
             });
-  
+
             analisis.facticas.forEach((factica: any) => {
               this.facticas.push(this.fb.group({
                 pregunta: factica.pregunta,
@@ -105,23 +104,27 @@ export class AnalisisComponent implements OnInit {
                 valida: factica.valida
               }));
             });
-  
+
             this.dataLoaded = true;
           } else {
-            this.addNormativa();
+
             this.addFactica();
+            this.addNormativa();
+            this.dataLoaded = true;
           }
           return [];
         })
       ).subscribe();
   }
-  
 
   submitForm() {
     const analisisData = this.analisisForm.value;
     this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       })
       .catch(error => {
         console.error("Error saving document: ", error);
@@ -140,6 +143,6 @@ export class AnalisisComponent implements OnInit {
   }
 
   isSiguienteButtonEnabled() {
-    return this.dataLoaded; // Enable the button if data is loaded
+    return this.dataLoaded;
   }
 }
