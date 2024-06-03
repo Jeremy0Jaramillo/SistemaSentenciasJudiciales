@@ -27,12 +27,12 @@ export class EvaluacionComponent implements OnInit {
       numero_proceso: ['', Validators.required],
       motivationType: ['', Validators.required],
       inexistencia: this.fb.group({
-        faltaFundamentacionNormativa: ['', Validators.required],
-        motivoFundamentacionNormativa: ['', Validators.required],
-        faltaFundamentacionFactica: ['', Validators.required],
-        motivoFundamentacionFactica: ['', Validators.required],
-        deficitMotivacion: ['', Validators.required],
-        motivoDeficitMotivacion: ['', Validators.required]
+        lackFoundationNormativa: ['', Validators.required],
+        reasonsNormativa: ['', Validators.required],
+        lackFoundationFactual: ['', Validators.required],
+        reasonsFactual: ['', Validators.required],
+        lackMotivation: ['', Validators.required],
+        reasonsMotivation: ['', Validators.required]
       }),
       insuficiencia: this.fb.group({
         faltaFundamentacionNormativa: ['', Validators.required],
@@ -43,19 +43,41 @@ export class EvaluacionComponent implements OnInit {
         motivoDeficitMotivacion: ['', Validators.required]
       }),
       apariencia: this.fb.group({
-        motivoApariencia: ['', Validators.required],
+        appearanceReason: ['', Validators.required],
         vicioMotivacional: ['', Validators.required],
-        incoherenciaJuridica: this.fb.group({
+        incoherencia: this.fb.group({
           incoherenciaLogicaNormativa: ['', Validators.required],
-          motivoLogicaNormativa: ['', Validators.required],
+          reasonsLogicaNormativa: ['', Validators.required],
           incoherenciaDecisionalNormativa: ['', Validators.required],
-          motivoDecisionalNormativa: ['', Validators.required],
-          incoherenciaLogicaFactica: ['', Validators.required],
-          motivoLogicaFactica: ['', Validators.required],
-          incoherenciaDecisionalFactica: ['', Validators.required],
-          motivoDecisionalFactica: ['', Validators.required],
-          deficitMotivacion: ['', Validators.required],
-          motivoDeficitMotivacion: ['', Validators.required]
+          reasonsDecisionalNormativa: ['', Validators.required],
+          incoherenciaLogicaFactual: ['', Validators.required],
+          reasonsLogicaFactual: ['', Validators.required],
+          incoherenciaDecisionalFactual: ['', Validators.required],
+          reasonsDecisionalFactual: ['', Validators.required],
+          lackMotivation: ['', Validators.required],
+          reasonsMotivation: ['', Validators.required]
+        }),
+        inatinencia: this.fb.group({
+          inatinenciaJuridica: ['', Validators.required],
+          reasonsInatinenciaJuridica: ['', Validators.required],
+          inatinenciaFactica: ['', Validators.required],
+          reasonsInatinenciaFactica: ['', Validators.required]
+        }),
+        imcomprensibilidad: this.fb.group({
+          imcomprensibilidadJuridica: ['', Validators.required],
+          reasonsImcomprensibilidadJuridica: ['', Validators.required],
+          imcomprensibilidadFactica: ['', Validators.required],
+          reasonsImcomprensibilidadFactica: ['', Validators.required]
+        }),
+        incongruencia: this.fb.group({
+          incongruenciaNormativaPartes: ['', Validators.required],
+          reasonsIncongruenciaNormativaPartes: ['', Validators.required],
+          incongruenciaNormativaDerecho: ['', Validators.required],
+          reasonsIncongruenciaNormativaDerecho: ['', Validators.required],
+          incongruenciaFacticaPartes: ['', Validators.required],
+          reasonsIncongruenciaFacticaPartes: ['', Validators.required],
+          incongruenciaFacticaDerecho: ['', Validators.required],
+          reasonsIncongruenciaFacticaDerecho: ['', Validators.required]
         })
       })
     });
@@ -101,6 +123,17 @@ export class EvaluacionComponent implements OnInit {
 
   redirectToAnalisis2() {
     this.router.navigate(['/analisis2'], {
+      queryParams: {
+        numero_proceso: this.numero_proceso,
+        asunto: this.asunto,
+        estudiante: this.estudiante,
+        docente: this.docente
+      }
+    });
+  }
+
+  redirectToEvaluacion2() {
+    this.router.navigate(['/evaluacion2'], {
       queryParams: {
         numero_proceso: this.numero_proceso,
         asunto: this.asunto,

@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <button class="bttn-stnd" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
+        <button class="bttn-stnd-eliminar" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
@@ -58,17 +58,15 @@
 
         </div>
 
-        <button class="bttn-stnd" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
+        <button class="bttn-stnd-eliminar" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
 
-    <div class="bttns">
+    <div class="bttn">
       <button class="bttn-stnd" type="submit">Guardar</button>
       <button class="bttn-sgt" (click)="redirectToAnalisis2()" [disabled]="!isSiguienteButtonEnabled()">Siguiente</button>
     </div>
   
   </form>
-
-  
 </div>
