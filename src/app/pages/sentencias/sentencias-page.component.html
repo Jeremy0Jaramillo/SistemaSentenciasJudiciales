@@ -1,18 +1,51 @@
-<h1>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h1>
-<form (ngSubmit)="submitForm()">
-  <label for="process">1. Numero de Proceso:</label><br>
-  <input type="text" id="process" name="process" [(ngModel)]="sentencia.numero_proceso" required><br>
-  
-  <label for="subject">2. Asunto:</label><br>
-  <input type="text" id="subject" name="subject" [(ngModel)]="sentencia.asunto" required><br>
-  
-  <label for="student">3. Estudiante:</label><br>
-  <input type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante" readonly><br>
-  
-  <label for="teacher">4. Docente:</label><br>
-  <select id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
-    <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>
-  </select><br><br>
-  
-  <button type="submit">Submit</button>
-</form>
+<app-header></app-header>
+
+<div class="inputs-sent">
+
+  <div class="tittle-sent">
+    <h4>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h4>
+  </div>
+
+  <form (ngSubmit)="submitForm()">
+
+    <div class="dato-sent">
+      <label class="numero-proceso" for="process">1. Numero de Proceso:</label><br>
+      <input class="numero-proceso" type="text" id="process" name="process" [(ngModel)]="sentencia.numero_proceso" required><br>
+    </div>
+
+    <div class="dato-sent">
+      <label class="asunto" for="subject">2. Asunto:</label><br>
+      <input class="asunto" type="text" id="subject" name="subject" [(ngModel)]="sentencia.asunto" required><br>
+    </div>
+
+    <div class="dato-sent">
+      <label class="estudiante" for="student">3. Estudiante:</label><br>
+      <input class="estudiante" type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante" readonly><br>
+    </div>
+
+    <div class="dato-sent">
+      <label class="label-docente" for="teacher">4. Docente:</label><br>
+      <select class="docente" id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
+        <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>
+      </select><br><br>
+    </div>
+
+    <div class="dato-sent-file">
+      <label for="archivo"> Carga de sentencia: </label><br>
+      <label for="archivo" id="cargar-archivo-label">
+          <img src="../../../assets/images/Cargar.png" alt="">
+      </label>
+      <input type="file" id="archivo" name="archivo" placeholder="" style="display: none;"><br><br>
+      <p> Cargar pdf</p>
+  </div>
+
+    <button class="bttn-stnd" type="submit">Guardar</button>
+  </form>
+</div>
+
+
+<script>
+  document.getElementById('cargar-archivo-label').addEventListener('click', function() {
+      document.getElementById('archivo').click();
+  });
+</script>
