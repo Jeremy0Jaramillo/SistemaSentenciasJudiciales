@@ -41,3 +41,19 @@
     margin: 20px 0px 0px 0px;
     justify-content: space-between;
   }
+
+  .appearance-options{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .options{
+    text-align: center;
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
