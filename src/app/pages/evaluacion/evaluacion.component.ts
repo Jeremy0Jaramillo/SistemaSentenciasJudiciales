@@ -26,58 +26,58 @@ export class EvaluacionComponent implements OnInit {
     this.evaluacionForm = this.fb.group({
       numero_proceso: ['', Validators.required],
       motivationType: ['', Validators.required],
-      inexistencia: this.fb.group({
-        lackFoundationNormativa: ['', Validators.required],
-        reasonsNormativa: ['', Validators.required],
+      nonexistinence: this.fb.group({
+        lackFoundationNormative: ['', Validators.required],
+        reasonsNormative: ['', Validators.required],
         lackFoundationFactual: ['', Validators.required],
         reasonsFactual: ['', Validators.required],
         lackMotivation: ['', Validators.required],
         reasonsMotivation: ['', Validators.required]
       }),
-      insuficiencia: this.fb.group({
-        faltaFundamentacionNormativa: ['', Validators.required],
-        motivoFundamentacionNormativa: ['', Validators.required],
-        faltaFundamentacionFactica: ['', Validators.required],
-        motivoFundamentacionFactica: ['', Validators.required],
-        deficitMotivacion: ['', Validators.required],
-        motivoDeficitMotivacion: ['', Validators.required]
+      insufficiency: this.fb.group({
+        lackFoundationNormative: ['', Validators.required],
+        reasonsNormative: ['', Validators.required],
+        lackFoundationFactual: ['', Validators.required],
+        reasonsFactual: ['', Validators.required],
+        lackMotivation: ['', Validators.required],
+        reasonsMotivation: ['', Validators.required]
       }),
-      apariencia: this.fb.group({
+      appearance: this.fb.group({
         appearanceReason: ['', Validators.required],
-        vicioMotivacional: ['', Validators.required],
-        incoherencia: this.fb.group({
-          incoherenciaLogicaNormativa: ['', Validators.required],
-          reasonsLogicaNormativa: ['', Validators.required],
-          incoherenciaDecisionalNormativa: ['', Validators.required],
-          reasonsDecisionalNormativa: ['', Validators.required],
-          incoherenciaLogicaFactual: ['', Validators.required],
+        motivationalHabit: ['', Validators.required],
+        incoherence: this.fb.group({
+          existsLogicalNormative: ['', Validators.required],
+          reasonsLogicaNormative: ['', Validators.required],
+          existsDecisionalNormative: ['', Validators.required],
+          reasonsDecisionalNormative: ['', Validators.required],
+          existsLogicaFactual: ['', Validators.required],
           reasonsLogicaFactual: ['', Validators.required],
-          incoherenciaDecisionalFactual: ['', Validators.required],
+          existsDecisionalFactual: ['', Validators.required],
           reasonsDecisionalFactual: ['', Validators.required],
           lackMotivation: ['', Validators.required],
           reasonsMotivation: ['', Validators.required]
         }),
-        inatinencia: this.fb.group({
-          inatinenciaJuridica: ['', Validators.required],
-          reasonsInatinenciaJuridica: ['', Validators.required],
-          inatinenciaFactica: ['', Validators.required],
-          reasonsInatinenciaFactica: ['', Validators.required]
+        inatinence: this.fb.group({
+          existsInatinenceJuridical: ['', Validators.required],
+          reasonsInatinenceJuridical: ['', Validators.required],
+          existsInatinenceFactual: ['', Validators.required],
+          reasonsInatinenceFactual: ['', Validators.required]
         }),
-        imcomprensibilidad: this.fb.group({
-          imcomprensibilidadJuridica: ['', Validators.required],
-          reasonsImcomprensibilidadJuridica: ['', Validators.required],
-          imcomprensibilidadFactica: ['', Validators.required],
-          reasonsImcomprensibilidadFactica: ['', Validators.required]
+        incomprehensibility: this.fb.group({
+          existsIncomprehensibilityJuridical: ['', Validators.required],
+          reasonsIncomprehensibilityJuridical: ['', Validators.required],
+          existsIncomprehensibilityFactual: ['', Validators.required],
+          reasonsIncomprehensibilityFactual: ['', Validators.required]
         }),
-        incongruencia: this.fb.group({
-          incongruenciaNormativaPartes: ['', Validators.required],
-          reasonsIncongruenciaNormativaPartes: ['', Validators.required],
-          incongruenciaNormativaDerecho: ['', Validators.required],
-          reasonsIncongruenciaNormativaDerecho: ['', Validators.required],
-          incongruenciaFacticaPartes: ['', Validators.required],
-          reasonsIncongruenciaFacticaPartes: ['', Validators.required],
-          incongruenciaFacticaDerecho: ['', Validators.required],
-          reasonsIncongruenciaFacticaDerecho: ['', Validators.required]
+        incongruity: this.fb.group({
+          existsIncongruityNormativeParticipants: ['', Validators.required],
+          reasonsIncongruityNormativeParticipants: ['', Validators.required],
+          existsIncongruityNormativeLaw: ['', Validators.required],
+          reasonsIncongruityNormativeLaw: ['', Validators.required],
+          existsIncongruityFactualParticipants: ['', Validators.required],
+          reasonsIncongruityFactualParticipants: ['', Validators.required],
+          existsIncongruityFactualLaw: ['', Validators.required],
+          reasonsIncongruityFactualLaw: ['', Validators.required]
         })
       })
     });

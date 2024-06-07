@@ -17,6 +17,7 @@ import { EvaluacionComponent } from './pages/evaluacion/evaluacion.component';
 import { Analisis2Component } from './pages/analisis2/analisis2.component';
 import { RouterModule } from '@angular/router';
 import { CajaTextoComponent } from './components/caja-texto/caja-texto.component';
+import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CajaTextoComponent } from './components/caja-texto/caja-texto.component
     AnalisisComponent,
     Analisis2Component,
     EvaluacionComponent,
-    CajaTextoComponent
+    CajaTextoComponent,
+    Evaluacion2Component
   ],
   imports: [
     BrowserModule,
