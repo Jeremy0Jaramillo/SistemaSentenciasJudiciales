@@ -12,7 +12,7 @@
   <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
 
     <div class="analisis">
-      <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'5. Ratio decidendi y obiter dictum'">
+      <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'1. Narración de los hechos'">
       </app-caja-texto>
     </div>
 
@@ -46,10 +46,11 @@
       </app-caja-texto>
     </div>
 
-    <button type="submit">Guardar</button>
+    <button class="bttn-stnd" type="submit">Guardar</button>
   </form>
 
-  <button (click)="redirectToAnalisis()">Anterior</button>
-  <button (click)="redirectToEvaluacion()" [disabled]="!saved">Evaluación</button>
-
+  <div class="bttn">
+    <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
+    <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!saved">Evaluación</button>
+  </div>
 </div>

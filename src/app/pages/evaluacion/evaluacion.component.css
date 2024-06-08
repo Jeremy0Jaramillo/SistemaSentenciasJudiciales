@@ -20,8 +20,40 @@
 
 .titulo{
     justify-content: left;
+    margin-top: -40px;
 }
 
 .eva{
     margin: 0px 40px 0px;
 }
+
+.titulo-eva{
+    display: flex;
+    padding-top: 10px;
+    color: #4f5257;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.bttn{
+    display: flex;
+    margin: 20px 0px 0px 0px;
+    justify-content: space-between;
+  }
+
+  .appearance-options{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .options{
+    text-align: center;
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }

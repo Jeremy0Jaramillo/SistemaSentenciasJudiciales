@@ -62,8 +62,21 @@
   line-height: normal;
 }
 
-.bttn-stnd{
-  margin: 30px 0px 0px 10px;
+.bttn-stnd-eliminar{
+  margin: 20px 0px 20px 0px;
+  background: #FA0F25;
+  color: #FFF;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  border-radius: 10px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+  padding: 10px 20px;
+  border: none;
+  display: flex;
 }
 
 .pa{
@@ -112,9 +125,9 @@ margin: 15px 40px 15px 40px;
   border-bottom: solid 1px #044170;
 }
 
-.bttns{
+.bttn{
   display: flex;
-  align-items: center;
-  padding-bottom: 10px;
+  margin: 20px 0px 0px 0px;
+  justify-content: space-between;
 }
 

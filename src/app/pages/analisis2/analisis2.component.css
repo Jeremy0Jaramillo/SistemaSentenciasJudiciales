@@ -10,3 +10,9 @@
     border-top: solid 7px #FFAB02;
     margin: 15px 40px 15px 40px;
 }
+
+.bttn{
+    display: flex;
+    margin: 20px 0px 0px 0px;
+    justify-content: space-between;
+}
