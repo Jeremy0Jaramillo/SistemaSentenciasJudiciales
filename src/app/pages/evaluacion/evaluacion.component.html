@@ -81,80 +81,84 @@
       <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
     </div>
     <div>
-      <label>¿Por qué?</label>
-      <textarea name="reasonsMotivation" formControlName="reasonsMotivation"></textarea>
+      <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
     </div>
   </div>
 
   <div *ngIf="evaluacionForm.get('motivationType')?.value === 'appearance'" formGroupName="appearance">
-    <h2>Apariencia</h2>
-    <h3>En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de los vicios motivacionales de la apariencia que constan a continuación.</h3>
+    <h2 class="titulo" >Apariencia</h2>
+    <h5 class="titulo" >En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de los vicios
+    motivacionales de la apariencia que constan a continuación.</h5>
     <div>
-      <label>¿Por qué?</label>
-      <textarea name="appearanceReason" formControlName="appearanceReason"></textarea>
+      <app-caja-texto name="appearanceReason" formControlName="appearanceReason" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
     </div>
 
-    <h3>Vicios motivacionales</h3>
-    <div>
-      <label>En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</label>
-      <input type="radio" name="motivationalHabit" value="Incoherencia" formControlName="motivationalHabit"> Incoherencia
-      <input type="radio" name="motivationalHabit" value="Inatinencia" formControlName="motivationalHabit"> Inatinencia
-      <input type="radio" name="motivationalHabit" value="Imcomprensibilidad" formControlName="motivationalHabit"> Imcomprensibilidad
-      <input type="radio" name="motivationalHabit" value="Incongruencia" formControlName="motivationalHabit"> Incongruencia
+    
+    <div class="appearance-options">
+      <h3 class="titulo" >Vicios motivacionales</h3>
+      <h5 class="titulo " >En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</h5>
+      <div class="options">
+        <input type="radio" name="motivationalHabit" value="Incoherencia" formControlName="motivationalHabit"> Incoherencia
+        <input type="radio" name="motivationalHabit" value="Inatinencia" formControlName="motivationalHabit"> Inatinencia
+        <input type="radio" name="motivationalHabit" value="Imcomprensibilidad" formControlName="motivationalHabit"> Imcomprensibilidad
+        <input type="radio" name="motivationalHabit" value="Incongruencia" formControlName="motivationalHabit"> Incongruencia
+      </div>
     </div>
 
     <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'Incoherencia'" formGroupName="incoherence">
-      <h3>Incoherencia</h3>
-      <h3>Fundamentación Jurídica</h3>
+      <h3 class="titulo" >Incoherencia</h3>
+      <h3 class="titulo">Fundamentación Jurídica</h3>
       <div>
-        <label>¿Existe incoherencia lógica normativa?</label>
+        <h4 class="titulo-eva">¿Existe incoherencia lógica normativa?</h4>
         <input type="radio" name="existsLogicalNormative" value="Si" formControlName="existsLogicalNormative"> Si
         <input type="radio" name="existsLogicalNormative" value="No" formControlName="existsLogicalNormative"> No
       </div>
       <div>
-        <label>¿Por qué?</label>
-        <textarea name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative"></textarea>
+        <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
       </div>
 
       <div>
-        <label>¿Existe incoherencia decisional normativa?</label>
+        <h4 class="titulo-eva" >¿Existe incoherencia decisional normativa?</h4>
         <input type="radio" name="existsDecisionalNormative" value="Si" formControlName="existsDecisionalNormative"> Si
         <input type="radio" name="existsDecisionalNormative" value="No" formControlName="existsDecisionalNormative"> No
       </div>
       <div>
-        <label>¿Por qué?</label>
-        <textarea name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative"></textarea>
+        <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
       </div>
 
-      <h3>Fundamentación fáctica</h3>
+      <h3 class="titulo" >Fundamentación fáctica</h3>
       <div>
-        <label>¿Existe incoherencia lógica fáctica?</label>
+        <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica?</h4>
         <input type="radio" name="existsLogicaFactual" value="Si" formControlName="existsLogicaFactual"> Si
         <input type="radio" name="existsLogicaFactual" value="No" formControlName="existsLogicaFactual"> No
       </div>
       <div>
-        <label>¿Por qué?</label>
-        <textarea name="reasonsLogicaFactual" formControlName="reasonsLogicaFactual"></textarea>
+        <app-caja-texto name="reasonsLogicaFactual" formControlName="reasonsLogicaFactual" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
       </div>
 
       <div>
-        <label>¿Existe incoherencia decisional fáctica?</label>
+        <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica?</h4>
         <input type="radio" name="existsDecisionalFactual" value="Si" formControlName="existsDecisionalFactual"> Si
         <input type="radio" name="existsDecisionalFactual" value="No" formControlName="existsDecisionalFactual"> No
       </div>
       <div>
-        <label>¿Por qué?</label>
-        <textarea name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual"></textarea>
+        <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
       </div>
 
       <div>
-        <label>Señale si la sentencia analizada debe ser anulada por déficit de motivación</label>
+        <h4 class="titulo-eva">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h4>
         <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
         <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
       </div>
       <div>
-        <label>¿Por qué?</label>
-        <textarea name="reasonsMotivation" formControlName="reasonsMotivation"></textarea>
+        <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
       </div>
     </div>
 
