@@ -1,46 +1,153 @@
-<app-header></app-header>
+<h2>Número de Proceso: {{ numero_proceso }}</h2>
+<h2>Asunto: {{ asunto }}</h2>
+<h2>Estudiante: {{ estudiante }}</h2>
+<h2>Docente: {{ docente }}</h2>
 
-<div class="datos-est">
-  <p class="dat"><strong> NÚMERO PROCESO: </strong> {{ numero_proceso }}</p>
-  <p class="dat"><strong> ASUNTO: </strong> {{ asunto }}</p>
-  <p class="dat"><strong> ESTUDIANTE: {{ estudiante }} </strong></p>
-  <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
-</div>
+<h3>Esquema de las argumentaciones</h3>
+<h5>En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de los siguientes tipos</h5>
 
-<div class="eva">
-  <form [formGroup]="evaluacionForm" (ngSubmit)="submitForm()">
+<form [formGroup]="evaluacionForm" (ngSubmit)="submitForm()">
+  <div>
+    <h3 class="titulo" for="motivationType">Tipo de Motivación</h3>
+    <select class="motivaciones" id="motivationType" formControlName="motivationType">
+      <option class="op" value="nonexistinence">Inexistencia</option>
+      <option class="op" value="insufficiency">Insuficiencia</option>
+      <option class="op" value="appearance">Apariencia</option>
+    </select>
+  </div>
+
+  <div *ngIf="evaluacionForm.get('motivationType')?.value === 'nonexistinence'" formGroupName="nonexistinence">
+    <h2>Inexistencia</h2>
+    <h3>Fundamentación normativa</h3>
     <div>
-      <h3 class="titulo" for="motivationType">Tipo de Motivación</h3>
-      <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
-        los siguientes tipos</h5>
-      <select class="motivaciones" id="motivationType" formControlName="motivationType">
-        <option class="op" value="Inexistencia">Inexistencia</option>
-        <option class="op" value="Insuficiencia">Insuficiencia</option>
-        <option class="op" value="Apariencia">Apariencia</option>
-      </select>
+      <label>¿Carece totalmente de fundamentación normativa?</label>
+      <input type="radio" name="lackFoundationNormative" value="Si" formControlName="lackFoundationNormative"> Si
+      <input type="radio" name="lackFoundationNormative" value="No" formControlName="lackFoundationNormative"> No
+    </div>
+    <div>
+      <label>¿Por qué?</label>
+      <textarea name="reasonsNormative" formControlName="reasonsNormative"></textarea>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Inexistencia'" formGroupName="inexistencia">
-      <h2 class="titulo">Inexistencia</h2>
-      <h3 class="titulo">Fundamentación normativa</h3>
+    <h3>Fundamentación fáctica</h3>
+    <div>
+      <label>¿Carece totalmente de fundamentación fáctica?</label>
+      <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
+      <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
+    </div>
+    <div>
+      <label>¿Por qué?</label>
+      <textarea name="reasonsFactual" formControlName="reasonsFactual"></textarea>
+    </div>
+
+    <div>
+      <label>Señale si la sentencia analizada debe ser anulada por déficit de motivación</label>
+      <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
+      <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
+    </div>
+    <div>
+      <label>¿Por qué?</label>
+      <textarea name="reasonsMotivation" formControlName="reasonsMotivation"></textarea>
+    </div>
+  </div>
+
+  <div *ngIf="evaluacionForm.get('motivationType')?.value === 'insufficiency'" formGroupName="insufficiency">
+    <h2>Insuficiencia</h2>
+    <h3>Fundamentación normativa</h3>
+    <div>
+      <label>¿Carece totalmente de fundamentación normativa?</label>
+      <input type="radio" name="lackFoundationNormative" value="Si" formControlName="lackFoundationNormative"> Si
+      <input type="radio" name="lackFoundationNormative" value="No" formControlName="lackFoundationNormative"> No
+    </div>
+    <div>
+      <label>¿Por qué?</label>
+      <textarea name="reasonsNormativa" formControlName="reasonsNormative"></textarea>
+    </div>
+
+    <h3>Fundamentación fáctica</h3>
+    <div>
+      <label>¿Carece totalmente de fundamentación fáctica?</label>
+      <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
+      <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
+    </div>
+    <div>
+      <label>¿Por qué?</label>
+      <textarea name="reasonsFactual" formControlName="reasonsFactual"></textarea>
+    </div>
+
+    <div>
+      <label>Señale si la sentencia analizada debe ser anulada por déficit de motivación</label>
+      <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
+      <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
+    </div>
+    <div>
+      <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
+    </div>
+  </div>
+
+  <div *ngIf="evaluacionForm.get('motivationType')?.value === 'appearance'" formGroupName="appearance">
+    <h2 class="titulo" >Apariencia</h2>
+    <h5 class="titulo" >En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de los vicios
+    motivacionales de la apariencia que constan a continuación.</h5>
+    <div>
+      <app-caja-texto name="appearanceReason" formControlName="appearanceReason" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
+    </div>
+
+    
+    <div class="appearance-options">
+      <h3 class="titulo" >Vicios motivacionales</h3>
+      <h5 class="titulo " >En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</h5>
+      <div class="options">
+        <input type="radio" name="motivationalHabit" value="Incoherencia" formControlName="motivationalHabit"> Incoherencia
+        <input type="radio" name="motivationalHabit" value="Inatinencia" formControlName="motivationalHabit"> Inatinencia
+        <input type="radio" name="motivationalHabit" value="Imcomprensibilidad" formControlName="motivationalHabit"> Imcomprensibilidad
+        <input type="radio" name="motivationalHabit" value="Incongruencia" formControlName="motivationalHabit"> Incongruencia
+      </div>
+    </div>
+
+    <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'Incoherencia'" formGroupName="incoherence">
+      <h3 class="titulo" >Incoherencia</h3>
+      <h3 class="titulo">Fundamentación Jurídica</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
-        <input type="radio" name="lackFoundationNormativa" value="Si" formControlName="lackFoundationNormativa"> Si
-        <input type="radio" name="lackFoundationNormativa" value="No" formControlName="lackFoundationNormativa"> No
+        <h4 class="titulo-eva">¿Existe incoherencia lógica normativa?</h4>
+        <input type="radio" name="existsLogicalNormative" value="Si" formControlName="existsLogicalNormative"> Si
+        <input type="radio" name="existsLogicalNormative" value="No" formControlName="existsLogicalNormative"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsNormativa" formControlName="reasonsNormativa" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
 
-      <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
-        <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
-        <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
+        <h4 class="titulo-eva" >¿Existe incoherencia decisional normativa?</h4>
+        <input type="radio" name="existsDecisionalNormative" value="Si" formControlName="existsDecisionalNormative"> Si
+        <input type="radio" name="existsDecisionalNormative" value="No" formControlName="existsDecisionalNormative"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
+      </div>
+
+      <h3 class="titulo" >Fundamentación fáctica</h3>
+      <div>
+        <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica?</h4>
+        <input type="radio" name="existsLogicaFactual" value="Si" formControlName="existsLogicaFactual"> Si
+        <input type="radio" name="existsLogicaFactual" value="No" formControlName="existsLogicaFactual"> No
+      </div>
+      <div>
+        <app-caja-texto name="reasonsLogicaFactual" formControlName="reasonsLogicaFactual" [titulo]="'¿Por qué?'">
+        </app-caja-texto>
+      </div>
+
+      <div>
+        <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica?</h4>
+        <input type="radio" name="existsDecisionalFactual" value="Si" formControlName="existsDecisionalFactual"> Si
+        <input type="radio" name="existsDecisionalFactual" value="No" formControlName="existsDecisionalFactual"> No
+      </div>
+      <div>
+        <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
 
@@ -55,259 +162,108 @@
       </div>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Insuficiencia'" formGroupName="insuficiencia">
-      <h2 class="titulo" >Insuficiencia</h2>
-      <h3 class="titulo">Fundamentación normativa</h3>
+    <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'Inatinencia'" formGroupName="inatinence">
+      <h3>Incoherencia</h3>
+      <h3>Fundamentación Jurídica</h3>
       <div>
-        <h4 class="titulo-eva" >¿Carece totalmente de fundamentación normativa?</h4>
-        <input type="radio" name="faltaFundamentacionNormativa" value="Si"
-          formControlName="faltaFundamentacionNormativa"> Si
-        <input type="radio" name="faltaFundamentacionNormativa" value="No"
-          formControlName="faltaFundamentacionNormativa"> No
+        <label>¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido?</label>
+        <input type="radio" name="existsInatinenceJuridical" value="Si" formControlName="existsInatinenceJuridical"> Si
+        <input type="radio" name="existsInatinenceJuridical" value="No" formControlName="existsInatinenceJuridical"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsNormativa" formControlName="reasonsNormativa" [titulo]="'¿Por qué?'">
-        </app-caja-texto>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical"></textarea>
       </div>
 
-      <h3 class="titulo" >Fundamentación fáctica</h3>
+      
+      <h3>Fundamentación fáctica</h3>
       <div>
-        <h4 class="titulo-eva" >¿Carece totalmente de fundamentación fáctica?</h4>
-        <input type="radio" name="faltaFundamentacionFactica" value="Si" formControlName="faltaFundamentacionFactica">
-        Si
-        <input type="radio" name="faltaFundamentacionFactica" value="No" formControlName="faltaFundamentacionFactica">
-        No
+        <label>¿Se esgrimen razones fácticas que no “tienen que ver” con el punto controvertido?</label>
+        <input type="radio" name="existsInatinenceFactual" value="Si" formControlName="existsInatinenceFactual"> Si
+        <input type="radio" name="existsInatinenceFactual" value="No" formControlName="existsInatinenceFactual"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsFactual" formControlName="motivoFundamentacionFactica" [titulo]="'¿Por qué?'">
-        </app-caja-texto>
-      </div>
-
-      <div>
-        <h3 class="titulo" >Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
-        <input type="radio" name="lackMotivation" value="Si" formControlName="deficitMotivacion"> Si
-        <input type="radio" name="lackMotivation" value="No" formControlName="deficitMotivacion"> No
-      </div>
-      <div>
-        <app-caja-texto name="reasonsMotivation" formControlName="motivoDeficitMotivacion" [titulo]="'¿Por qué?'">
-        </app-caja-texto>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual"></textarea>
       </div>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'Apariencia'" formGroupName="apariencia">
-      <h2 class="titulo" >Apariencia</h2>
-      <h5 class="titulo" >En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de los vicios
-        motivacionales de la apariencia que constan a continuación.</h5>
+    <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'Imcomprensibilidad'" formGroupName="incomprehensibility">
+      <h3>Incoherencia</h3>
+      <h3>Fundamentación Jurídica</h3>
       <div>
-        <app-caja-texto name="appearanceReason" formControlName="appearanceReason" [titulo]="'¿Por qué?'">
-        </app-caja-texto>
+        <label>¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
+          para un profesional del derecho ciudadano?</label>
+        <input type="radio" name="existsIncomprehensibilityJuridical" value="Si" formControlName="existsIncomprehensibilityJuridical"> Si
+        <input type="radio" name="existsIncomprehensibilityJuridical" value="No" formControlName="existsIncomprehensibilityJuridical"> No
+      </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncomprehensibilityJuridical" formControlName="reasonsIncomprehensibilityJuridical"></textarea>
       </div>
 
-      <div class="appearance-options">
-        <h3 class="titulo" >Vicios motivacionales</h3>
-        <h5 class="titulo " >En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</h5>
-        <div class="options">
-          <input type="radio" name="vicioMotivacional" value="Incoherencia" formControlName="vicioMotivacional">
-          Incoherencia
-          <input type="radio" name="vicioMotivacional" value="Inatinencia" formControlName="vicioMotivacional">
-          Inatinencia
-          <input type="radio" name="vicioMotivacional" value="Imcomprensibilidad" formControlName="vicioMotivacional">
-          Imcomprensibilidad
-          <input type="radio" name="vicioMotivacional" value="Incongruencia" formControlName="vicioMotivacional">
-          Incongruencia
-        </div>
+      
+      <h3>Fundamentación fáctica</h3>
+      <div>
+        <label>¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
+          para un profesional del derecho ciudadano?</label>
+        <input type="radio" name="existsIncomprehensibilityFactual" value="Si" formControlName="existsIncomprehensibilityFactual"> Si
+        <input type="radio" name="existsIncomprehensibilityFactual" value="No" formControlName="existsIncomprehensibilityFactual"> No
       </div>
-
-      <div *ngIf="evaluacionForm.get('apariencia')?.get('vicioMotivacional')?.value === 'Incoherencia'"
-        formGroupName="incoherencia">
-        <h3 class="titulo" >Incoherencia</h3>
-        <h3 class="titulo">Fundamentación Jurídica</h3>
-        <div>
-          <h4 class="titulo-eva">¿Existe incoherencia lógica normativa?</h4>
-          <input type="radio" name="incoherenciaLogicaNormativa" value="Si"
-            formControlName="incoherenciaLogicaNormativa"> Si
-          <input type="radio" name="incoherenciaLogicaNormativa" value="No"
-            formControlName="incoherenciaLogicaNormativa"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsLogicaNormativa" formControlName="reasonsLogicaNormativa" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-
-        <div>
-          <h4 class="titulo-eva" >¿Existe incoherencia decisional normativa?</h4>
-          <input type="radio" name="incoherenciaDecisionalNormativa" value="Si"
-            formControlName="incoherenciaDecisionalNormativa"> Si
-          <input type="radio" name="incoherenciaDecisionalNormativa" value="No"
-            formControlName="incoherenciaDecisionalNormativa"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsDecisionalNormativa" formControlName="reasonsDecisionalNormativa" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-
-        <h3 class="titulo" >Fundamentación fáctica</h3>
-        <div>
-          <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica?</h4>
-          <input type="radio" name="incoherenciaLogicaFactual" value="Si" formControlName="incoherenciaLogicaFactual">
-          Si
-          <input type="radio" name="incoherenciaLogicaFactual" value="No" formControlName="incoherenciaLogicaFactual">
-          No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsLogicaFactual" formControlName="reasonsLogicaFactual" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-
-        <div>
-          <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica?</h4>
-          <input type="radio" name="incoherenciaDecisionalFactual" value="Si"
-            formControlName="incoherenciaDecisionalFactual"> Si
-          <input type="radio" name="incoherenciaDecisionalFactual" value="No"
-            formControlName="incoherenciaDecisionalFactual"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-
-        <div>
-          <h4 class="titulo-eva">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h4>
-          <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
-          <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-      </div>
-
-      <div *ngIf="evaluacionForm.get('apariencia')?.get('vicioMotivacional')?.value === 'Inatinencia'"
-        formGroupName="inatinencia">
-        <h3 class="titulo" >Incoherencia</h3>
-        <h3 class="titulo">Fundamentación Jurídica</h3>
-        <div>
-          <h4 class="titulo-eva" >¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido?</h4>
-          <input type="radio" name="inatinenciaJuridica" value="Si" formControlName="inatinenciaJuridica"> Si
-          <input type="radio" name="inatinenciaJuridica" value="No" formControlName="inatinenciaJuridica"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsInatinenciaJuridica" formControlName="reasonsInatinenciaJuridica" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-
-
-        <h3 class="titulo" >Fundamentación fáctica</h3>
-        <div>
-          <h4 class="titulo-eva" >¿Se esgrimen razones fácticas que no “tienen que ver” con el punto controvertido?</h4>
-          <input type="radio" name="inatinenciaFactica" value="Si" formControlName="inatinenciaFactica"> Si
-          <input type="radio" name="inatinenciaFactica" value="No" formControlName="inatinenciaFactica"> No
-        </div>
-        <div>
-          <app-caja-texto name="reasonsInatinenciaFactica" formControlName="reasonsInatinenciaFactica" [titulo]="'¿Por qué?'">
-          </app-caja-texto>
-        </div>
-      </div>
-
-      <div *ngIf="evaluacionForm.get('apariencia')?.get('vicioMotivacional')?.value === 'Imcomprensibilidad'"
-        formGroupName="imcomprensibilidad">
-        <h3 class="titulo" >Incoherencia</h3>
-        <h3 class="titulo">Fundamentación Jurídica</h3>
-        <div>
-          <h4 class="titulo-eva" >¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
-            para un profesional del derecho ciudadano?</h4>
-          <input type="radio" name="imcomprensibilidadJuridica" value="Si" formControlName="imcomprensibilidadJuridica">
-          Si
-          <input type="radio" name="imcomprensibilidadJuridica" value="No" formControlName="imcomprensibilidadJuridica">
-          No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsImcomprensibilidadJuridica"
-            formControlName="reasonsImcomprensibilidadJuridica" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
-
-
-        <h3 class="titulo" >Fundamentación fáctica</h3>
-        <div>
-          <h4 class="titulo-eva" >¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
-            para un profesional del derecho ciudadano?</h4>
-          <input type="radio" name="imcomprensibilidadFactica" value="Si" formControlName="imcomprensibilidadFactica">
-          Si
-          <input type="radio" name="imcomprensibilidadFactica" value="No" formControlName="imcomprensibilidadFactica">
-          No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsImcomprensibilidadFactica"
-            formControlName="reasonsImcomprensibilidadFactica" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
-      </div>
-
-      <div *ngIf="evaluacionForm.get('apariencia')?.get('vicioMotivacional')?.value === 'Incongruencia'"
-        formGroupName="incongruencia">
-        <h3 class="titulo" >Incoherencia</h3>
-        <h3 class="titulo " >Fundamentación Jurídica</h3>
-        <div>
-          <h4 class="titulo-eva">¿Existe incongruencia normativa frente a las partes?</h4>
-          <input type="radio" name="incongruenciaNormativaPartes" value="Si"
-            formControlName="incongruenciaNormativaPartes"> Si
-          <input type="radio" name="incongruenciaNormativaPartes" value="No"
-            formControlName="incongruenciaNormativaPartes"> No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsIncongruenciaNormativaPartes"
-            formControlName="reasonsIncongruenciaNormativaPartes" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
-
-        <div>
-          <h4 class="titulo-eva" >¿Existe incongruencia normativa frente al derecho?</h4>
-          <input type="radio" name="incongruenciaNormativaDerecho" value="Si"
-            formControlName="incongruenciaNormativaDerecho"> Si
-          <input type="radio" name="incongruenciaNormativaDerecho" value="No"
-            formControlName="incongruenciaNormativaDerecho"> No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsIncongruenciaNormativaDerecho"
-            formControlName="reasonsIncongruenciaNormativaDerecho" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
-
-        <h3 class="titulo" >Fundamentación fáctica</h3>
-        <div>
-          <h4 class="titulo-eva" >¿Existe incongruencia fáctica frente a las partes?</h4>
-          <input type="radio" name="incongruenciaFacticaPartes" value="Si" formControlName="incongruenciaFacticaPartes">
-          Si
-          <input type="radio" name="incongruenciaFacticaPartes" value="No" formControlName="incongruenciaFacticaPartes">
-          No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsIncongruenciaFacticaPartes"
-            formControlName="reasonsIncongruenciaFacticaPartes" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
-
-        <div>
-          <h4 class="titulo-eva " >¿Existe incongruencia fáctica frente al derecho?</h4>
-          <input type="radio" name="incongruenciaFacticaDerecho" value="Si"
-            formControlName="incongruenciaFacticaDerecho"> Si
-          <input type="radio" name="incongruenciaFacticaDerecho" value="No"
-            formControlName="incongruenciaFacticaDerecho"> No
-        </div>
-        <div>
-            <app-caja-texto name="reasonsIncongruenciaFacticaDerecho"
-            formControlName="reasonsIncongruenciaFacticaDerecho" [titulo]="'¿Por qué?'">
-            </app-caja-texto>
-        </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual"></textarea>
       </div>
     </div>
 
-    <button class="bttn-stnd" type="submit">Guardar</button>
-  </form>
+    <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'Incongruencia'" formGroupName="incongruity">
+      <h3>Incoherencia</h3>
+      <h3>Fundamentación Jurídica</h3>
+      <div>
+        <label>¿Existe incongruencia normativa frente a las partes?</label>
+        <input type="radio" name="existsIncongruityNormativeParticipants" value="Si" formControlName="existsIncongruityNormativeParticipants"> Si
+        <input type="radio" name="existsIncongruityNormativeParticipants" value="No" formControlName="existsIncongruityNormativeParticipants"> No
+      </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncongruityNormativeParticipants" formControlName="reasonsIncongruityNormativeParticipants"></textarea>
+      </div>
 
-  <div class="bttn">
-    <button class="bttn-stnd" (click)="redirectToAnalisis2()">Análisis</button>
-    <button class="bttn-stnd" [disabled]="!saved" (click)="redirectToEvaluacion2()">Siguiente</button>
+      <div>
+        <label>¿Existe incongruencia normativa frente al derecho?</label>
+        <input type="radio" name="existsIncongruityNormativeLaw" value="Si" formControlName="existsIncongruityNormativeLaw"> Si
+        <input type="radio" name="existsIncongruityNormativeLaw" value="No" formControlName="existsIncongruityNormativeLaw"> No
+      </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw"></textarea>
+      </div>
+
+      <h3>Fundamentación fáctica</h3>
+      <div>
+        <label>¿Existe incongruencia fáctica frente a las partes?</label>
+        <input type="radio" name="existsIncongruityFactualParticipants" value="Si" formControlName="existsIncongruityFactualParticipants"> Si
+        <input type="radio" name="existsIncongruityFactualParticipants" value="No" formControlName="existsIncongruityFactualParticipants"> No
+      </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncongruityFactualParticipants" formControlName="reasonsIncongruityFactualParticipants"></textarea>
+      </div>
+
+      <div>
+        <label>¿Existe incongruencia fáctica frente al derecho?</label>
+        <input type="radio" name="existsIncongruityFactualLaw" value="Si" formControlName="existsIncongruityFactualLaw"> Si
+        <input type="radio" name="existsIncongruityFactualLaw" value="No" formControlName="existsIncongruityFactualLaw"> No
+      </div>
+      <div>
+        <label>¿Por qué?</label>
+        <textarea name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw"></textarea>
+      </div>
+    </div>
   </div>
-</div>
+
+  <button type="submit">Guardar</button>
+</form>
+
+<button (click)="redirectToAnalisis2()">Análisis</button>
+<button [disabled]="!saved" (click)="redirectToEvaluacion2()">Siguiente</button>
