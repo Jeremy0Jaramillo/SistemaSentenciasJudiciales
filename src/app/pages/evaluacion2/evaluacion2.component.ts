@@ -24,23 +24,29 @@ export class Evaluacion2Component implements OnInit {
     private route: ActivatedRoute
   ) {
     this.evaluacion2Form = this.fb.group({
-      numero_proceso: ['', Validators.required],
-      sentenceSubject: ['', Validators.required],
-      validSummary: ['', Validators.required],
-      factsConception: ['', Validators.required],
-      finalDecision: ['', Validators.required],
-      properUse: ['', Validators.required],
-      lawAnalysis: ['', Validators.required],
-      normativeEvaluation: ['', Validators.required],
-      precedentsAplication: ['', Validators.required],
-      expressionClarity: ['', Validators.required],
-      crimeClassification: ['', Validators.required],
-      properAnalysis: ['', Validators.required],
-      againstProperty: ['', Validators.required],
-      precedentsAplication2: ['', Validators.required],
-      expressionClarity2: ['', Validators.required],
-      judgeAnalysis: ['', Validators.required],
-      reasonsNormative: ['', Validators.required]
+      numero_proceso: [''],
+      sentenceSubject: [''],
+      multicomponent: this.fb.group({
+        multiOption: ['']
+      }),
+      other: this.fb.group({
+        otherSubject: ['']
+      }),
+      validSummary: [''],
+      factsConception: [''],
+      finalDecision: [''],
+      properUse: [''],
+      lawAnalysis: [''],
+      normativeEvaluation: [''],
+      precedentsAplication: [''],
+      expressionClarity: [''],
+      crimeClassification: [''],
+      properAnalysis: [''],
+      againstProperty: [''],
+      precedentsAplication2: [''],
+      expressionClarity2: [''],
+      judgeAnalysis: [''],
+      reasonsNormative: ['']
     });
   }
 
@@ -54,6 +60,9 @@ export class Evaluacion2Component implements OnInit {
       this.evaluacion2Form.patchValue({
         numero_proceso: this.numero_proceso
       });
+
+      // Load existing data if available
+      this.loadEvaluacion2Data();
     });
   }
 
@@ -62,16 +71,25 @@ export class Evaluacion2Component implements OnInit {
     this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(evaluacion2Data)
       .then(() => {
         this.saved = true;
-        setTimeout(() => {
-          window.location.reload(); // Reload the page after 2 seconds
-        }, 2000);
       })
       .catch(error => {
         console.error("Error saving document: ", error);
       });
   }
 
-  redirectToEvaluacion2() {
+  loadEvaluacion2Data() {
+    this.firestore.collection('evaluacion2').doc(this.numero_proceso)
+      .valueChanges()
+      .subscribe(data => {
+        if (data) {
+          const evaluation2Data = data as Evaluacion2Form; // Cast to the correct type
+          this.evaluacion2Form.patchValue(evaluation2Data);
+          this.saved = true;
+        }
+      });
+  }
+
+  redirectToEvaluacion() {
     this.router.navigate(['/evaluacion'], {
       queryParams: {
         numero_proceso: this.numero_proceso,
@@ -85,4 +103,30 @@ export class Evaluacion2Component implements OnInit {
   redirectToSiguiente() {
     // Implement the redirection to the next component/page if needed
   }
+}
+
+interface Evaluacion2Form {
+  numero_proceso: string;
+  sentenceSubject: string;
+  multicomponent: {
+    multiOption: string;
+  };
+  other: {
+    otherSubject: string;
+  };
+  validSummary: string;
+  factsConception: string;
+  finalDecision: string;
+  properUse: string;
+  lawAnalysis: string;
+  normativeEvaluation: string;
+  precedentsAplication: string;
+  expressionClarity: string;
+  crimeClassification: string;
+  properAnalysis: string;
+  againstProperty: string;
+  precedentsAplication2: string;
+  expressionClarity2: string;
+  judgeAnalysis: string;
+  reasonsNormative: string;
 }

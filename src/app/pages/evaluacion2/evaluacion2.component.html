@@ -9,31 +9,28 @@
     <div>
       <h3 class="titulo" for="sentenceSubject">SEÑALE  LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
       <h5>Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
-      <select class="subjects" id="sentenceSubject" formControlName="sentenceSubject">
-        <input type="radio" name="validSummary" value="Civil" formControlName="validSummary"> Civil
-        <input type="radio" name="validSummary" value="Penal" formControlName="validSummary"> Penal
-        <input type="radio" name="validSummary" value="Constitutional" formControlName="validSummary"> Constitucional
-        <input type="radio" name="validSummary" value="GuaranteeCourts" formControlName="validSummary"> Tribunales de garantías penales
-        <input type="radio" name="validSummary" value="Civil" formControlName="validSummary"> Mercantil
-        <input type="radio" name="validSummary" value="Penal" formControlName="validSummary"> Inquilinato y relaciones vecinales
-        <input type="radio" name="validSummary" value="Constitutional" formControlName="validSummary"> Laboral
-        <input type="radio" name="validSummary" value="GuaranteeCourts" formControlName="validSummary"> Tribunales contencioso administrativo
-        <input type="radio" name="validSummary" value="Civil" formControlName="validSummary"> Familia, mujer, niñez y adolescencia
-        <input type="radio" name="validSummary" value="Multicomponent" formControlName="validSummary"> Multicomponente
+        <input type="radio" name="sentenceSubject" value="Civil" formControlName="sentenceSubject"> Civil
+        <input type="radio" name="sentenceSubject" value="Penal" formControlName="sentenceSubject"> Penal
+        <input type="radio" name="sentenceSubject" value="Constitutional" formControlName="sentenceSubject"> Constitucional
+        <input type="radio" name="sentenceSubject" value="GuaranteeCourts" formControlName="sentenceSubject"> Tribunales de garantías penales
+        <input type="radio" name="sentenceSubject" value="Mercantil" formControlName="sentenceSubject"> Mercantil
+        <input type="radio" name="sentenceSubject" value="Inquilinato" formControlName="sentenceSubject"> Inquilinato y relaciones vecinales
+        <input type="radio" name="sentenceSubject" value="Laboral" formControlName="sentenceSubject"> Laboral
+        <input type="radio" name="sentenceSubject" value="ContenciosoAdministrativo" formControlName="sentenceSubject"> Tribunales contencioso administrativo
+        <input type="radio" name="sentenceSubject" value="Familia" formControlName="sentenceSubject"> Familia, mujer, niñez y adolescencia
+        <input type="radio" name="sentenceSubject" value="Multicomponent" formControlName="sentenceSubject"> Multicomponente
         <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Multicomponent'" formGroupName="multicomponent">
-            <input type="radio" name="validSummary" value="MultiCivil" formControlName="validSummary"> Mult. civil
-            <input type="radio" name="validSummary" value="MultiPenal" formControlName="validSummary"> Mult. penal
+            <input type="radio" name="multiOption" value="MultiCivil" formControlName="multiOption"> Mult. civil
+            <input type="radio" name="multiOption" value="MultiPenal" formControlName="multiOption"> Mult. penal
         </div>
-        <input type="radio" name="validSummary" value="Transit" formControlName="validSummary"> Tránsito
-        <input type="radio" name="validSummary" value="Violence" formControlName="validSummary"> Violencia contra la mujer o miembro del núcleo familliar
-        <input type="radio" name="validSummary" value="Contraventions" formControlName="validSummary"> Contravensiones
-        <input type="radio" name="validSummary" value="TributaryLitigation" formControlName="validSummary"> Contensioso tributario
-        <input type="radio" name="validSummary" value="Constitutional" formControlName="validSummary"> Constitucional
-        <input type="radio" name="validSummary" value="Other" formControlName="validSummary"> Otro...
+        <input type="radio" name="sentenceSubject" value="Transit" formControlName="sentenceSubject"> Tránsito
+        <input type="radio" name="sentenceSubject" value="Violence" formControlName="sentenceSubject"> Violencia contra la mujer o miembro del núcleo familliar
+        <input type="radio" name="sentenceSubject" value="Contraventions" formControlName="sentenceSubject"> Contravenciones
+        <input type="radio" name="sentenceSubject" value="TributaryLitigation" formControlName="sentenceSubject"> Contencioso tributario
+        <input type="radio" name="sentenceSubject" value="Other" formControlName="sentenceSubject"> Otro...
         <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Other'" formGroupName="other">
             <textarea name="otherSubject" formControlName="otherSubject"></textarea>
         </div>
-      </select>
     </div>
 
     <h2>SEÑALE EL CASILLERO QUE CREA CONVENIENTE</h2>
@@ -166,5 +163,5 @@
     <button type="submit">Guardar</button>
 </form>
 
-<button (click)="redirectToEvaluacion2()">Análisis</button>
+<button (click)="redirectToEvaluacion()">Evaluación</button>
 <button [disabled]="!saved" (click)="redirectToSiguiente()">Siguiente</button>
