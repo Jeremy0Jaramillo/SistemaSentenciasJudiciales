@@ -40,6 +40,7 @@
     display: flex;
     margin: 20px 0px 0px 0px;
     justify-content: space-between;
+    padding: 0PX 35px 10px;
   }
 
   .appearance-options{

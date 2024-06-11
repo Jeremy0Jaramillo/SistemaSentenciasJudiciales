@@ -1,59 +1,82 @@
-<h2>Número de Proceso: {{ numero_proceso }}</h2>
-<h2>Asunto: {{ asunto }}</h2>
-<h2>Estudiante: {{ estudiante }}</h2>
-<h2>Docente: {{ docente }}</h2>
+<app-header></app-header>
 
-<h2>MOTIVACIÓN CORRECTA</h2>
+<div class="datos-est">
+    <p class="dat"><strong> NÚMERO PROCESO: </strong> {{ numero_proceso }}</p>
+    <p class="dat"><strong> ASUNTO: </strong> {{ asunto }}</p>
+    <p class="dat"><strong> ESTUDIANTE: </strong> {{ estudiante }} </p>
+    <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
+</div>
+
+<h2 class="titulo">MOTIVACIÓN CORRECTA</h2>
 
 <form [formGroup]="evaluacion2Form" (ngSubmit)="submitForm()">
     <div>
-      <h3 class="titulo" for="sentenceSubject">SEÑALE  LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
-      <h5>Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
-        <input type="radio" name="sentenceSubject" value="Civil" formControlName="sentenceSubject"> Civil
-        <input type="radio" name="sentenceSubject" value="Penal" formControlName="sentenceSubject"> Penal
-        <input type="radio" name="sentenceSubject" value="Constitutional" formControlName="sentenceSubject"> Constitucional
-        <input type="radio" name="sentenceSubject" value="GuaranteeCourts" formControlName="sentenceSubject"> Tribunales de garantías penales
-        <input type="radio" name="sentenceSubject" value="Mercantil" formControlName="sentenceSubject"> Mercantil
-        <input type="radio" name="sentenceSubject" value="Inquilinato" formControlName="sentenceSubject"> Inquilinato y relaciones vecinales
-        <input type="radio" name="sentenceSubject" value="Laboral" formControlName="sentenceSubject"> Laboral
-        <input type="radio" name="sentenceSubject" value="ContenciosoAdministrativo" formControlName="sentenceSubject"> Tribunales contencioso administrativo
-        <input type="radio" name="sentenceSubject" value="Familia" formControlName="sentenceSubject"> Familia, mujer, niñez y adolescencia
-        <input type="radio" name="sentenceSubject" value="Multicomponent" formControlName="sentenceSubject"> Multicomponente
-        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Multicomponent'" formGroupName="multicomponent">
-            <input type="radio" name="multiOption" value="MultiCivil" formControlName="multiOption"> Mult. civil
-            <input type="radio" name="multiOption" value="MultiPenal" formControlName="multiOption"> Mult. penal
-        </div>
-        <input type="radio" name="sentenceSubject" value="Transit" formControlName="sentenceSubject"> Tránsito
-        <input type="radio" name="sentenceSubject" value="Violence" formControlName="sentenceSubject"> Violencia contra la mujer o miembro del núcleo familliar
-        <input type="radio" name="sentenceSubject" value="Contraventions" formControlName="sentenceSubject"> Contravenciones
-        <input type="radio" name="sentenceSubject" value="TributaryLitigation" formControlName="sentenceSubject"> Contencioso tributario
-        <input type="radio" name="sentenceSubject" value="Other" formControlName="sentenceSubject"> Otro...
-        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Other'" formGroupName="other">
-            <textarea name="otherSubject" formControlName="otherSubject"></textarea>
+
+        <div class="checkbox-class">
+            <h3 class="tittle-check " for="sentenceSubject">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
+            <h5>Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
+            <input type="checkbox" name="sentenceSubject" value="Civil" formControlName="sentenceSubject"> Civil
+            <input type="checkbox" name="sentenceSubject" value="Penal" formControlName="sentenceSubject"> Penal
+            <input type="checkbox" name="sentenceSubject" value="Constitutional" formControlName="sentenceSubject">
+            Constitucional
+            <input type="checkbox" name="sentenceSubject" value="GuaranteeCourts" formControlName="sentenceSubject">
+            Tribunales de garantías penales
+            <input type="checkbox" name="sentenceSubject" value="Mercantil" formControlName="sentenceSubject"> Mercantil
+            <input type="checkbox" name="sentenceSubject" value="Inquilinato" formControlName="sentenceSubject">
+            Inquilinato y relaciones vecinales
+            <input type="checkbox" name="sentenceSubject" value="Laboral" formControlName="sentenceSubject"> Laboral
+            <input type="checkbox" name="sentenceSubject" value="ContenciosoAdministrativo"
+                formControlName="sentenceSubject"> Tribunales contencioso administrativo
+            <input type="checkbox" name="sentenceSubject" value="Familia" formControlName="sentenceSubject"> Familia,
+            mujer, niñez y adolescencia
+            <input type="checkbox" name="sentenceSubject" value="Multicomponent" formControlName="sentenceSubject">
+            Multicomponente
+            <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Multicomponent'"
+                formGroupName="multicomponent">
+                <input type="checkbox" name="multiOption" value="MultiCivil" formControlName="multiOption"> Mult. civil
+                <input type="checkbox" name="multiOption" value="MultiPenal" formControlName="multiOption"> Mult. penal
+            </div>
+            <input type="checkbox" name="sentenceSubject" value="Transit" formControlName="sentenceSubject"> Tránsito
+            <input type="checkbox" name="sentenceSubject" value="Violence" formControlName="sentenceSubject"> Violencia
+            contra la mujer o miembro del núcleo familliar
+            <input type="checkbox" name="sentenceSubject" value="Contraventions" formControlName="sentenceSubject">
+            Contravenciones
+            <input type="checkbox" name="sentenceSubject" value="TributaryLitigation" formControlName="sentenceSubject">
+            Contencioso tributario
+            <input type="checkbox" name="sentenceSubject" value="Other" formControlName="sentenceSubject"> Otro...
+            <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Other'" formGroupName="other">
+                <textarea name="otherSubject" formControlName="otherSubject"></textarea>
+            </div>
         </div>
     </div>
 
     <h2>SEÑALE EL CASILLERO QUE CREA CONVENIENTE</h2>
-    <h5>En este apartado encontrará una serie de parámetros, para seleccionar según su conveniencia tenga en cuenta que: Totalmente en desacuerdo (1), Ni desacuerdo/Ni en desacuerdo (2), Muy de acuerdo (3), No aplica (4) </h5>
+    <h5>En este apartado encontrará una serie de parámetros, para seleccionar según su conveniencia tenga en cuenta que:
+        Totalmente en desacuerdo (1), Ni desacuerdo/Ni en desacuerdo (2), Muy de acuerdo (3), No aplica (4) </h5>
 
     <div>
-        <h3>Argumentaicón jurídica y motivación correcta: Se revisará la aplicación práctica del derecho en la construcción de la resolución o sentencia, el derecho relacionado al caso y la materia de cada caso.</h3>
+        <h3>Argumentaicón jurídica y motivación correcta: Se revisará la aplicación práctica del derecho en la
+            construcción de la resolución o sentencia, el derecho relacionado al caso y la materia de cada caso.</h3>
         <div>
-            <label>Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.</label>
+            <label>Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación
+                correspondiente a la parte considerativa y expositiva de la resolución.</label>
             <input type="radio" name="validSummary" value="1" formControlName="validSummary"> 1
             <input type="radio" name="validSummary" value="2" formControlName="validSummary"> 2
             <input type="radio" name="validSummary" value="3" formControlName="validSummary"> 3
             <input type="radio" name="validSummary" value="4" formControlName="validSummary"> 4
         </div>
         <div>
-            <label>Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible conforme al Derecho.</label>
+            <label>Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal
+                vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible
+                conforme al Derecho.</label>
             <input type="radio" name="factsConception" value="1" formControlName="factsConception"> 1
             <input type="radio" name="factsConception" value="2" formControlName="factsConception"> 2
             <input type="radio" name="factsConception" value="3" formControlName="factsConception"> 3
             <input type="radio" name="factsConception" value="4" formControlName="factsConception"> 4
         </div>
         <div>
-            <label>Conclusión de la decisión final frente a los hechos presentados en base al análisis realizado.</label>
+            <label>Conclusión de la decisión final frente a los hechos presentados en base al análisis
+                realizado.</label>
             <input type="radio" name="finalDecision" value="1" formControlName="finalDecision"> 1
             <input type="radio" name="finalDecision" value="2" formControlName="finalDecision"> 2
             <input type="radio" name="finalDecision" value="3" formControlName="finalDecision"> 3
@@ -71,14 +94,17 @@
     <div>
         <h3>Principios constitucionales.</h3>
         <div>
-            <label>Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.</label>
+            <label>Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido
+                proceso.</label>
             <input type="radio" name="lawAnalysis" value="1" formControlName="lawAnalysis"> 1
             <input type="radio" name="lawAnalysis" value="2" formControlName="lawAnalysis"> 2
             <input type="radio" name="lawAnalysis" value="3" formControlName="lawAnalysis"> 3
             <input type="radio" name="lawAnalysis" value="4" formControlName="lawAnalysis"> 4
         </div>
         <div>
-            <label>Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba. Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los hechos.</label>
+            <label>Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba.
+                Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los
+                hechos.</label>
             <input type="radio" name="normativeEvaluation" value="1" formControlName="normativeEvaluation"> 1
             <input type="radio" name="normativeEvaluation" value="2" formControlName="normativeEvaluation"> 2
             <input type="radio" name="normativeEvaluation" value="3" formControlName="normativeEvaluation"> 3
@@ -89,7 +115,8 @@
     <div>
         <h3>Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada.</h3>
         <div>
-            <label>Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.</label>
+            <label>Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal
+                vigente y de acuerdo al caso.</label>
             <input type="radio" name="precedentsAplication" value="1" formControlName="precedentsAplication"> 1
             <input type="radio" name="precedentsAplication" value="2" formControlName="precedentsAplication"> 2
             <input type="radio" name="precedentsAplication" value="3" formControlName="precedentsAplication"> 3
@@ -114,14 +141,16 @@
             <input type="radio" name="crimeClassification" value="4" formControlName="crimeClassification"> 4
         </div>
         <div>
-            <label>Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de acuerdo al art. 640 del COIP y abreviado.</label>
+            <label>Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de
+                acuerdo al art. 640 del COIP y abreviado.</label>
             <input type="radio" name="properAnalysis" value="1" formControlName="properAnalysis"> 1
             <input type="radio" name="properAnalysis" value="2" formControlName="properAnalysis"> 2
             <input type="radio" name="properAnalysis" value="3" formControlName="properAnalysis"> 3
             <input type="radio" name="properAnalysis" value="4" formControlName="properAnalysis"> 4
         </div>
         <div>
-            <label>Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.</label>
+            <label>Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la
+                propiedad.</label>
             <input type="radio" name="againstProperty" value="1" formControlName="againstProperty"> 1
             <input type="radio" name="againstProperty" value="2" formControlName="againstProperty"> 2
             <input type="radio" name="againstProperty" value="3" formControlName="againstProperty"> 3
@@ -130,9 +159,11 @@
     </div>
 
     <div>
-        <h3>Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o términos previstos  en la ley.</h3>
+        <h3>Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o
+            términos previstos en la ley.</h3>
         <div>
-            <label>Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.</label>
+            <label>Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal
+                vigente y de acuerdo al caso.</label>
             <input type="radio" name="precedentsAplication2" value="1" formControlName="precedentsAplication2"> 1
             <input type="radio" name="precedentsAplication2" value="2" formControlName="precedentsAplication2"> 2
             <input type="radio" name="precedentsAplication2" value="3" formControlName="precedentsAplication2"> 3
@@ -150,7 +181,8 @@
     <div>
         <h3>Fundamentación normativa</h3>
         <div>
-        <label>Señale si la sentencia analizada debe ser corregida (dejada por defecto) por un juez de segunda instancia a través de la presentación de un recurso de apelación.</label>
+            <label>Señale si la sentencia analizada debe ser corregida (dejada por defecto) por un juez de segunda
+                instancia a través de la presentación de un recurso de apelación.</label>
             <input type="radio" name="judgeAnalysis" value="Si" formControlName="judgeAnalysis"> Si
             <input type="radio" name="judgeAnalysis" value="No" formControlName="judgeAnalysis"> No
         </div>

@@ -3,7 +3,7 @@
 <div class="datos-est">
   <p class="dat"><strong> NÚMERO PROCESO: </strong> {{ numero_proceso }}</p>
   <p class="dat"><strong> ASUNTO: </strong> {{ asunto }}</p>
-  <p class="dat"><strong> ESTUDIANTE: {{ estudiante }} </strong></p>
+  <p class="dat"><strong> ESTUDIANTE: </strong> {{ estudiante }} </p>
   <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
 </div>
 
@@ -33,25 +33,25 @@
         </app-caja-texto>
       </div>
 
-    <h3>Fundamentación fáctica</h3>
+    <h3 class="titulo">Fundamentación fáctica</h3>
     <div>
-      <label>¿Carece totalmente de fundamentación fáctica?</label>
+      <h4 class="titulo-eva" >¿Carece totalmente de fundamentación fáctica?</h4>
       <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
       <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
     </div>
     <div>
-      <label>¿Por qué?</label>
-      <textarea name="reasonsFactual" formControlName="reasonsFactual"></textarea>
+      <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
     </div>
 
     <div>
-      <label>Señale si la sentencia analizada debe ser anulada por déficit de motivación</label>
+      <h3 class="titulo" >Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
       <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
       <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
     </div>
     <div>
-      <label>¿Por qué?</label>
-      <textarea name="reasonsMotivation" formControlName="reasonsMotivation"></textarea>
+      <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
     </div>
   </div>
 
@@ -302,11 +302,11 @@
         </div>
       </div>
     </div>
-    <button type="submit">Guardar</button>
+    <button class="bttn-stnd" type="submit">Guardar</button>
     </form>
   </div>
 
-
-
-<button (click)="redirectToAnalisis2()">Análisis</button>
-<button [disabled]="!saved" (click)="redirectToEvaluacion2()">Siguiente</button>
+<div class="bttn">
+  <button class="bttn-stnd" (click)="redirectToAnalisis2()">Análisis</button>
+  <button class="bttn-stnd" [disabled]="!saved" (click)="redirectToEvaluacion2()">Siguiente</button>
+</div>
