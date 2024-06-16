@@ -10,45 +10,44 @@
 
 <div class="info-analisis">
   <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
+    
+<div class="analisis">
+  <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'1. Narración de los hechos'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'1. Narración de los hechos'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto id="problema_juridico" formControlName="problema_juridico" [titulo]="'2. Problema jurídico'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="problema_juridico" formControlName="problema_juridico" [titulo]="'2. Problema jurídico'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto id="cuestiones_subcuestiones" formControlName="cuestiones_subcuestiones" [titulo]="'3. Cuestiones o subcuestiones para solucionar el problema'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="cuestiones_subcuestiones" formControlName="cuestiones_subcuestiones" [titulo]="'3. Cuestiones o subcuestiones para solucionar el problema'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto  id="respuesta_cuestiones" formControlName="respuesta_cuestiones" [titulo]="'4. Respuesta a las cuestiones'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto  id="respuesta_cuestiones" formControlName="respuesta_cuestiones" [titulo]="'4. Respuesta a las cuestiones'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto id="ratio_obiter" formControlName="ratio_obiter" [titulo]="'5. Ratio decidendi y obiter dictum'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="ratio_obiter" formControlName="ratio_obiter" [titulo]="'5. Ratio decidendi y obiter dictum'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto id="solucion_problema" formControlName="solucion_problema" [titulo]="'6. Solución al problema'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="solucion_problema" formControlName="solucion_problema" [titulo]="'6. Solución al problema'">
-      </app-caja-texto>
-    </div>
+<div class="analisis">
+  <app-caja-texto id="decision" formControlName="decision" [titulo]="'7. Desición'">
+  </app-caja-texto>
+</div>
 
-    <div class="analisis">
-      <app-caja-texto id="decision" formControlName="decision" [titulo]="'7. Desición'">
-      </app-caja-texto>
-    </div>
-
-    <button class="bttn-stnd" type="submit">Guardar</button>
+<button class="bttn-stnd" type="submit">Guardar</button>
   </form>
-
   <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
     <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!saved">Evaluación</button>
