@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
@@ -25,9 +25,9 @@ export class Evaluacion2Component implements OnInit {
   ) {
     this.evaluacion2Form = this.fb.group({
       numero_proceso: [''],
-      sentenceSubject: [''],
+      sentenceSubject: this.fb.array([]),
       multicomponent: this.fb.group({
-        multiOption: ['']
+        multiOption: this.fb.array([])
       }),
       other: this.fb.group({
         otherSubject: ['']
@@ -56,7 +56,7 @@ export class Evaluacion2Component implements OnInit {
       this.asunto = params.get('asunto') || '';
       this.estudiante = params.get('estudiante') || '';
       this.docente = params.get('docente') || '';  
-  
+
       this.evaluacion2Form.patchValue({
         numero_proceso: this.numero_proceso
       });
@@ -84,9 +84,34 @@ export class Evaluacion2Component implements OnInit {
         if (data) {
           const evaluation2Data = data as Evaluacion2Form; // Cast to the correct type
           this.evaluacion2Form.patchValue(evaluation2Data);
+
+          // Manually update FormArray values
+          this.setSentenceSubject(evaluation2Data.sentenceSubject || []);
+          this.setMultiOption(evaluation2Data.multicomponent?.multiOption || []);
+
           this.saved = true;
         }
       });
+  }
+
+  setSentenceSubject(subjects: string[]) {
+    const formArray = this.evaluacion2Form.get('sentenceSubject') as FormArray;
+    subjects.forEach(subject => formArray.push(this.fb.control(subject)));
+  }
+
+  setMultiOption(options: string[]) {
+    const formArray = this.evaluacion2Form.get(['multicomponent', 'multiOption']) as FormArray;
+    options.forEach(option => formArray.push(this.fb.control(option)));
+  }
+
+  onCheckboxChange(e: any, controlName: string) {
+    const formArray: FormArray = this.evaluacion2Form.get(controlName) as FormArray;
+    if (e.target.checked) {
+      formArray.push(this.fb.control(e.target.value));
+    } else {
+      const index = formArray.controls.findIndex(x => x.value === e.target.value);
+      formArray.removeAt(index);
+    }
   }
 
   redirectToEvaluacion() {
@@ -107,9 +132,9 @@ export class Evaluacion2Component implements OnInit {
 
 interface Evaluacion2Form {
   numero_proceso: string;
-  sentenceSubject: string;
+  sentenceSubject: string[];
   multicomponent: {
-    multiOption: string;
+    multiOption: string[];
   };
   other: {
     otherSubject: string;

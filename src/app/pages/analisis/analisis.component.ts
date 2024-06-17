@@ -3,6 +3,14 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Observable, of } from 'rxjs';
+
+interface User {
+  uid: string;
+  role: string;
+  [key: string]: any; // To handle any additional properties
+}
 
 @Component({
   selector: 'app-analisis',
@@ -17,12 +25,15 @@ export class AnalisisComponent implements OnInit {
   docente: string = '';
   saved = false;
   dataLoaded = false;
+  isDocente = false;
+  currentUser: Observable<User | null | undefined> = of(null); // Allow null and undefined
 
   constructor(
     private fb: FormBuilder,
     private firestore: AngularFirestore,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private afAuth: AngularFireAuth
   ) {
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
@@ -36,13 +47,29 @@ export class AnalisisComponent implements OnInit {
       this.numero_proceso = params.get('numero_proceso') || '';
       this.asunto = params.get('asunto') || '';
       this.estudiante = params.get('estudiante') || '';
-      this.docente = params.get('docente') || '';  
-  
+      this.docente = params.get('docente') || '';
+
       this.analisisForm.patchValue({
         numero_proceso: this.numero_proceso
       });
-  
-      this.loadAnalisisData();
+
+      this.loadUserData();
+    });
+  }
+
+  loadUserData() {
+    this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.currentUser = this.firestore.collection('users').doc<User>(user.uid).valueChanges();
+        this.currentUser.subscribe(userData => {
+          if (userData && userData.role === 'docente') {
+            this.isDocente = true;
+          }
+          this.loadAnalisisData();
+        });
+      } else {
+        this.loadAnalisisData();
+      }
     });
   }
 
@@ -58,7 +85,10 @@ export class AnalisisComponent implements OnInit {
     this.normativas.push(this.fb.group({
       pregunta: ['', Validators.required],
       respuesta: ['', Validators.required],
-      valida: ['', Validators.required]
+      valida: ['', Validators.required],
+      calificacion: [''],
+      retroalimentacion: [''],
+      showCalificar: [false]
     }));
   }
 
@@ -70,7 +100,10 @@ export class AnalisisComponent implements OnInit {
     this.facticas.push(this.fb.group({
       pregunta: ['', Validators.required],
       respuesta: ['', Validators.required],
-      valida: ['', Validators.required]
+      valida: ['', Validators.required],
+      calificacion: [''],
+      retroalimentacion: [''],
+      showCalificar: [false]
     }));
   }
 
@@ -93,7 +126,10 @@ export class AnalisisComponent implements OnInit {
               this.normativas.push(this.fb.group({
                 pregunta: normativa.pregunta,
                 respuesta: normativa.respuesta,
-                valida: normativa.valida
+                valida: normativa.valida,
+                calificacion: normativa.calificacion || '',
+                retroalimentacion: normativa.retroalimentacion || '',
+                showCalificar: [false]
               }));
             });
 
@@ -101,13 +137,15 @@ export class AnalisisComponent implements OnInit {
               this.facticas.push(this.fb.group({
                 pregunta: factica.pregunta,
                 respuesta: factica.respuesta,
-                valida: factica.valida
+                valida: factica.valida,
+                calificacion: factica.calificacion || '',
+                retroalimentacion: factica.retroalimentacion || '',
+                showCalificar: [false]
               }));
             });
 
             this.dataLoaded = true;
           } else {
-
             this.addFactica();
             this.addNormativa();
             this.dataLoaded = true;
@@ -144,5 +182,15 @@ export class AnalisisComponent implements OnInit {
 
   isSiguienteButtonEnabled() {
     return this.dataLoaded;
+  }
+
+  toggleCalificar(index: number, type: string) {
+    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
+    control.patchValue({ showCalificar: !control.value.showCalificar });
+  }
+
+  setCalificacion(index: number, type: string, calificacion: string) {
+    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
+    control.patchValue({ calificacion });
   }
 }
