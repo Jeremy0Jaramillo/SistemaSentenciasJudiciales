@@ -11,11 +11,7 @@
     margin: 15px 40px 15px 40px;
 }
 
-.titulo {
-    margin: -20px 0px -20px -0px;
-}
-
-.checkbox-class{
+.checkbox-class {
     margin: 0px 20px 0px;
 }
 
@@ -27,3 +23,135 @@
     font-weight: 700;
     line-height: 24px;
 }
+
+.description {
+    color: #172D5A;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 24px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .option input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .option label {
+    color: var(--Greyscale-Content);
+    font-family: Mukta, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .option div {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  textarea {
+    width: 100%;
+    resize: vertical;
+  }
+
+  .sub-options {
+    margin-top: 10px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .sub-option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .sub-option input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .likert-table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.likert-row {
+    display: table-row;
+    border-bottom: 1px solid #ddd; /* Línea de separación entre filas */
+}
+
+.likert-label {
+    display: table-cell;
+    vertical-align: middle;
+    font-family: Mukta, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--Greyscale-Content, #1A1A1A);
+    width: 80%;
+}
+
+.likert-options {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle; /* Centrado vertical */
+    padding: 10px;
+}
+
+.likert-options label {
+    display: inline-block;
+    padding: 0 10px;
+    font-family: Mukta, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--Greyscale-Content, #1A1A1A);
+}
+
+.likert-options input[type="radio"] {
+    margin: 0 5px;
+    transform: scale(1.5); /* Aumenta el tamaño del radio button */
+    accent-color: var(--Greyscale-Content, #1A1A1A); /* Color para navegadores compatibles */
+}
+
+.likert-options span {
+    margin-left: 5px;
+    font-family: Mukta, sans-serif;
+    font-size: 16px;
+    color: var(--Greyscale-Content, #1A1A1A);
+}
+
+.bttn{
+  display: flex;
+  margin: 20px 0px 0px 0px;
+  justify-content: space-between;
+  padding: 0PX 25px 10px;
+}
+
+
+
+  

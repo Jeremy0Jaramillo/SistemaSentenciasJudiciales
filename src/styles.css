@@ -17,7 +17,6 @@ h2 {
 }
 
 .titulo {
-    display: flex;
     justify-content: center;
     padding-top: 50px;
     color: #172D5A;
@@ -41,6 +40,7 @@ h2 {
     padding: 10px 20px; /* Ajusta el relleno según sea necesario */
     border: none;
     display: flex;
+    transition: background-color 0.3s ease; 
 }
 
 .bttn-stnd:hover {

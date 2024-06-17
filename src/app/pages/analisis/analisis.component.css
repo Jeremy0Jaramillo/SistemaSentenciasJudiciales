@@ -28,19 +28,6 @@
     margin: 0px 60px 0px 60px;
   }
 
-  .analisis-eva
-.bttn-stnd.active {
-  color: var(--1, #172D5A);
-  background-color: #E1E8EE;
-  border-bottom: solid 5px #044170;
-  transition-duration: 0.5s;
-}
-
-.contenedor-bttn-aeva {
-  display: flex;
-  justify-content: center;
-}
-
 .si-no{
   color: var(--Greyscale-Content, #1A1A1A);
   font-family: Roboto;
@@ -62,9 +49,9 @@
   line-height: normal;
 }
 
-.bttn-stnd-eliminar{
+.bttn-stnd-delete{
   margin: 20px 0px 20px 0px;
-  background: #FA0F25;
+  background: #EE4E4E;
   color: #FFF;
   text-align: center;
   font-family: Poppins;
@@ -77,6 +64,11 @@
   padding: 10px 20px;
   border: none;
   display: flex;
+  transition: background-color 0.3s ease; 
+}
+
+.bttn-stnd-delete:hover{
+  background: #C80036;
 }
 
 .pa{
@@ -127,7 +119,8 @@ margin: 15px 40px 15px 40px;
 
 .bttn{
   display: flex;
-  margin: 20px 0px 0px 0px;
+  align-items: center;
   justify-content: space-between;
+  margin: 20px 0px 0px;
 }
 
