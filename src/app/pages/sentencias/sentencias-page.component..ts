@@ -17,6 +17,7 @@ interface Sentencia {
   styleUrls: ['./sentencias-page.component.css']
 })
 export class SentenciasPageComponent implements OnInit {
+  alerta: boolean = false;
   sentencia: Sentencia = {
     numero_proceso: '',
     asunto: '',
@@ -46,10 +47,16 @@ export class SentenciasPageComponent implements OnInit {
     this.firestore.collection('sentencias').add(this.sentencia)
       .then(() => {
         console.log('Sentencia added successfully!');
+        this.alerta = true;
         // Clear the form or navigate to another page
       })
       .catch(error => {
         console.error('Error adding sentencia: ', error);
+        this.alerta = true;
       });
+  }
+
+  cerrarAlerta() {
+    this.alerta = false;
   }
 }

@@ -30,10 +30,8 @@
             </div>
           </div>
         </div>
-<<<<<<< HEAD
+
         <button class="bttn-stnd-delete" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
-=======
-        <button class="bttn-stnd-eliminar" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
         <button *ngIf="isDocente" type="button" (click)="toggleCalificar(i, 'normativa')">Calificar</button>
         <div *ngIf="normativa.get('showCalificar')?.value">
           <button type="button" (click)="setCalificacion(i, 'normativa', 'Correcto')">Correcto</button>
@@ -41,7 +39,7 @@
           <label for="retroalimentacion-{{i}}">Retroalimentación</label>
           <textarea id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></textarea>
         </div>
->>>>>>> 16ba1634693ec2906854e603e06be55bebfa3e45
+
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
@@ -67,11 +65,8 @@
             </div>
           </div>
         </div>
-<<<<<<< HEAD
 
         <button class="bttn-stnd-delete" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
-=======
-        <button class="bttn-stnd-eliminar" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
         <button *ngIf="isDocente" type="button" (click)="toggleCalificar(i, 'factica')">Calificar</button>
         <div *ngIf="factica.get('showCalificar')?.value">
           <button type="button" (click)="setCalificacion(i, 'factica', 'Correcto')">Correcto</button>
@@ -79,7 +74,7 @@
           <label for="retroalimentacion-{{i}}">Retroalimentación</label>
           <textarea id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></textarea>
         </div>
->>>>>>> 16ba1634693ec2906854e603e06be55bebfa3e45
+
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
