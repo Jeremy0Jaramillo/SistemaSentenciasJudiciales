@@ -1,10 +1,13 @@
 .titulo {
     flex-direction: column;
     margin-top: -20px;
+    text-align: center;
+    display: flex;
+    
 }
 
 .bttn-stnd{
-    margin: 40px 0px 0px 75px;
+    margin-top: 20px;
 }
 
 .sentencias {
@@ -26,6 +29,12 @@
     padding-top: 20px;
     margin-top: 20px;
     margin-right: 30px;
+}
+
+.sent .more{
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 .proceso {

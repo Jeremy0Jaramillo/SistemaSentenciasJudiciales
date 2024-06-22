@@ -1,7 +1,13 @@
 <app-header></app-header>
 
-<div class="inputs-sent">
+<div class="alert-content">
+  <div *ngIf="alerta" class="alerta" (click)="cerrarAlerta()">
+    <p>Número de proceso ya en uso, ingrese otro.</p>
+  </div>
+</div>
 
+<div class="inputs-sent">
+  
   <div class="tittle-sent">
     <h4>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h4>
   </div>
@@ -37,15 +43,16 @@
       </label>
       <input type="file" id="archivo" name="archivo" placeholder="" style="display: none;"><br><br>
       <p> Cargar pdf</p>
-  </div>
+    </div>
 
-    <button class="bttn-stnd" type="submit">Guardar</button>
+    <div class="save">
+      <button class="bttn-stnd" type="submit">Guardar</button>
+    </div>
+
   </form>
-</div>
-
 
 <script>
   document.getElementById('cargar-archivo-label').addEventListener('click', function() {
-      document.getElementById('archivo').click();
+    document.getElementById('archivo').click();
   });
 </script>
