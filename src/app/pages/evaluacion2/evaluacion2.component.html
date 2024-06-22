@@ -13,41 +13,35 @@
     <div>
 
         <div class="checkbox-class">
-            <h3 class="tittle-check" for="sentenceSubject">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
-            <h5>Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
-            <input type="checkbox" name="sentenceSubject" value="Civil" formControlName="sentenceSubject"> Civil
-            <input type="checkbox" name="sentenceSubject" value="Penal" formControlName="sentenceSubject"> Penal
-            <input type="checkbox" name="sentenceSubject" value="Constitutional" formControlName="sentenceSubject">
-            Constitucional
-            <input type="checkbox" name="sentenceSubject" value="GuaranteeCourts" formControlName="sentenceSubject">
-            Tribunales de garantías penales
-            <input type="checkbox" name="sentenceSubject" value="Mercantil" formControlName="sentenceSubject"> Mercantil
-            <input type="checkbox" name="sentenceSubject" value="Inquilinato" formControlName="sentenceSubject">
-            Inquilinato y relaciones vecinales
-            <input type="checkbox" name="sentenceSubject" value="Laboral" formControlName="sentenceSubject"> Laboral
-            <input type="checkbox" name="sentenceSubject" value="ContenciosoAdministrativo"
-                formControlName="sentenceSubject"> Tribunales contencioso administrativo
-            <input type="checkbox" name="sentenceSubject" value="Familia" formControlName="sentenceSubject"> Familia,
-            mujer, niñez y adolescencia
-            <input type="checkbox" name="sentenceSubject" value="Multicomponent" formControlName="sentenceSubject">
-            Multicomponente
-            <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Multicomponent'"
-                formGroupName="multicomponent">
-                <input type="checkbox" name="multiOption" value="MultiCivil" formControlName="multiOption"> Mult. civil
-                <input type="checkbox" name="multiOption" value="MultiPenal" formControlName="multiOption"> Mult. penal
-            </div>
-            <input type="checkbox" name="sentenceSubject" value="Transit" formControlName="sentenceSubject"> Tránsito
-            <input type="checkbox" name="sentenceSubject" value="Violence" formControlName="sentenceSubject"> Violencia
-            contra la mujer o miembro del núcleo familliar
-            <input type="checkbox" name="sentenceSubject" value="Contraventions" formControlName="sentenceSubject">
-            Contravenciones
-            <input type="checkbox" name="sentenceSubject" value="TributaryLitigation" formControlName="sentenceSubject">
-            Contencioso tributario
-            <input type="checkbox" name="sentenceSubject" value="Other" formControlName="sentenceSubject"> Otro...
-            <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Other'" formGroupName="other">
-                <textarea name="otherSubject" formControlName="otherSubject"></textarea>
-            </div>
-        </div>
+    <h3 class="tittle-check" for="sentenceSubject">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
+    <h5>Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
+    <input type="checkbox" name="sentenceSubject" value="Civil" (change)="onCheckboxChange($event, 'sentenceSubject')"> Civil
+    <input type="checkbox" name="sentenceSubject" value="Penal" (change)="onCheckboxChange($event, 'sentenceSubject')"> Penal
+    <input type="checkbox" name="sentenceSubject" value="Constitutional" (change)="onCheckboxChange($event, 'sentenceSubject')"> Constitucional
+    <input type="checkbox" name="sentenceSubject" value="GuaranteeCourts" (change)="onCheckboxChange($event, 'sentenceSubject')"> Tribunales de garantías penales
+    <input type="checkbox" name="sentenceSubject" value="Mercantil" (change)="onCheckboxChange($event, 'sentenceSubject')"> Mercantil
+    <input type="checkbox" name="sentenceSubject" value="Inquilinato" (change)="onCheckboxChange($event, 'sentenceSubject')"> Inquilinato y relaciones vecinales
+    <input type="checkbox" name="sentenceSubject" value="Laboral" (change)="onCheckboxChange($event, 'sentenceSubject')"> Laboral
+    <input type="checkbox" name="sentenceSubject" value="ContenciosoAdministrativo" (change)="onCheckboxChange($event, 'sentenceSubject')"> Tribunales contencioso administrativo
+    <input type="checkbox" name="sentenceSubject" value="Familia" (change)="onCheckboxChange($event, 'sentenceSubject')"> Familia, mujer, niñez y adolescencia
+    <input type="checkbox" name="sentenceSubject" value="Multicomponent" (change)="onCheckboxChange($event, 'sentenceSubject')"> Multicomponente
+    <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value.includes('Multicomponent')" formGroupName="multicomponent">
+      <input type="checkbox" name="multiOption" value="MultiCivil" (change)="onCheckboxChange($event, 'multicomponent.multiOption')"> Mult. civil
+      <input type="checkbox" name="multiOption" value="MultiPenal" (change)="onCheckboxChange($event, 'multicomponent.multiOption')"> Mult. penal
+    </div>
+    <input type="checkbox" name="sentenceSubject" value="Transit" (change)="onCheckboxChange($event, 'sentenceSubject')"> Tránsito
+    <input type="checkbox" name="sentenceSubject" value="Violence" (change)="onCheckboxChange($event, 'sentenceSubject')"> Violencia contra la mujer o miembro del núcleo familliar
+    <input type="checkbox" name="sentenceSubject" value="Contraventions" (change)="onCheckboxChange($event, 'sentenceSubject')"> Contravenciones
+    <input type="checkbox" name="sentenceSubject" value="TributaryLitigation" (change)="onCheckboxChange($event, 'sentenceSubject')"> Contencioso tributario
+    <input type="checkbox" name="sentenceSubject" value="Other" (change)="onCheckboxChange($event, 'sentenceSubject')"> Otro...
+    <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value.includes('Other')" formGroupName="other">
+      <textarea name="otherSubject" formControlName="otherSubject"></textarea>
+    </div>
+  </div>
+  <div>
+    <label for="validSummary">Resumen Válido</label>
+    <textarea id="validSummary" formControlName="validSummary"></textarea>
+  </div>
     </div>
 
     <h2>SEÑALE EL CASILLERO QUE CREA CONVENIENTE</h2>
