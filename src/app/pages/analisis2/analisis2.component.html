@@ -7,20 +7,18 @@
   <p class="dat"><strong> DOCENTE: </strong> {{ docente }}</p>
 </div>
 
-
 <div class="info-analisis">
   <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
-    
     <div class="analisis">
       <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'1. Narración de los hechos'">
       </app-caja-texto>
-      <button *ngIf="isDocente" type="button">Calificar</button>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('narracion_hechos')">Calificar</button>
+      <div *ngIf="analisis2Form.get('narracion_hechos')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('narracion_hechos', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('narracion_hechos', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="narracion_hechos_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
@@ -28,12 +26,13 @@
     <div class="analisis">
       <app-caja-texto id="problema_juridico" formControlName="problema_juridico" [titulo]="'2. Problema jurídico'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('problema_juridico')">Calificar</button>
+      <div *ngIf="analisis2Form.get('problema_juridico')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('problema_juridico', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('problema_juridico', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="problema_juridico_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
@@ -41,25 +40,27 @@
     <div class="analisis">
       <app-caja-texto id="cuestiones_subcuestiones" formControlName="cuestiones_subcuestiones" [titulo]="'3. Cuestiones o subcuestiones para solucionar el problema'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('cuestiones_subcuestiones')">Calificar</button>
+      <div *ngIf="analisis2Form.get('cuestiones_subcuestiones')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('cuestiones_subcuestiones', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('cuestiones_subcuestiones', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="cuestiones_subcuestiones_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
 
     <div class="analisis">
-      <app-caja-texto  id="respuesta_cuestiones" formControlName="respuesta_cuestiones" [titulo]="'4. Respuesta a las cuestiones'">
+      <app-caja-texto id="respuesta_cuestiones" formControlName="respuesta_cuestiones" [titulo]="'4. Respuesta a las cuestiones'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('respuesta_cuestiones')">Calificar</button>
+      <div *ngIf="analisis2Form.get('respuesta_cuestiones')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('respuesta_cuestiones', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('respuesta_cuestiones', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="respuesta_cuestiones_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
@@ -67,12 +68,13 @@
     <div class="analisis">
       <app-caja-texto id="ratio_obiter" formControlName="ratio_obiter" [titulo]="'5. Ratio decidendi y obiter dictum'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('ratio_obiter')">Calificar</button>
+      <div *ngIf="analisis2Form.get('ratio_obiter')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('ratio_obiter', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('ratio_obiter', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="ratio_obiter_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
@@ -80,25 +82,27 @@
     <div class="analisis">
       <app-caja-texto id="solucion_problema" formControlName="solucion_problema" [titulo]="'6. Solución al problema'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('solucion_problema')">Calificar</button>
+      <div *ngIf="analisis2Form.get('solucion_problema')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('solucion_problema', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('solucion_problema', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="solucion_problema_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
 
     <div class="analisis">
-      <app-caja-texto id="decision" formControlName="decision" [titulo]="'7. Desición'">
+      <app-caja-texto id="decision" formControlName="decision" [titulo]="'7. Decisión'">
       </app-caja-texto>
-      <div *ngIf="control.showCalificar">
-        <button type="button" (click)="setCalificacion(control, 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion(control, 'Incorrecto')">Incorrecto</button>
+      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('decision')">Calificar</button>
+      <div *ngIf="analisis2Form.get('decision')?.value?.showCalificar">
+        <button type="button" (click)="setCalificacion('decision', 'Correcto')">Correcto</button>
+        <button type="button" (click)="setCalificacion('decision', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
-          <textarea [formControlName]="control.retroalimentacionControlName"></textarea>
+          <textarea formControlName="decision_retroalimentacion"></textarea>
         </div>
       </div>
     </div>
@@ -107,6 +111,6 @@
   </form>
   <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
-    <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!saved">Evaluación</button>
+    <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!isSiguienteButtonEnabled()">Evaluación</button>
   </div>
 </div>

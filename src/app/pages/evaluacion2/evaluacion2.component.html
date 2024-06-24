@@ -17,22 +17,30 @@
                 <!-- Columna 1 -->
                 <div class="column">
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Civil" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Civil"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Civil')">
                         <label class="description">Civil</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Penal" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Penal"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Penal')">
                         <label class="description">Penal</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="Constitutional"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Constitutional')">
                         <label class="description">Constitucional</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Other" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Other"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Other')">
                         <label class="description">Otro...</label>
-                        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Other'" formGroupName="other">
+                        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value.includes('Other')"
+                            formGroupName="other">
                             <textarea name="otherSubject" formControlName="otherSubject"></textarea>
                         </div>
                     </div>
@@ -41,74 +49,84 @@
                 <div class="column">
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="Mercantil"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Mercantil')">
                         <label class="description">Mercantil</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="Inquilinato"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Inquilinato')">
                         <label class="description">Inquilinato y relaciones vecinales</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Laboral" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Laboral"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Laboral')">
                         <label class="description">Laboral</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="ContenciosoAdministrativo"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('ContenciosoAdministrativo')">
                         <label class="description">Tribunales contencioso administrativo</label>
                     </div>
                 </div>
                 <!-- Columna 3 -->
                 <div class="column">
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Familia" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Familia"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Familia')">
                         <label class="description">Familia, mujer, niñez y adolescencia</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Multicomponent"
-                            formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="MultiComponent"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('MultiComponent')">
                         <label class="description">Multicomponente</label>
-                        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'Multicomponent'"
+                        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value.includes('MultiComponent')"
                             formGroupName="multicomponent">
-                            <div>
-                                <input type="checkbox" name="multiOption" value="MultiCivil"
-                                    formControlName="multiOption">
-                                <label class="description">Mult. civil</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" name="multiOption" value="MultiPenal"
-                                    formControlName="multiOption">
-                                <label class="description">Mult. penal</label>
-                            </div>
+                            <input type="checkbox" name="multiOption" value="MultiCivil"
+                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')"
+                                [checked]="evaluacion2Form.get('multicomponent.multiOption')?.value.includes('MultiCivil')">
+                            <label class="description">Mult. civil</label>
+                            <input type="checkbox" name="multiOption" value="MultiPenal"
+                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')"
+                                [checked]="evaluacion2Form.get('multicomponent.multiOption')?.value.includes('MultiPenal')">
+                            <label class="description">Mult. civil</label>
                         </div>
                     </div>
                 </div>
                 <!-- Columna 4 -->
                 <div class="column">
                     <div class="option">
-                        <input type="checkbox" name="sentenceSubject" value="Transit" formControlName="sentenceSubject">
+                        <input type="checkbox" name="sentenceSubject" value="Transit"
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Transit')">
                         <label class="description">Tránsito</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="Violence"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Violence')">
                         <label class="description">Violencia contra la mujer o miembro del núcleo familiar</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="Contraventions"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('Contraventions')">
                         <label class="description">Contravenciones</label>
                     </div>
                     <div class="option">
                         <input type="checkbox" name="sentenceSubject" value="TributaryLitigation"
-                            formControlName="sentenceSubject">
+                            (change)="onCheckboxChange($event, 'sentenceSubject')"
+                            [checked]="evaluacion2Form.get('sentenceSubject')?.value.includes('TributaryLitigation')">
                         <label class="description">Contencioso tributario</label>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
 
@@ -470,15 +488,16 @@
         <div class="likert-table">
             <h3 class="titulo">Fundamentación normativa.</h3>
             <div>
-                <label class="likert-label" >Señale si la sentencia analizada debe ser corregida (dejada por defecto) por un juez de
+                <label class="likert-label">Señale si la sentencia analizada debe ser corregida (dejada por defecto) por
+                    un juez de
                     segunda
                     instancia a través de la presentación de un recurso de apelación.</label>
                 <input type="radio" name="judgeAnalysis" value="Si" formControlName="judgeAnalysis"> Si
                 <input type="radio" name="judgeAnalysis" value="No" formControlName="judgeAnalysis"> No
             </div>
             <div>
-                <app-caja-texto name="reasonsNormativa" formControlName="reasonsNormativa"
-                [titulo]="'Justifique su respuesta (500 palabras)'">
+                <app-caja-texto name="reasonsNormativa" formControlName="reasonsNormative"
+                    [titulo]="'Justifique su respuesta (500 palabras)'">
                 </app-caja-texto>
             </div>
         </div>
@@ -490,4 +509,4 @@
 <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToEvaluacion()">Evaluación</button>
     <button class="bttn-stnd" [disabled]="!saved" (click)="redirectToSiguiente()">Siguiente</button>
-  </div>
+</div>

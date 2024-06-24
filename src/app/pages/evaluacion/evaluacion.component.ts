@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
+import { Observable,of } from 'rxjs';
+
+interface User {
+  uid: string;
+  role: string;
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-evaluacion',
@@ -16,12 +24,15 @@ export class EvaluacionComponent implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  isDocente = false;
+  currentUser: Observable<User | null | undefined> = of(null);
 
   constructor(
     private fb: FormBuilder,
     private firestore: AngularFirestore,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private afAuth: AngularFireAuth
   ) {
     this.evaluacionForm = this.fb.group({
       numero_proceso: ['', Validators.required],
@@ -29,18 +40,30 @@ export class EvaluacionComponent implements OnInit {
       nonexistinence: this.fb.group({
         lackFoundationNormative: ['', Validators.required],
         reasonsNormative: ['', Validators.required],
+        normative_calificacion: [''],
+        normative_retroalimentacion: [''],
         lackFoundationFactual: ['', Validators.required],
         reasonsFactual: ['', Validators.required],
+        factual_calificacion: [''],
+        factual_retroalimentacion: [''],
         lackMotivation: ['', Validators.required],
-        reasonsMotivation: ['', Validators.required]
+        reasonsMotivation: ['', Validators.required],
+        motivation_calificacion: [''],
+        motivation_retroalimentacion: ['']
       }),
       insufficiency: this.fb.group({
         lackFoundationNormative: ['', Validators.required],
         reasonsNormative: ['', Validators.required],
+        normative_calificacion: [''],
+        normative_retroalimentacion: [''],
         lackFoundationFactual: ['', Validators.required],
         reasonsFactual: ['', Validators.required],
+        factual_calificacion: [''],
+        factual_retroalimentacion: [''],
         lackMotivation: ['', Validators.required],
-        reasonsMotivation: ['', Validators.required]
+        reasonsMotivation: ['', Validators.required],
+        motivation_calificacion: [''],
+        motivation_retroalimentacion: ['']
       }),
       appearance: this.fb.group({
         appearanceReason: ['', Validators.required],
@@ -94,7 +117,23 @@ export class EvaluacionComponent implements OnInit {
         numero_proceso: this.numero_proceso
       });
 
-      this.loadEvaluacionData();
+      this.loadUserData();
+    });
+  }
+
+  loadUserData() {
+    this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.currentUser = this.firestore.collection('users').doc<User>(user.uid).valueChanges();
+        this.currentUser.subscribe(userData => {
+          if (userData && userData.role === 'docente') {
+            this.isDocente = true;
+          }
+          this.loadEvaluacionData();
+        });
+      } else {
+        this.loadEvaluacionData();
+      }
     });
   }
 
@@ -142,6 +181,17 @@ export class EvaluacionComponent implements OnInit {
       }
     });
   }
+
+  toggleCalificar(section: string) {
+    const control = this.evaluacionForm.get(section);
+    if (control) {
+      control.patchValue({ showCalificar: !control.value.showCalificar });
+    }
+  }
+
+  setCalificacion(section: string, calificacion: string) {
+    this.evaluacionForm.patchValue({ [`${section}_calificacion`]: calificacion });
+  }
 }
 
 
@@ -151,18 +201,30 @@ interface evaluacionData {
   inexistencia?: {
     faltaFundamentacionNormativa: string;
     motivoFundamentacionNormativa: string;
+    normativa_calificacion: string;
+    normativa_retroalimentacion: string;
     faltaFundamentacionFactica: string;
     motivoFundamentacionFactica: string;
+    factica_calificacion: string;
+    factica_retroalimentacion: string;
     deficitMotivacion: string;
     motivoDeficitMotivacion: string;
+    motivacion_calificacion: string;
+    motivacion_retroalimentacion: string;
   };
   insuficiencia?: {
     faltaFundamentacionNormativa: string;
     motivoFundamentacionNormativa: string;
+    normativa_calificacion: string;
+    normativa_retroalimentacion: string;
     faltaFundamentacionFactica: string;
     motivoFundamentacionFactica: string;
+    factica_calificacion: string;
+    factica_retroalimentacion: string;
     deficitMotivacion: string;
     motivoDeficitMotivacion: string;
+    motivacioncalificacion: string;
+    motivacionretroalimentacion: string;
   };
   apariencia?: {
     motivoApariencia: string;

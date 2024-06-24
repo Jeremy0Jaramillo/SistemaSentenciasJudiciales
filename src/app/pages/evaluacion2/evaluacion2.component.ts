@@ -33,6 +33,8 @@ export class Evaluacion2Component implements OnInit {
         otherSubject: ['']
       }),
       validSummary: [''],
+      validSummary_calificacion: [''],
+      validSummary_retroalimentacion: [''],
       factsConception: [''],
       finalDecision: [''],
       properUse: [''],
@@ -82,35 +84,44 @@ export class Evaluacion2Component implements OnInit {
       .valueChanges()
       .subscribe(data => {
         if (data) {
-          const evaluation2Data = data as Evaluacion2Form; // Cast to the correct type
+          const evaluation2Data = data as any; // Cast to the correct type
           this.evaluacion2Form.patchValue(evaluation2Data);
 
           // Manually update FormArray values
-          this.setSentenceSubject(evaluation2Data.sentenceSubject || []);
-          this.setMultiOption(evaluation2Data.multicomponent?.multiOption || []);
-
-          this.saved = true;
+          this.setSentenceSubject(evaluation2Data.sentenceSubject);
+          this.setMultiOption(evaluation2Data.multicomponent.multiOption);
         }
       });
   }
 
   setSentenceSubject(subjects: string[]) {
-    const formArray = this.evaluacion2Form.get('sentenceSubject') as FormArray;
-    subjects.forEach(subject => formArray.push(this.fb.control(subject)));
+    const sentenceSubject = this.evaluacion2Form.get('sentenceSubject') as FormArray;
+    subjects.forEach(subject => {
+      sentenceSubject.push(this.fb.control(subject));
+    });
   }
 
   setMultiOption(options: string[]) {
-    const formArray = this.evaluacion2Form.get(['multicomponent', 'multiOption']) as FormArray;
-    options.forEach(option => formArray.push(this.fb.control(option)));
+    const multiOption = this.evaluacion2Form.get('multicomponent.multiOption') as FormArray;
+    options.forEach(option => {
+      multiOption.push(this.fb.control(option));
+    });
   }
 
-  onCheckboxChange(e: any, controlName: string) {
+  onCheckboxChange(event: any, controlName: string) {
     const formArray: FormArray = this.evaluacion2Form.get(controlName) as FormArray;
-    if (e.target.checked) {
-      formArray.push(this.fb.control(e.target.value));
+
+    if (event.target.checked) {
+      formArray.push(this.fb.control(event.target.value));
     } else {
-      const index = formArray.controls.findIndex(x => x.value === e.target.value);
-      formArray.removeAt(index);
+      let i: number = 0;
+      formArray.controls.forEach((ctrl: any) => {
+        if (ctrl.value == event.target.value) {
+          formArray.removeAt(i);
+          return;
+        }
+        i++;
+      });
     }
   }
 
@@ -130,28 +141,4 @@ export class Evaluacion2Component implements OnInit {
   }
 }
 
-interface Evaluacion2Form {
-  numero_proceso: string;
-  sentenceSubject: string[];
-  multicomponent: {
-    multiOption: string[];
-  };
-  other: {
-    otherSubject: string;
-  };
-  validSummary: string;
-  factsConception: string;
-  finalDecision: string;
-  properUse: string;
-  lawAnalysis: string;
-  normativeEvaluation: string;
-  precedentsAplication: string;
-  expressionClarity: string;
-  crimeClassification: string;
-  properAnalysis: string;
-  againstProperty: string;
-  precedentsAplication2: string;
-  expressionClarity2: string;
-  judgeAnalysis: string;
-  reasonsNormative: string;
-}
+

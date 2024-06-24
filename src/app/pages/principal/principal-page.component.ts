@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { Observable, combineLatest, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Observable, combineLatest, of, BehaviorSubject } from 'rxjs';
+import { switchMap, map, startWith } from 'rxjs/operators';
 
 interface Sentencia {
   numero_proceso: string;
@@ -19,13 +19,30 @@ interface Sentencia {
 })
 export class PrincipalPageComponent implements OnInit {
   user: any = null;
+  userRole: string | null = null;
   sentencias$: Observable<Sentencia[]> = of([]);
+  filteredSentencias$: Observable<Sentencia[]>;
+  searchText: string = '';
+  private searchSubject = new BehaviorSubject<string>('');
 
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private router: Router
-  ) {}
+  ) {
+    this.filteredSentencias$ = this.searchSubject.pipe(
+      startWith(''),
+      switchMap(searchText => 
+        this.sentencias$.pipe(
+          map(sentencias => 
+            sentencias.filter(sentencia => 
+              sentencia.nombre_estudiante.toLowerCase().includes(searchText.toLowerCase())
+            )
+          )
+        )
+      )
+    );
+  }
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {
@@ -43,6 +60,7 @@ export class PrincipalPageComponent implements OnInit {
       switchMap((userData: any) => {
         if (userData && userData.name) {
           const userName = userData.name;
+          this.userRole = userData.role;
           return this.loadSentencias(userName);
         } else {
           return of([]);
@@ -50,6 +68,7 @@ export class PrincipalPageComponent implements OnInit {
       })
     ).subscribe((sentencias) => {
       this.sentencias$ = of(sentencias);
+      this.searchSubject.next(this.searchText); // trigger initial filter
     });
   }
 
@@ -85,5 +104,8 @@ export class PrincipalPageComponent implements OnInit {
       }
     });
   }
-  
+
+  onSearchTextChanged() {
+    this.searchSubject.next(this.searchText);
+  }
 }

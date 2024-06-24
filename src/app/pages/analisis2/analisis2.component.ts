@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 
 interface User {
   uid: string;
@@ -12,29 +12,28 @@ interface User {
   [key: string]: any;
 }
 
-interface Analisis2Data {
-  numero_proceso: string;
+interface Analisis2 {
   narracion_hechos: string;
+  narracion_hechos_calificacion: string;
+  narracion_hechos_retroalimentacion: string;
   problema_juridico: string;
+  problema_juridico_calificacion: string;
+  problema_juridico_retroalimentacion: string;
   cuestiones_subcuestiones: string;
+  cuestiones_subcuestiones_calificacion: string;
+  cuestiones_subcuestiones_retroalimentacion: string;
   respuesta_cuestiones: string;
+  respuesta_cuestiones_calificacion: string;
+  respuesta_cuestiones_retroalimentacion: string;
   ratio_obiter: string;
+  ratio_obiter_calificacion: string;
+  ratio_obiter_retroalimentacion: string;
   solucion_problema: string;
+  solucion_problema_calificacion: string;
+  solucion_problema_retroalimentacion: string;
   decision: string;
-  narracion_hechos_retroalimentacion?: string;
-  problema_juridico_retroalimentacion?: string;
-  cuestiones_subcuestiones_retroalimentacion?: string;
-  respuesta_cuestiones_retroalimentacion?: string;
-  ratio_obiter_retroalimentacion?: string;
-  solucion_problema_retroalimentacion?: string;
-  decision_retroalimentacion?: string;
-  narracion_hechos_calificacion?: string;
-  problema_juridico_calificacion?: string;
-  cuestiones_subcuestiones_calificacion?: string;
-  respuesta_cuestiones_calificacion?: string;
-  ratio_obiter_calificacion?: string;
-  solucion_problema_calificacion?: string;
-  decision_calificacion?: string;
+  decision_calificacion: string;
+  decision_retroalimentacion: string;
 }
 
 @Component({
@@ -49,19 +48,9 @@ export class Analisis2Component implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
-
-  analysisControls = [
-    { id: 'narracion_hechos', formControlName: 'narracion_hechos', title: '1. Narración de los hechos', showCalificar: false, retroalimentacionControlName: 'narracion_hechos_retroalimentacion' },
-    { id: 'problema_juridico', formControlName: 'problema_juridico', title: '2. Problema jurídico', showCalificar: false, retroalimentacionControlName: 'problema_juridico_retroalimentacion' },
-    { id: 'cuestiones_subcuestiones', formControlName: 'cuestiones_subcuestiones', title: '3. Cuestiones o subcuestiones para solucionar el problema', showCalificar: false, retroalimentacionControlName: 'cuestiones_subcuestiones_retroalimentacion' },
-    { id: 'respuesta_cuestiones', formControlName: 'respuesta_cuestiones', title: '4. Respuesta a las cuestiones', showCalificar: false, retroalimentacionControlName: 'respuesta_cuestiones_retroalimentacion' },
-    { id: 'ratio_obiter', formControlName: 'ratio_obiter', title: '5. Ratio decidendi y obiter dictum', showCalificar: false, retroalimentacionControlName: 'ratio_obiter_retroalimentacion' },
-    { id: 'solucion_problema', formControlName: 'solucion_problema', title: '6. Solución al problema', showCalificar: false, retroalimentacionControlName: 'solucion_problema_retroalimentacion' },
-    { id: 'decision', formControlName: 'decision', title: '7. Desición', showCalificar: false, retroalimentacionControlName: 'decision_retroalimentacion' },
-  ];
-  control: any;
 
   constructor(
     private fb: FormBuilder,
@@ -73,35 +62,35 @@ export class Analisis2Component implements OnInit {
     this.analisis2Form = this.fb.group({
       numero_proceso: ['', Validators.required],
       narracion_hechos: ['', Validators.required],
-      problema_juridico: ['', Validators.required],
-      cuestiones_subcuestiones: ['', Validators.required],
-      respuesta_cuestiones: ['', Validators.required],
-      ratio_obiter: ['', Validators.required],
-      solucion_problema: ['', Validators.required],
-      decision: ['', Validators.required],
-      narracion_hechos_retroalimentacion: [''],
-      problema_juridico_retroalimentacion: [''],
-      cuestiones_subcuestiones_retroalimentacion: [''],
-      respuesta_cuestiones_retroalimentacion: [''],
-      ratio_obiter_retroalimentacion: [''],
-      solucion_problema_retroalimentacion: [''],
-      decision_retroalimentacion: [''],
       narracion_hechos_calificacion: [''],
+      narracion_hechos_retroalimentacion: [''],
+      problema_juridico: ['', Validators.required],
       problema_juridico_calificacion: [''],
+      problema_juridico_retroalimentacion: [''],
+      cuestiones_subcuestiones: ['', Validators.required],
       cuestiones_subcuestiones_calificacion: [''],
+      cuestiones_subcuestiones_retroalimentacion: [''],
+      respuesta_cuestiones: ['', Validators.required],
       respuesta_cuestiones_calificacion: [''],
+      respuesta_cuestiones_retroalimentacion: [''],
+      ratio_obiter: ['', Validators.required],
       ratio_obiter_calificacion: [''],
+      ratio_obiter_retroalimentacion: [''],
+      solucion_problema: ['', Validators.required],
       solucion_problema_calificacion: [''],
-      decision_calificacion: ['']
+      solucion_problema_retroalimentacion: [''],
+      decision: ['', Validators.required],
+      decision_calificacion: [''],
+      decision_retroalimentacion: ['']
     });
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.numero_proceso = params['numero_proceso'] || '';
-      this.asunto = params['asunto'] || '';
-      this.estudiante = params['estudiante'] || '';
-      this.docente = params['docente'] || '';
+    this.route.queryParamMap.subscribe(params => {
+      this.numero_proceso = params.get('numero_proceso') || '';
+      this.asunto = params.get('asunto') || '';
+      this.estudiante = params.get('estudiante') || '';
+      this.docente = params.get('docente') || '';
 
       this.analisis2Form.patchValue({
         numero_proceso: this.numero_proceso
@@ -119,44 +108,52 @@ export class Analisis2Component implements OnInit {
           if (userData && userData.role === 'docente') {
             this.isDocente = true;
           }
-          this.loadAnalisis2Data();
+          this.loadAnalisisData();
         });
       } else {
-        this.loadAnalisis2Data();
+        this.loadAnalisisData();
       }
     });
   }
 
-  loadAnalisis2Data() {
-    this.firestore.collection('analisis2', ref => ref.where('numero_proceso', '==', this.numero_proceso))
+  loadAnalisisData() {
+    this.firestore.collection<Analisis2>('analisis2', ref => ref.where('numero_proceso', '==', this.numero_proceso))
       .valueChanges()
-      .subscribe(data => {
-        if (data && data.length) {
-          const analisis2Data = data[0] as Analisis2Data;
-          this.analisis2Form.patchValue(analisis2Data);
-          this.saved = true;
-        }
-      });
+      .pipe(
+        map(analisis2Array => {
+          console.log('Fetched analisis2 data:', analisis2Array);  // Check if data is fetched correctly
+          if (analisis2Array && analisis2Array.length > 0) {
+            const data: Analisis2 = analisis2Array[0];
+            this.analisis2Form.patchValue(data);
+            this.dataLoaded = true;
+          }
+        })
+      ).subscribe();
   }
 
   submitForm() {
-    const analisis2Data = this.analisis2Form.value;
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisis2Data)
+    const analisisData = this.analisis2Form.value;
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       })
       .catch(error => {
         console.error("Error saving document: ", error);
       });
   }
 
-  toggleCalificar(control: any) {
-    control.showCalificar = !control.showCalificar;
-  }
-
-  setCalificacion(control: any, calificacion: string) {
-    const calificacionControlName = `${control.formControlName}_calificacion`;
-    this.analisis2Form.get(calificacionControlName)?.setValue(calificacion);
+  redirectToAnalisis() {
+    this.router.navigate(['/analisis'], {
+      queryParams: {
+        numero_proceso: this.numero_proceso,
+        asunto: this.asunto,
+        estudiante: this.estudiante,
+        docente: this.docente
+      }
+    });
   }
 
   redirectToEvaluacion() {
@@ -170,14 +167,18 @@ export class Analisis2Component implements OnInit {
     });
   }
 
-  redirectToAnalisis() {
-    this.router.navigate(['/analisis'], {
-      queryParams: {
-        numero_proceso: this.numero_proceso,
-        asunto: this.asunto,
-        estudiante: this.estudiante,
-        docente: this.docente
-      }
-    });
+  toggleCalificar(section: string) {
+    const control = this.analisis2Form.get(section);
+    if (control) {
+      control.patchValue({ showCalificar: !control.value.showCalificar });
+    }
+  }
+
+  setCalificacion(section: string, calificacion: string) {
+    this.analisis2Form.patchValue({ [`${section}_calificacion`]: calificacion });
+  }
+  
+  isSiguienteButtonEnabled() {
+    return this.dataLoaded;
   }
 }
