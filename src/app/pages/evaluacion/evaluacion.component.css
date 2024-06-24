@@ -19,8 +19,10 @@
 }
 
 .titulo{
-    justify-content: left;
-    margin-top: -40px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
 }
 
 .eva{

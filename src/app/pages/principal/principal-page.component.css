@@ -67,3 +67,20 @@
     font-weight: 400;
     line-height: normal;
 }
+
+.search-bar{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    justify-content: start;
+}
+
+.search{
+    margin: 20px 30px 0px 40px;
+    width: 250px;
+    height: 25px;
+    border-radius: 10px;
+    border-color: darkgray;
+    padding-left:10px;
+}

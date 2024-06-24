@@ -70,3 +70,70 @@ h2 {
     font-weight: 400;
     line-height: 24px;
 }
+
+.rate {
+    background: none;
+    color: #6486CB;
+    text-align: center;
+    font-family: Poppins, sans-serif;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border: none;
+    border-bottom: 2px solid #6486CB;
+    display: flex;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+  }
+  
+  .rate:hover {
+    color: #21468f;
+    border-bottom: 2px solid #21468f;
+  }
+  
+  
+  .bttns-rate{
+    display: flex;
+    justify-content: space-between;
+    width: 15%;
+  }
+  
+  .correct-button{
+    margin-top: 20px;
+    background: #037514;
+    color: #FFF;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+    padding: 10px 10px;
+    border: none;
+    display: flex;
+    transition: background-color 0.3s ease;
+  }
+  
+  .incorrect-button{
+    margin-top: 20px;
+    background: #970909;
+    color: #FFF;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+    padding: 10px 10px;
+    border: none;
+    display: flex;
+    transition: background-color 0.3s ease;
+  }
+  
+  .label-for-text{
+    font-family: Poppins;
+  }
