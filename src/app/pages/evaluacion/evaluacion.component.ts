@@ -26,6 +26,7 @@ export class EvaluacionComponent implements OnInit {
   saved = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
+  selectedButton: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -191,6 +192,7 @@ export class EvaluacionComponent implements OnInit {
 
   setCalificacion(section: string, calificacion: string) {
     this.evaluacionForm.patchValue({ [`${section}_calificacion`]: calificacion });
+    this.selectedButton = calificacion;
   }
 }
 

@@ -27,6 +27,7 @@ export class AnalisisComponent implements OnInit {
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null); // Allow null and undefined
+  selectedButton: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -192,5 +193,6 @@ export class AnalisisComponent implements OnInit {
   setCalificacion(index: number, type: string, calificacion: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     control.patchValue({ calificacion });
+    this.selectedButton = calificacion;
   }
 }

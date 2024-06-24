@@ -37,9 +37,9 @@
         <div *ngIf="normativa.get('showCalificar')?.value">
 
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
               (click)="setCalificacion(i, 'normativa', 'Correcto')">Correcto</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" type="button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
               (click)="setCalificacion(i, 'normativa', 'Incorrecto')">Incorrecto</button>
           </div>
           <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
@@ -76,8 +76,8 @@
         <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(i, 'factica')">Calificar</button>
         <div *ngIf="factica.get('showCalificar')?.value">
           <div class="bttns-rate">
-            <button class="correct-button" type="button" (click)="setCalificacion(i, 'factica', 'Correcto')">Correcto</button>
-            <button class="incorrect-button" type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">Incorrecto</button>
+            <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}" (click)="setCalificacion(i, 'factica', 'Correcto')">Correcto</button>
+            <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}" type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">Incorrecto</button>
           </div>
           <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
           <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>

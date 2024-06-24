@@ -96,44 +96,46 @@ h2 {
     display: flex;
     justify-content: space-between;
     width: 15%;
+    flex-direction: row;
   }
   
-  .correct-button{
+  .correct-button, .incorrect-button {
     margin-top: 20px;
+    background: #21468f;
+    color: #FFF;
+    text-align: center;
+    font-family: Poppins, sans-serif; /* Añadido 'sans-serif' para mejor soporte */
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+    padding: 10px 10px;
+    border: none;
+    display: flex;
+    justify-content: center; /* Añadido para centrar contenido dentro del botón */
+    transition: background-color 0.3s ease;
+}
+
+.correct-button:hover {
     background: #037514;
-    color: #FFF;
-    text-align: center;
-    font-family: Poppins;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    border-radius: 10px;
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
-    padding: 10px 10px;
-    border: none;
-    display: flex;
-    transition: background-color 0.3s ease;
-  }
-  
-  .incorrect-button{
-    margin-top: 20px;
+}
+
+.incorrect-button:hover {
     background: #970909;
-    color: #FFF;
-    text-align: center;
-    font-family: Poppins;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    border-radius: 10px;
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
-    padding: 10px 10px;
-    border: none;
-    display: flex;
-    transition: background-color 0.3s ease;
-  }
+}
+
+/* Estilos para botones seleccionados */
+.correct-button.selected {
+    background: #037514;
+}
+
+.incorrect-button.selected {
+    background: #970909;
+}
+
   
-  .label-for-text{
+.label-for-text{
     font-family: Poppins;
   }

@@ -133,7 +133,15 @@ export class Analisis2Component implements OnInit {
 
   submitForm() {
     const analisisData = this.analisis2Form.value;
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
+    // Filtrar las propiedades que no tienen _showCalificar para guardar en Firestore
+    const dataToSave: any = {};
+    Object.keys(analisisData).forEach(key => {
+      if (!key.endsWith('_showCalificar')) {
+        dataToSave[key] = analisisData[key];
+      }
+    });
+
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(dataToSave)
       .then(() => {
         this.saved = true;
         setTimeout(() => {
@@ -144,6 +152,7 @@ export class Analisis2Component implements OnInit {
         console.error("Error saving document: ", error);
       });
   }
+
 
   redirectToAnalisis() {
     this.router.navigate(['/analisis'], {

@@ -32,13 +32,20 @@
         <app-caja-texto name="reasonsNormative" formControlName="reasonsNormative" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
+      <button class="rate" *ngIf="isDocente" type="button"
+        (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsNormative')?.value?.showCalificar">
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsNormative', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsNormative', 'Incorrecto')">Incorrecto</button>
+        <div class="bttns-rate">
+          <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+            (click)="setCalificacion('nonexistinence.reasonsNormative', 'Correcto')">Correcto</button>
+          <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}" type="button" (click)="setCalificacion('nonexistinence.reasonsNormative', 'Incorrecto')">
+            Incorrecto</button>
+        </div>
         <div>
-          <label>Retroalimentación:</label>
-          <textarea formControlName="normativa_retroalimentacion"></textarea>
+          <div>
+            <app-caja-texto formControlName="normativa_retroalimentacion"
+              [titulo]="'Retroalimentación'"></app-caja-texto>
+          </div>
         </div>
       </div>
 
@@ -52,13 +59,16 @@
         <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
+      <button class="rate" *ngIf="isDocente" type="button"
+        (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsFactual')?.value?.showCalificar">
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Incorrecto')">Incorrecto</button>
+        <div class="bttns-rate">
+          <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}" type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Correcto')">Correcto</button>
+          <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"  type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Incorrecto')">Incorrecto</button>
+        </div>
         <div>
-          <label>Retroalimentación:</label>
-          <textarea formControlName="factica_retroalimentacion"></textarea>
+          <app-caja-texto formControlName="factica_retroalimentacion"
+              [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
 
@@ -68,16 +78,22 @@
         <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
+        <app-caja-texto formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar</button>
+      <button *ngIf="isDocente" type="button"
+       class="rate" (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsMotivation')?.value?.showCalificar">
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Incorrecto')">Incorrecto</button>
+
+        <div class="bttns-rate">
+          <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+          (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Correcto')">Correcto</button>
+        <button class="incorrect-button" type="button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+          (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Incorrecto')">Incorrecto</button>
+        </div>
         <div>
-          <label>Retroalimentación:</label>
-          <textarea formControlName="motivacion_retroalimentacion"></textarea>
+          <app-caja-texto formControlName="motivacion_retroalimentacion" [titulo]="'¿Por qué?'">
+          </app-caja-texto>
         </div>
       </div>
     </div>
@@ -94,10 +110,12 @@
         <app-caja-texto name="reasonsNormative" formControlName="reasonsNormative" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
+      <button *ngIf="isDocente" type="button"
+        (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsNormative')?.value?.showCalificar">
         <button type="button" (click)="setCalificacion('nonexistinence.reasonsNormative', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsNormative', 'Incorrecto')">Incorrecto</button>
+        <button type="button"
+          (click)="setCalificacion('nonexistinence.reasonsNormative', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
           <textarea formControlName="normativa_retroalimentacion"></textarea>
@@ -114,10 +132,12 @@
         <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
+      <button *ngIf="isDocente" type="button"
+        (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsFactual')?.value?.showCalificar">
         <button type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsFactual', 'Incorrecto')">Incorrecto</button>
+        <button type="button"
+          (click)="setCalificacion('nonexistinence.reasonsFactual', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
           <textarea formControlName="factica_retroalimentacion"></textarea>
@@ -133,10 +153,13 @@
         <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
-      <button *ngIf="isDocente" type="button" (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar</button>
+      <button *ngIf="isDocente" type="button"
+        (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar</button>
       <div *ngIf="evaluacionForm.get('nonexistinence.reasonsMotivation')?.value?.showCalificar">
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Correcto')">Correcto</button>
-        <button type="button" (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Incorrecto')">Incorrecto</button>
+        <button type="button"
+          (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Correcto')">Correcto</button>
+        <button type="button"
+          (click)="setCalificacion('nonexistinence.reasonsMotivation', 'Incorrecto')">Incorrecto</button>
         <div>
           <label>Retroalimentación:</label>
           <textarea formControlName="motivacion_retroalimentacion"></textarea>

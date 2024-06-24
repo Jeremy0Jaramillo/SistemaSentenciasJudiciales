@@ -9,144 +9,44 @@
 
 <div class="info-analisis">
   <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
-    <div class="analisis">
-      <app-caja-texto id="narracion_hechos" formControlName="narracion_hechos" [titulo]="'1. Narración de los hechos'">
+
+    <div class="analisis" *ngFor="let section of [
+      {id: 'narracion_hechos', title: '1. Narración de los hechos'},
+      {id: 'problema_juridico', title: '2. Problema jurídico'},
+      {id: 'cuestiones_subcuestiones', title: '3. Cuestiones o subcuestiones para solucionar el problema'},
+      {id: 'respuesta_cuestiones', title: '4. Respuesta a las cuestiones'},
+      {id: 'ratio_obiter', title: '5. Ratio decidendi y obiter dictum'},
+      {id: 'solucion_problema', title: '6. Solución al problema'},
+      {id: 'decision', title: '7. Decisión'}
+    ]">
+
+      <app-caja-texto [id]="section.id" [formControlName]="section.id" [titulo]="section.title">
       </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('narracion_hechos')">Calificar</button>
-      <div *ngIf="analisis2Form.get('narracion_hechos')?.value?.showCalificar">
+
+      <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(section.id)">Calificar</button>
+
+      <div *ngIf="analisis2Form.get(section.id)?.value?.showCalificar">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-            (click)="setCalificacion('narracion_hechos', 'Correcto')">Correcto</button>
+            [ngClass]="{'selected': analisis2Form.get(section.id + '_calificacion')?.value === 'Correcto'}"
+            (click)="setCalificacion(section.id, 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
-            (click)="setCalificacion('narracion_hechos', 'Incorrecto')">Incorrecto</button>
+            [ngClass]="{'selected': analisis2Form.get(section.id + '_calificacion')?.value === 'Incorrecto'}"
+            (click)="setCalificacion(section.id, 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
-          <app-caja-texto formControlName="narracion_hechos_retroalimentacion"
+          <app-caja-texto [formControlName]="section.id + '_retroalimentacion'"
             [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-    </div>
 
-    <div class="analisis">
-      <app-caja-texto id="problema_juridico" formControlName="problema_juridico" [titulo]="'2. Problema jurídico'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('problema_juridico')">Calificar</button>
-      <div *ngIf="analisis2Form.get('problema_juridico')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="setCalificacion('problema_juridico', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
-            (click)="setCalificacion('problema_juridico', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <div>
-            <app-caja-texto formControlName="problema_juridico_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="analisis">
-      <app-caja-texto id="cuestiones_subcuestiones" formControlName="cuestiones_subcuestiones"
-        [titulo]="'3. Cuestiones o subcuestiones para solucionar el problema'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('cuestiones_subcuestiones')">Calificar</button>
-      <div *ngIf="analisis2Form.get('cuestiones_subcuestiones')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="setCalificacion('cuestiones_subcuestiones', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
-            (click)="setCalificacion('cuestiones_subcuestiones', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <app-caja-texto formControlName="cuestiones_subcuestiones_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
-        </div>
-      </div>
-    </div>
-
-    <div class="analisis">
-      <app-caja-texto id="respuesta_cuestiones" formControlName="respuesta_cuestiones"
-        [titulo]="'4. Respuesta a las cuestiones'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('respuesta_cuestiones')">Calificar</button>
-      <div *ngIf="analisis2Form.get('respuesta_cuestiones')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="setCalificacion('respuesta_cuestiones', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
-            (click)="setCalificacion('respuesta_cuestiones', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <app-caja-texto formControlName="respuesta_cuestiones_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
-        </div>
-      </div>
-    </div>
-
-    <div class="analisis">
-      <app-caja-texto id="ratio_obiter" formControlName="ratio_obiter" [titulo]="'5. Ratio decidendi y obiter dictum'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('ratio_obiter')">Calificar</button>
-      <div *ngIf="analisis2Form.get('ratio_obiter')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="setCalificacion('ratio_obiter', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
-            (click)="setCalificacion('ratio_obiter', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <app-caja-texto formControlName="ratio_obiter_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
-        </div>
-      </div>
-    </div>
-
-    <div class="analisis">
-      <app-caja-texto id="solucion_problema" formControlName="solucion_problema" [titulo]="'6. Solución al problema'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('solucion_problema')">Calificar</button>
-      <div *ngIf="analisis2Form.get('solucion_problema')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="setCalificacion('solucion_problema', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
-            (click)="setCalificacion('solucion_problema', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <app-caja-texto formControlName="solucion_problema_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
-        </div>
-      </div>
-    </div>
-
-    <div class="analisis">
-      <app-caja-texto id="decision" formControlName="decision" [titulo]="'7. Decisión'">
-      </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('decision')">Calificar</button>
-      <div *ngIf="analisis2Form.get('decision')?.value?.showCalificar">
-        <div class="bttns-rate">
-          <button class="correct-button" type="button" (click)="setCalificacion('decision', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button" (click)="setCalificacion('decision', 'Incorrecto')">Incorrecto</button>
-        </div>
-        <div>
-          <app-caja-texto formControlName="decision_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
-        </div>
-      </div>
     </div>
 
     <button class="bttn-stnd" type="submit">Guardar</button>
   </form>
+
   <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
-    <button class="bttn-stnd" (click)="redirectToEvaluacion()"
-      [disabled]="!isSiguienteButtonEnabled()">Evaluación</button>
+    <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!isSiguienteButtonEnabled()">Evaluación</button>
   </div>
 </div>
