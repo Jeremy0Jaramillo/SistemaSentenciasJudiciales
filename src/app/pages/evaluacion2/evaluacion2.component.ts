@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
+import { Observable,of } from 'rxjs';
+
+interface User {
+  uid: string;
+  role: string;
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-evaluacion2',
@@ -16,12 +24,16 @@ export class Evaluacion2Component implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  selectedButton: string | null = null;
+  isDocente = false;
+  currentUser: Observable<User | null | undefined> = of(null);
 
   constructor(
     private fb: FormBuilder,
     private firestore: AngularFirestore,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private afAuth: AngularFireAuth
   ) {
     this.evaluacion2Form = this.fb.group({
       numero_proceso: [''],
@@ -33,13 +45,13 @@ export class Evaluacion2Component implements OnInit {
         otherSubject: ['']
       }),
       validSummary: [''],
-      validSummary_calificacion: [''],
-      validSummary_retroalimentacion: [''],
       factsConception: [''],
       finalDecision: [''],
       properUse: [''],
+      properUse_calificacion: [''],
       lawAnalysis: [''],
       normativeEvaluation: [''],
+      normativeEvaluation_calificacion: [''],
       precedentsAplication: [''],
       expressionClarity: [''],
       crimeClassification: [''],
@@ -64,7 +76,23 @@ export class Evaluacion2Component implements OnInit {
       });
 
       // Load existing data if available
-      this.loadEvaluacion2Data();
+      this.loadUserData();
+    });
+  }
+
+  loadUserData() {
+    this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.currentUser = this.firestore.collection('users').doc<User>(user.uid).valueChanges();
+        this.currentUser.subscribe(userData => {
+          if (userData && userData.role === 'docente') {
+            this.isDocente = true;
+          }
+          this.loadEvaluacion2Data();
+        });
+      } else {
+        this.loadEvaluacion2Data();
+      }
     });
   }
 
@@ -124,6 +152,30 @@ export class Evaluacion2Component implements OnInit {
       });
     }
   }
+
+  toggleCalificar(controlPath: string): void {
+    const control = this.evaluacion2Form.get(controlPath);
+    if (control) {
+      const currentValue = control.value;
+      control.setValue({
+        ...currentValue,
+        showCalificar: !currentValue.showCalificar,
+      });
+    }
+  }
+
+  setCalificacion(controlPath: string, calificacion: string): void {
+    const control = this.evaluacion2Form.get(controlPath);
+    if (control) {
+      const currentValue = control.value;
+      control.setValue({
+        ...currentValue,
+        calificacion,
+      });
+      this.selectedButton = calificacion;
+    }
+  }
+
 
   redirectToEvaluacion() {
     this.router.navigate(['/evaluacion'], {

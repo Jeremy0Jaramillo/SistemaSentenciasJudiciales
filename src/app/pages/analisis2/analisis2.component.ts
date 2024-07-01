@@ -41,6 +41,7 @@ interface Analisis2 {
   templateUrl: './analisis2.component.html',
   styleUrls: ['./analisis2.component.css']
 })
+
 export class Analisis2Component implements OnInit {
   analisis2Form: FormGroup;
   numero_proceso: string = '';
@@ -51,6 +52,8 @@ export class Analisis2Component implements OnInit {
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
+  control: any;
+
 
   constructor(
     private fb: FormBuilder,
@@ -95,11 +98,9 @@ export class Analisis2Component implements OnInit {
       this.analisis2Form.patchValue({
         numero_proceso: this.numero_proceso
       });
-
       this.loadUserData();
     });
   }
-
   loadUserData() {
     this.afAuth.user.subscribe(user => {
       if (user) {
@@ -118,8 +119,7 @@ export class Analisis2Component implements OnInit {
 
   loadAnalisisData() {
     this.firestore.collection<Analisis2>('analisis2', ref => ref.where('numero_proceso', '==', this.numero_proceso))
-      .valueChanges()
-      .pipe(
+      .valueChanges().pipe(
         map(analisis2Array => {
           console.log('Fetched analisis2 data:', analisis2Array);  // Check if data is fetched correctly
           if (analisis2Array && analisis2Array.length > 0) {
@@ -133,15 +133,7 @@ export class Analisis2Component implements OnInit {
 
   submitForm() {
     const analisisData = this.analisis2Form.value;
-    // Filtrar las propiedades que no tienen _showCalificar para guardar en Firestore
-    const dataToSave: any = {};
-    Object.keys(analisisData).forEach(key => {
-      if (!key.endsWith('_showCalificar')) {
-        dataToSave[key] = analisisData[key];
-      }
-    });
-
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(dataToSave)
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
         setTimeout(() => {
@@ -152,7 +144,6 @@ export class Analisis2Component implements OnInit {
         console.error("Error saving document: ", error);
       });
   }
-
 
   redirectToAnalisis() {
     this.router.navigate(['/analisis'], {
@@ -186,7 +177,7 @@ export class Analisis2Component implements OnInit {
   setCalificacion(section: string, calificacion: string) {
     this.analisis2Form.patchValue({ [`${section}_calificacion`]: calificacion });
   }
-  
+
   isSiguienteButtonEnabled() {
     return this.dataLoaded;
   }

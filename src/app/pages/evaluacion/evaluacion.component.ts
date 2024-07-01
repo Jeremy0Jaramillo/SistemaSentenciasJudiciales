@@ -72,36 +72,62 @@ export class EvaluacionComponent implements OnInit {
         incoherence: this.fb.group({
           existsLogicalNormative: ['', Validators.required],
           reasonsLogicaNormative: ['', Validators.required],
+          logicaNormative_calificacion: ['', Validators.required],
+          logicaNormative_retroalimentacion: ['', Validators.required],
           existsDecisionalNormative: ['', Validators.required],
           reasonsDecisionalNormative: ['', Validators.required],
-          existsLogicaFactual: ['', Validators.required],
-          reasonsLogicaFactual: ['', Validators.required],
+          decisionalNormative_calificacion: ['', Validators.required],
+          decisionalNormative_retroalimentacion: ['', Validators.required],
+          existsLogicalFactual: ['', Validators.required],
+          reasonsLogicalFactual: ['', Validators.required],
+          logicalFactual_calificacion: ['', Validators.required],
+          logicalFactual_retroalimentacion: ['', Validators.required],
           existsDecisionalFactual: ['', Validators.required],
           reasonsDecisionalFactual: ['', Validators.required],
+          decisionalFactual_calificacion: ['', Validators.required],
+          decisionalFactual_retroalimentacion: ['', Validators.required],
           lackMotivation: ['', Validators.required],
-          reasonsMotivation: ['', Validators.required]
+          reasonsMotivation: ['', Validators.required],
+          motivation_calificacion: ['', Validators.required],
+          motivation_retroalimentacion: ['', Validators.required]
         }),
         inatinence: this.fb.group({
           existsInatinenceJuridical: ['', Validators.required],
           reasonsInatinenceJuridical: ['', Validators.required],
+          inatinenceJuridical_calificacion: ['', Validators.required],
+          inatinenceJuridical_retroalimentacion: ['', Validators.required],
           existsInatinenceFactual: ['', Validators.required],
-          reasonsInatinenceFactual: ['', Validators.required]
+          reasonsInatinenceFactual: ['', Validators.required],
+          inatinenceFactual_calificacion: ['', Validators.required],
+          inatinenceFactual_retroalimentacion: ['', Validators.required]
         }),
         incomprehensibility: this.fb.group({
           existsIncomprehensibilityJuridical: ['', Validators.required],
           reasonsIncomprehensibilityJuridical: ['', Validators.required],
+          incomprehensibilityJuridical_calificacion: ['', Validators.required],
+          incomprehensibilityJuridical_retroalimentacion: ['', Validators.required],
           existsIncomprehensibilityFactual: ['', Validators.required],
-          reasonsIncomprehensibilityFactual: ['', Validators.required]
+          reasonsIncomprehensibilityFactual: ['', Validators.required],
+          incomprehensibilityFactual_calificacion: ['', Validators.required],
+          incomprehensibilityFactual_retroalimentacion: ['', Validators.required]
         }),
         incongruity: this.fb.group({
           existsIncongruityNormativeParticipants: ['', Validators.required],
           reasonsIncongruityNormativeParticipants: ['', Validators.required],
+          normativeParticipants_calificacion: ['', Validators.required],
+          normativeParticipants_retroalimentacion: ['', Validators.required],
           existsIncongruityNormativeLaw: ['', Validators.required],
           reasonsIncongruityNormativeLaw: ['', Validators.required],
+          normativeLaw_calificacion: ['', Validators.required],
+          normativeLaw_retroalimentacion: ['', Validators.required],
           existsIncongruityFactualParticipants: ['', Validators.required],
           reasonsIncongruityFactualParticipants: ['', Validators.required],
+          factualParticipants_calificacion: ['', Validators.required],
+          factualParticipants_retroalimentacion: ['', Validators.required],
           existsIncongruityFactualLaw: ['', Validators.required],
-          reasonsIncongruityFactualLaw: ['', Validators.required]
+          reasonsIncongruityFactualLaw: ['', Validators.required],
+          factualLaw_calificacion: ['', Validators.required],
+          factualLaw_retroalimentacion: ['', Validators.required]
         })
       })
     });
@@ -183,16 +209,27 @@ export class EvaluacionComponent implements OnInit {
     });
   }
 
-  toggleCalificar(section: string) {
-    const control = this.evaluacionForm.get(section);
+  toggleCalificar(controlPath: string): void {
+    const control = this.evaluacionForm.get(controlPath);
     if (control) {
-      control.patchValue({ showCalificar: !control.value.showCalificar });
+      const currentValue = control.value;
+      control.setValue({
+        ...currentValue,
+        showCalificar: !currentValue.showCalificar,
+      });
     }
   }
 
-  setCalificacion(section: string, calificacion: string) {
-    this.evaluacionForm.patchValue({ [`${section}_calificacion`]: calificacion });
-    this.selectedButton = calificacion;
+  setCalificacion(controlPath: string, calificacion: string): void {
+    const control = this.evaluacionForm.get(controlPath);
+    if (control) {
+      const currentValue = control.value;
+      control.setValue({
+        ...currentValue,
+        calificacion,
+      });
+      this.selectedButton = calificacion;
+    }
   }
 }
 

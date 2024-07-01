@@ -14,6 +14,16 @@
             <h3 class="tittle-check">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
             <h5 class="description">Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
             <div class="options">
+                <button *ngIf="isDocente" type="button" class="rate"
+                    (click)="toggleCalificar('sentenceSubject')">Calificar</button>
+                <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value?.showCalificar">
+                    <div class="bttns-rate">
+                        <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+                            type="button" (click)="setCalificacion('sentenceSubject', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                            type="button" (click)="setCalificacion('sentenceSubject', 'Incorrecto')">Incorrecto</button>
+                    </div>
+                </div>
                 <!-- Columna 1 -->
                 <div class="column">
                     <div class="option">
@@ -234,6 +244,16 @@
                         </label>
                     </div>
                 </div>
+                <button *ngIf="isDocente" type="button" class="rate"
+                    (click)="toggleCalificar('properUse')">Calificar</button>
+                <div *ngIf="evaluacion2Form.get('properUse')?.value?.showCalificar">
+                    <div class="bttns-rate">
+                        <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+                            type="button" (click)="setCalificacion('properUse', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                            type="button" (click)="setCalificacion('properUse', 'Incorrecto')">Incorrecto</button>
+                    </div>
+                </div>
             </div>
 
             <div class="likert-table">
@@ -290,6 +310,17 @@
                         </label>
                     </div>
                 </div>
+                <button *ngIf="isDocente" type="button" class="rate"
+                    (click)="toggleCalificar('normativeEvaluation')">Calificar</button>
+                <div *ngIf="evaluacion2Form.get('normativeEvaluation')?.value?.showCalificar">
+                    <div class="bttns-rate">
+                        <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+                            type="button" (click)="setCalificacion('normativeEvaluation', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                            type="button"
+                            (click)="setCalificacion('normativeEvaluation', 'Incorrecto')">Incorrecto</button>
+                    </div>
+                </div>
             </div>
 
             <div class="likert-table">
@@ -344,6 +375,17 @@
                             <input type="radio" name="expressionClarity" value="4" formControlName="expressionClarity">
                             <span>4</span>
                         </label>
+                    </div>
+                </div>
+                <button *ngIf="isDocente" type="button" class="rate"
+                    (click)="toggleCalificar('expressionClarity')">Calificar</button>
+                <div *ngIf="evaluacion2Form.get('expressionClarity')?.value?.showCalificar">
+                    <div class="bttns-rate">
+                        <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
+                            type="button" (click)="setCalificacion('expressionClarity', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                            type="button"
+                            (click)="setCalificacion('expressionClarity', 'Incorrecto')">Incorrecto</button>
                     </div>
                 </div>
             </div>
@@ -424,6 +466,16 @@
                     </label>
                 </div>
             </div>
+            <button *ngIf="isDocente" type="button" class="rate"
+                (click)="toggleCalificar('againstProperty')">Calificar</button>
+            <div *ngIf="evaluacion2Form.get('againstProperty')?.value?.showCalificar">
+                <div class="bttns-rate">
+                    <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}" type="button"
+                        (click)="setCalificacion('againstProperty', 'Correcto')">Correcto</button>
+                    <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                        type="button" (click)="setCalificacion('againstProperty', 'Incorrecto')">Incorrecto</button>
+                </div>
+            </div>
         </div>
 
         <div class="likert-table">
@@ -483,6 +535,16 @@
                     </label>
                 </div>
             </div>
+            <button *ngIf="isDocente" type="button" class="rate"
+                (click)="toggleCalificar('expressionClarity2')">Calificar</button>
+            <div *ngIf="evaluacion2Form.get('expressionClarity2')?.value?.showCalificar">
+                <div class="bttns-rate">
+                    <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}" type="button"
+                        (click)="setCalificacion('expressionClarity2', 'Correcto')">Correcto</button>
+                    <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                        type="button" (click)="setCalificacion('expressionClarity2', 'Incorrecto')">Incorrecto</button>
+                </div>
+            </div>
         </div>
 
         <div class="likert-table">
@@ -500,10 +562,23 @@
                     [titulo]="'Justifique su respuesta (500 palabras)'">
                 </app-caja-texto>
             </div>
+            <button class="rate" *ngIf="isDocente" type="button"
+                (click)="toggleCalificar('reasonsNormativa')">Calificar</button>
+            <div *ngIf="evaluacion2Form.get('reasonsNormativa')?.value?.showCalificar">
+                <div class="bttns-rate">
+                    <button class="correct-button" [ngClass]="{'selected': selectedButton === 'Correcto'}" type="button"
+                        (click)="setCalificacion('reasonsNormativa', 'Correcto')">Correcto</button>
+                    <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
+                        type="button" (click)="setCalificacion('reasonsNormativa', 'Incorrecto')">Incorrecto</button>
+                </div>
+                <div>
+                    <app-caja-texto formControlName="normativa_retroalimentacion"
+                        [titulo]="'Retroalimentación'"></app-caja-texto>
+                </div>
+            </div>
         </div>
-
-        <button class="bttn-stnd" type="submit">Guardar</button>
     </div>
+    <button class="bttn-stnd" type="submit">Guardar</button>
 </form>
 
 <div class="bttn">
