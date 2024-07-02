@@ -10,7 +10,9 @@ interface Sentencia {
   asunto: string;
   nombre_estudiante: string;
   nombre_docente: string;
+  archivoURL?: string;
 }
+
 
 @Component({
   selector: 'app-principal-page',

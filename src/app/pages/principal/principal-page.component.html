@@ -28,11 +28,14 @@
 
       <div class="text-dat">
         <p><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
-
       </div>
     </div>
+
     <div class="more">
       <button class="bttn-stnd" (click)="redirectToAnalisis(sentencia)">Ver más</button>
+      <a *ngIf="sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank">
+        <button class="bttn-stnd">Descargar PDF</button>
+      </a>
     </div>
   </div>
 </div>

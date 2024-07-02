@@ -38,4 +38,21 @@ export class LoginPageComponent {
         this.alerta = true;
       });
   }
+
+  register(email: string, password: string) {
+    this.afAuth.createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        if (userCredential.user) {
+          // Registration successful, write user data to Firestore
+          this.firestore.collection('users').doc(userCredential.user.uid).set({
+            email: userCredential.user.email
+            // Add additional user data as needed
+          });
+        }
+      })
+      .catch(error => {
+        // Handle registration error
+        console.error('Registration error:', error);
+      });
+  }
 }
