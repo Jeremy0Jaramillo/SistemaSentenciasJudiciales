@@ -49,10 +49,12 @@ export class Analisis2Component implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  docenteSaved = false;
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
   control: any;
+  calificarState: { [key: string]: boolean } = {};
 
 
   constructor(
@@ -101,6 +103,7 @@ export class Analisis2Component implements OnInit {
       this.loadUserData();
     });
   }
+  
   loadUserData() {
     this.afAuth.user.subscribe(user => {
       if (user) {
@@ -108,10 +111,9 @@ export class Analisis2Component implements OnInit {
         this.currentUser.subscribe(userData => {
           if (userData && userData.role === 'docente') {
             this.isDocente = true;
+            this.checkDocenteSaved();
           }
-          this.loadAnalisisData();
         });
-      } else {
         this.loadAnalisisData();
       }
     });
@@ -133,7 +135,15 @@ export class Analisis2Component implements OnInit {
 
   submitForm() {
     const analisisData = this.analisis2Form.value;
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
+    // Filtrar las propiedades que no tienen _showCalificar para guardar en Firestore
+    const dataToSave: any = {};
+    Object.keys(analisisData).forEach(key => {
+      if (!key.endsWith('_showCalificar')) {
+        dataToSave[key] = analisisData[key];
+      }
+    });
+
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(dataToSave)
       .then(() => {
         this.saved = true;
         setTimeout(() => {
@@ -166,19 +176,35 @@ export class Analisis2Component implements OnInit {
       }
     });
   }
+  
+  checkDocenteSaved() {
+    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
+      .valueChanges()
+      .subscribe(data => {
+        if (data && data.length) {
+          this.docenteSaved = true;
+        }
+      });
+  }
 
   toggleCalificar(section: string) {
-    const control = this.analisis2Form.get(section);
-    if (control) {
-      control.patchValue({ showCalificar: !control.value.showCalificar });
-    }
+    this.calificarState[section] = !this.calificarState[section];
   }
 
   setCalificacion(section: string, calificacion: string) {
     this.analisis2Form.patchValue({ [`${section}_calificacion`]: calificacion });
   }
 
-  isSiguienteButtonEnabled() {
-    return this.dataLoaded;
+  redirectToEvaluacion2() {
+    if (this.docenteSaved) {
+      this.router.navigate(['/evaluacion2'], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente
+        }
+      });
+    }
   }
 }

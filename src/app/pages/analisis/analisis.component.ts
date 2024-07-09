@@ -24,6 +24,7 @@ export class AnalisisComponent implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  docenteSaved = false;
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null); // Allow null and undefined
@@ -65,10 +66,9 @@ export class AnalisisComponent implements OnInit {
         this.currentUser.subscribe(userData => {
           if (userData && userData.role === 'docente') {
             this.isDocente = true;
+            this.checkDocenteSaved();
           }
-          this.loadAnalisisData();
         });
-      } else {
         this.loadAnalisisData();
       }
     });
@@ -179,6 +179,16 @@ export class AnalisisComponent implements OnInit {
         docente: this.docente
       }
     });
+  }
+
+  checkDocenteSaved() {
+    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
+      .valueChanges()
+      .subscribe(data => {
+        if (data && data.length) {
+          this.docenteSaved = true;
+        }
+      });
   }
 
   isSiguienteButtonEnabled() {
