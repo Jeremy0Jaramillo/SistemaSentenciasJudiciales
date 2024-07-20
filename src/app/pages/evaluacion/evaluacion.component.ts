@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,6 +22,7 @@ export class EvaluacionComponent implements OnInit {
   asunto: string = '';
   estudiante: string = '';
   docente: string = '';
+  saved = false;
   docenteSaved = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
@@ -37,7 +38,11 @@ export class EvaluacionComponent implements OnInit {
   ) {
     this.evaluacionForm = this.fb.group({
       numero_proceso: new FormControl (''),
+      saved: [false],
+      docenteSaved: [false],
       motivationType: new FormControl (''),
+      motivationType_calificacion: new FormControl (''),
+      motivationType_retroalimentacion: new FormControl (''),
       nonexistinence: this.fb.group({
         lackFoundationNormative: new FormControl (''),
         reasonsNormative: new FormControl (''),
@@ -69,6 +74,8 @@ export class EvaluacionComponent implements OnInit {
       appearance: this.fb.group({
         appearanceReason: new FormControl (''),
         motivationalHabit: new FormControl (''),
+        motivationalHabit_calificacion: new FormControl (''),
+        motivationalHabit_retroalimentacion: new FormControl (''),
         incoherence: this.fb.group({
           existsLogicalNormative: new FormControl (''),
           reasonsLogicaNormative: new FormControl (''),
@@ -148,8 +155,42 @@ export class EvaluacionComponent implements OnInit {
         numero_proceso: this.numero_proceso
       });
       this.loadUserData();
+      this.checkDocenteSaved();
+      setTimeout(() => {
+        this.checkLockStatus();
+      }, 1000);
     });
   }
+
+  checkLockStatus() {
+    this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
+      if (data && data.locked) {
+        this.disableFormControls(this.evaluacionForm); // Disable the form if it's locked
+      }
+    });
+  }
+  
+
+  lockForm() {
+    this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
+      .then(() => {
+        this.disableFormControls(this.evaluacionForm); // Disable the form controls
+      })
+      .catch(error => {
+        console.error("Error locking form: ", error);
+      });
+  }
+  
+  disableFormControls(formGroup: FormGroup | FormArray) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.disable(); // Disable the control
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.disableFormControls(control); // Recursively disable nested controls
+      }
+    });
+  }  
+  
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -232,19 +273,30 @@ export class EvaluacionComponent implements OnInit {
   }
   
   checkDocenteSaved() {
-    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
-      .valueChanges()
-      .subscribe(data => {
-        if (data && data.length) {
-          this.docenteSaved = true;
+    this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
+      .subscribe((data: any) => {
+        if (data && data.saved) {
+          this.docenteSaved = data.docenteSaved || false;
         }
       });
   }
+
+  getCalificacionValue(controlName: string): string {
+    const control = this.evaluacionForm.get(controlName);
+    return control && control.value ? control.value : 'No Calificado';
+  }
   
   submitForm() {
-    const evaluacionData = this.evaluacionForm.value;
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).set(evaluacionData)
+    this.evaluacionForm.patchValue({ saved: true });
+    if (this.isDocente) {
+      this.evaluacionForm.patchValue({ docenteSaved: true });
+    }
+    
+    const analisisData = this.evaluacionForm.value;
+    this.firestore.collection('evaluacion').doc(this.numero_proceso).set(analisisData)
       .then(() => {
+        this.saved = true;
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);

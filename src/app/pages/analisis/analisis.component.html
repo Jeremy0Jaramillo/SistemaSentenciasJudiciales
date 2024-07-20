@@ -46,6 +46,12 @@
           <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
         </div>
 
+        <!-- Display the calificacion value conditionally -->
+        <div *ngIf="!isDocente">
+          <div class="calificacion-display" *ngIf="!saved">
+            {{ getCalificacionValue('normativas.' + i + '.calificacion') }}
+          </div>
+        </div>
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
@@ -72,17 +78,23 @@
           </div>
         </div>
 
-        <button class="bttn-stnd-delete" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
         <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(i, 'factica')">Calificar</button>
         <div *ngIf="factica.get('showCalificar')?.value">
           <div class="bttns-rate">
             <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}" (click)="setCalificacion(i, 'factica', 'Correcto')">Correcto</button>
-            <button class="incorrect-button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}" type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">Incorrecto</button>
+            <button class="incorrect-button" type="button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}" type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">Incorrecto</button>
           </div>
           <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
           <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
         </div>
 
+        <!-- Display the calificacion value conditionally -->
+        <div *ngIf="!isDocente">
+          <div class="calificacion-display" *ngIf="!saved">
+            {{ getCalificacionValue('facticas.' + i + '.calificacion') }}
+          </div>
+        </div>
+        <button class="bttn-stnd-delete" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
       </div>
     </div>
     <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>

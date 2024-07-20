@@ -53,7 +53,6 @@ export class Analisis2Component implements OnInit {
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
-  control: any;
   calificarState: { [key: string]: boolean } = {};
 
 
@@ -86,7 +85,9 @@ export class Analisis2Component implements OnInit {
       solucion_problema_retroalimentacion: [''],
       decision: ['', Validators.required],
       decision_calificacion: [''],
-      decision_retroalimentacion: ['']
+      decision_retroalimentacion: [''],
+      saved: [false],
+      docenteSaved: [false]
     });
   }
 
@@ -101,6 +102,36 @@ export class Analisis2Component implements OnInit {
         numero_proceso: this.numero_proceso
       });
       this.loadUserData();
+      this.checkDocenteSaved();
+      this.checkLockStatus();
+    });
+  }
+
+  checkLockStatus() {
+    this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
+      if (data && data.locked) {
+        this.disableFormControls(this.analisis2Form); // Disable the form if it's locked
+      }
+    });
+  }
+
+  lockForm() {
+    this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
+      .then(() => {
+        this.disableFormControls(this.analisis2Form); // Disable the form controls
+      })
+      .catch(error => {
+        console.error("Error locking form: ", error);
+      });
+  }
+  
+  disableFormControls(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.disable(); // Disable the control
+      if (control instanceof FormGroup) {
+        this.disableFormControls(control); // Recursively disable nested controls
+      }
     });
   }
   
@@ -111,7 +142,6 @@ export class Analisis2Component implements OnInit {
         this.currentUser.subscribe(userData => {
           if (userData && userData.role === 'docente') {
             this.isDocente = true;
-            this.checkDocenteSaved();
           }
         });
         this.loadAnalisisData();
@@ -123,10 +153,12 @@ export class Analisis2Component implements OnInit {
     this.firestore.collection<Analisis2>('analisis2', ref => ref.where('numero_proceso', '==', this.numero_proceso))
       .valueChanges().pipe(
         map(analisis2Array => {
-          console.log('Fetched analisis2 data:', analisis2Array);  // Check if data is fetched correctly
           if (analisis2Array && analisis2Array.length > 0) {
             const data: Analisis2 = analisis2Array[0];
             this.analisis2Form.patchValue(data);
+            this.dataLoaded = true;
+          } else {
+            // Handle case where no data is found
             this.dataLoaded = true;
           }
         })
@@ -134,26 +166,28 @@ export class Analisis2Component implements OnInit {
   }
 
   submitForm() {
+    this.analisis2Form.patchValue({ saved: true });
+    if (this.isDocente) {
+      this.analisis2Form.patchValue({ docenteSaved: true });
+    }
     const analisisData = this.analisis2Form.value;
-    // Filtrar las propiedades que no tienen _showCalificar para guardar en Firestore
+
     const dataToSave: any = {};
     Object.keys(analisisData).forEach(key => {
       if (!key.endsWith('_showCalificar')) {
         dataToSave[key] = analisisData[key];
       }
     });
-
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(dataToSave)
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
       });
   }
+  
 
   redirectToAnalisis() {
     this.router.navigate(['/analisis'], {
@@ -167,22 +201,23 @@ export class Analisis2Component implements OnInit {
   }
 
   redirectToEvaluacion() {
-    this.router.navigate(['/evaluacion'], {
-      queryParams: {
-        numero_proceso: this.numero_proceso,
-        asunto: this.asunto,
-        estudiante: this.estudiante,
-        docente: this.docente
-      }
-    });
+    if (this.docenteSaved) {
+      this.router.navigate(['/evaluacion'], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente
+        }
+      });
+    }
   }
   
   checkDocenteSaved() {
-    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
-      .valueChanges()
-      .subscribe(data => {
-        if (data && data.length) {
-          this.docenteSaved = true;
+    this.firestore.collection('analisis2').doc(this.numero_proceso).valueChanges()
+      .subscribe((data: any) => {
+        if (data && data.saved) {
+          this.docenteSaved = data.docenteSaved || false;
         }
       });
   }
@@ -195,16 +230,9 @@ export class Analisis2Component implements OnInit {
     this.analisis2Form.patchValue({ [`${section}_calificacion`]: calificacion });
   }
 
-  redirectToEvaluacion2() {
-    if (this.docenteSaved) {
-      this.router.navigate(['/evaluacion2'], {
-        queryParams: {
-          numero_proceso: this.numero_proceso,
-          asunto: this.asunto,
-          estudiante: this.estudiante,
-          docente: this.docente
-        }
-      });
-    }
+  getCalificacionValue(controlName: string): string {
+    const control = this.analisis2Form.get(controlName);
+    return control && control.value ? control.value : 'No Calificado';
   }
+
 }

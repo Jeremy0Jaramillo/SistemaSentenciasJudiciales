@@ -40,7 +40,9 @@ export class AnalisisComponent implements OnInit {
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
       normativas: this.fb.array([]),
-      facticas: this.fb.array([])
+      facticas: this.fb.array([]),
+      saved: [false],
+      docenteSaved: [false]
     });
   }
 
@@ -56,8 +58,40 @@ export class AnalisisComponent implements OnInit {
       });
 
       this.loadUserData();
+      this.checkDocenteSaved();
+      setTimeout(() => {
+        this.checkLockStatus();
+      }, 1000);
     });
   }
+
+  checkLockStatus() {
+    this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
+      if (data && data.locked) {
+        this.disableFormControls(this.analisisForm); // Disable the form if it's locked
+      }
+    });
+  }
+
+  lockForm() {
+    this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
+      .then(() => {
+        this.disableFormControls(this.analisisForm); // Disable the form controls
+      })
+      .catch(error => {
+        console.error("Error locking form: ", error);
+      });
+  }
+  
+  disableFormControls(formGroup: FormGroup | FormArray) {
+  Object.keys(formGroup.controls).forEach(key => {
+    const control = formGroup.get(key);
+    control?.disable(); // Disable the control
+    if (control instanceof FormGroup || control instanceof FormArray) {
+      this.disableFormControls(control); // Recursively disable nested controls
+    }
+  });
+}
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -113,87 +147,97 @@ export class AnalisisComponent implements OnInit {
   }
 
   loadAnalisisData() {
-    this.firestore.collection('analisis', ref => ref.where('numero_proceso', '==', this.numero_proceso))
-      .valueChanges()
-      .pipe(
-        map(analisis => analisis[0]),
-        switchMap((analisis: any) => {
-          if (analisis) {
-            this.analisisForm.patchValue({
-              numero_proceso: analisis.numero_proceso
-            });
-
-            analisis.normativas.forEach((normativa: any) => {
-              this.normativas.push(this.fb.group({
-                pregunta: normativa.pregunta,
-                respuesta: normativa.respuesta,
-                valida: normativa.valida,
-                calificacion: normativa.calificacion || '',
-                retroalimentacion: normativa.retroalimentacion || '',
-                showCalificar: [false]
-              }));
-            });
-
-            analisis.facticas.forEach((factica: any) => {
-              this.facticas.push(this.fb.group({
-                pregunta: factica.pregunta,
-                respuesta: factica.respuesta,
-                valida: factica.valida,
-                calificacion: factica.calificacion || '',
-                retroalimentacion: factica.retroalimentacion || '',
-                showCalificar: [false]
-              }));
-            });
-
-            this.dataLoaded = true;
-          } else {
-            this.addFactica();
-            this.addNormativa();
-            this.dataLoaded = true;
-          }
-          return [];
-        })
-      ).subscribe();
+    this.firestore.collection('analisis').doc(this.numero_proceso).valueChanges()
+      .subscribe((analisis: any) => {
+        if (analisis) {
+          this.analisisForm.patchValue({
+            numero_proceso: analisis.numero_proceso,
+            saved: analisis.saved || false
+          });
+  
+          analisis.normativas.forEach((normativa: any) => {
+            this.normativas.push(this.fb.group({
+              pregunta: normativa.pregunta,
+              respuesta: normativa.respuesta,
+              valida: normativa.valida,
+              calificacion: normativa.calificacion || '',
+              retroalimentacion: normativa.retroalimentacion || '',
+              showCalificar: [false]
+            }));
+          });
+  
+          analisis.facticas.forEach((factica: any) => {
+            this.facticas.push(this.fb.group({
+              pregunta: factica.pregunta,
+              respuesta: factica.respuesta,
+              valida: factica.valida,
+              calificacion: factica.calificacion || '',
+              retroalimentacion: factica.retroalimentacion || '',
+              showCalificar: [false]
+            }));
+          });
+  
+          this.dataLoaded = true;
+        } else {
+          this.addFactica();
+          this.addNormativa();
+          this.dataLoaded = true;
+        }
+      });
   }
+  
 
   submitForm() {
+    // Set the saved flag to true before submitting
+    this.analisisForm.patchValue({ saved: true });
+    if (this.isDocente) {
+      this.analisisForm.patchValue({ docenteSaved: true });
+    }
+    
     const analisisData = this.analisisForm.value;
     this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
       });
   }
+  
+  
+
+  getCalificacionValue(controlName: string): string {
+    if (!this.saved) {
+      return '';
+    }
+    const control = this.analisisForm.get(controlName);
+    return control && control.value ? control.value : 'No Calificado';
+  }
+  
 
   redirectToAnalisis2() {
-    this.router.navigate(['/analisis2'], {
-      queryParams: {
-        numero_proceso: this.numero_proceso,
-        asunto: this.asunto,
-        estudiante: this.estudiante,
-        docente: this.docente
-      }
-    });
+    if (this.docenteSaved) {
+      this.router.navigate(['/analisis2'], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente
+        }
+      });
+    }
   }
 
   checkDocenteSaved() {
-    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
-      .valueChanges()
-      .subscribe(data => {
-        if (data && data.length) {
-          this.docenteSaved = true;
+    this.firestore.collection('analisis').doc(this.numero_proceso).valueChanges()
+      .subscribe((data: any) => {
+        if (data && data.saved) {
+          this.docenteSaved = data.docenteSaved || false;
         }
       });
   }
 
-  isSiguienteButtonEnabled() {
-    return this.dataLoaded;
-  }
 
   toggleCalificar(index: number, type: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);

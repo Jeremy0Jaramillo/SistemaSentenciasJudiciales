@@ -1,5 +1,5 @@
-import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, Input, forwardRef, OnInit } from '@angular/core';
+import { AbstractControl, ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-caja-texto',
@@ -15,9 +15,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class CajaTextoComponent implements ControlValueAccessor {
   @Input() titulo: string = '';
+  @Input() disabled: boolean = false;
   value: string = '';
   onChange = (value: any) => {};
   onTouched = () => {};
+
+  formControl = new FormControl({ value: '', disabled: this.disabled });
+
+  ngOnInit() {
+    if (this.disabled) {
+      this.formControl.disable();
+    }
+  }
 
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -38,7 +47,12 @@ export class CajaTextoComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
-    // Opcional: maneja el estado deshabilitado aquí
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    isDisabled ? this.formControl.disable() : this.formControl.enable();
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return this.formControl.valid ? null : { invalidForm: { valid: false, message: "form is invalid" } };
   }
 }

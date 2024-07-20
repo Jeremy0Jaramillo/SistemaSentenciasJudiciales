@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
-import { Observable,of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 interface User {
   uid: string;
@@ -24,9 +24,11 @@ export class Evaluacion2Component implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
+  docenteSaved = false;
   selectedButton: string | null = null;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
+  calificarState: { [key: string]: boolean } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -37,6 +39,8 @@ export class Evaluacion2Component implements OnInit {
   ) {
     this.evaluacion2Form = this.fb.group({
       numero_proceso: [''],
+      saved: [false],
+      docenteSaved: [false],
       sentenceSubject: this.fb.array([]),
       multicomponent: this.fb.group({
         multiOption: this.fb.array([])
@@ -44,23 +48,21 @@ export class Evaluacion2Component implements OnInit {
       other: this.fb.group({
         otherSubject: ['']
       }),
-      validSummary: [''],
-      factsConception: [''],
-      finalDecision: [''],
-      properUse: [''],
-      properUse_calificacion: [''],
-      lawAnalysis: [''],
-      normativeEvaluation: [''],
-      normativeEvaluation_calificacion: [''],
-      precedentsAplication: [''],
-      expressionClarity: [''],
-      crimeClassification: [''],
-      properAnalysis: [''],
-      againstProperty: [''],
-      precedentsAplication2: [''],
-      expressionClarity2: [''],
+      sentenceSubject_calificacion: [''],
+      sentenceOptions1: this.fb.array([]),
+      sentenceOptions1_calificacion: [''],
+      sentenceOptions2: this.fb.array([]),
+      sentenceOptions2_calificacion: [''],
+      sentenceOptions3: this.fb.array([]),
+      sentenceOptions3_calificacion: [''],
+      sentenceOptions4: this.fb.array([]),
+      sentenceOptions4_calificacion: [''],
+      sentenceOptions5: this.fb.array([]),
+      sentenceOptions5_calificacion: [''],
       judgeAnalysis: [''],
-      reasonsNormative: ['']
+      reasonsNormative: [''],
+      reasonsNormative_calificacion: [''],
+      reasonsNormative_retroalimentacion: ['']
     });
   }
 
@@ -70,15 +72,47 @@ export class Evaluacion2Component implements OnInit {
       this.asunto = params.get('asunto') || '';
       this.estudiante = params.get('estudiante') || '';
       this.docente = params.get('docente') || '';  
-
+  
       this.evaluacion2Form.patchValue({
         numero_proceso: this.numero_proceso
       });
-
-      // Load existing data if available
+      
       this.loadUserData();
+      this.checkDocenteSaved();
+      setTimeout(() => {
+        this.checkLockStatus();
+      }, 1000);
     });
   }
+
+checkLockStatus() {
+    this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
+      if (data && data.locked) {
+        this.disableFormControls(this.evaluacion2Form); // Disable the form if it's locked
+      }
+    });
+  }
+
+  lockForm() {
+    this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
+      .then(() => {
+        this.disableFormControls(this.evaluacion2Form); // Disable the form controls
+      })
+      .catch(error => {
+        console.error("Error locking form: ", error);
+      });
+  }  
+  
+  disableFormControls(formGroup: FormGroup | FormArray) {
+  Object.keys(formGroup.controls).forEach(key => {
+    const control = formGroup.get(key);
+    if (control instanceof FormGroup || control instanceof FormArray) {
+      this.disableFormControls(control); // Recursively disable nested controls
+    } else {
+      control?.disable();
+    }
+  });
+}
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -97,16 +131,21 @@ export class Evaluacion2Component implements OnInit {
   }
 
   submitForm() {
-    const evaluacion2Data = this.evaluacion2Form.value;
-    this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(evaluacion2Data)
+    this.evaluacion2Form.patchValue({ saved: true });
+    
+    const analisisData = this.evaluacion2Form.value;
+    this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
+        if (this.isDocente) {
+          this.docenteSaved = true;
+        }
         this.saved = true;
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
       });
   }
-
   loadEvaluacion2Data() {
     this.firestore.collection('evaluacion2').doc(this.numero_proceso)
       .valueChanges()
@@ -114,13 +153,45 @@ export class Evaluacion2Component implements OnInit {
         if (data) {
           const evaluation2Data = data as any; // Cast to the correct type
           this.evaluacion2Form.patchValue(evaluation2Data);
-
+  
           // Manually update FormArray values
           this.setSentenceSubject(evaluation2Data.sentenceSubject);
           this.setMultiOption(evaluation2Data.multicomponent.multiOption);
+  
+          // Add more form arrays and nested groups as needed
+          this.setFormArrayValues('sentenceOptions1', evaluation2Data.sentenceOptions1);
+          this.setFormArrayValues('sentenceOptions2', evaluation2Data.sentenceOptions2);
+          this.setFormArrayValues('sentenceOptions3', evaluation2Data.sentenceOptions3);
+          this.setFormArrayValues('sentenceOptions4', evaluation2Data.sentenceOptions4);
+          this.setFormArrayValues('sentenceOptions5', evaluation2Data.sentenceOptions5);
+          this.setFormArrayValues('judgeAnalysis', evaluation2Data.judgeAnalysis);
+          this.setFormArrayValues('reasonsNormative', evaluation2Data.reasonsNormative);
+          this.checkLockStatus();
         }
       });
   }
+  
+
+  checkDocenteSaved() {
+    this.firestore.collection('evaluacion2').doc(this.numero_proceso).valueChanges()
+      .subscribe((data: any) => {
+        if (data && data.saved) {
+          this.docenteSaved = data.docenteSaved || false;
+        }
+      });
+  }
+
+  setFormArrayValues(controlName: string, values: any[]) {
+    const formArray = this.evaluacion2Form.get(controlName) as FormArray;
+    formArray.clear(); // Clear existing values
+  
+    if (values) {
+      values.forEach(value => {
+        formArray.push(this.fb.control(value));
+      });
+    }
+  }
+  
 
   setSentenceSubject(subjects: string[]) {
     const sentenceSubject = this.evaluacion2Form.get('sentenceSubject') as FormArray;
@@ -153,16 +224,10 @@ export class Evaluacion2Component implements OnInit {
     }
   }
 
-  toggleCalificar(controlPath: string): void {
-    const control = this.evaluacion2Form.get(controlPath);
-    if (control) {
-      const currentValue = control.value;
-      control.setValue({
-        ...currentValue,
-        showCalificar: !currentValue.showCalificar,
-      });
-    }
+  toggleCalificar(section: string) {
+    this.calificarState[section] = !this.calificarState[section];
   }
+
 
   setCalificacion(controlPath: string, calificacion: string): void {
     const control = this.evaluacion2Form.get(controlPath);
@@ -176,6 +241,18 @@ export class Evaluacion2Component implements OnInit {
     }
   }
 
+  resetOtherCheckboxes(controlName: string) {
+    Object.keys(this.evaluacion2Form.controls).forEach(key => {
+      if (key !== controlName) {
+        this.evaluacion2Form.get(key)?.setValue(null);
+      }
+    });
+  }
+
+  getCalificacionValue(controlName: string): string {
+    const control = this.evaluacion2Form.get(controlName);
+    return control && control.value ? control.value : 'No Calificado';
+  }
 
   redirectToEvaluacion() {
     this.router.navigate(['/evaluacion'], {
@@ -192,5 +269,3 @@ export class Evaluacion2Component implements OnInit {
     // Implement the redirection to the next component/page if needed
   }
 }
-
-

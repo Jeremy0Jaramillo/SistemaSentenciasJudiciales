@@ -24,16 +24,23 @@
       </app-caja-texto>
 
       <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(section.id)">Calificar</button>
-        <div *ngIf="calificarState[section.id]">
-          <div class="bttns-rate">
-            <button class="correct-button" (click)="setCalificacion(section.id + '_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" (click)="setCalificacion(section.id + '_calificacion', 'Incorrecto')">Incorrect</button>
-          </div>
-          <div>
-            <app-caja-texto [formControlName]="section.id + '_retroalimentacion'"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
-          </div>
+      <div *ngIf="calificarState[section.id]">
+        <div class="bttns-rate">
+          <button class="correct-button" type="button"
+            (click)="setCalificacion(section.id + '_calificacion', 'Correcto')">Correct</button>
+          <button class="incorrect-button" type="button"
+            (click)="setCalificacion(section.id + '_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
+        <div>
+          <app-caja-texto [formControlName]="section.id + '_retroalimentacion'"
+            [titulo]="'Retroalimentación'"></app-caja-texto>
+        </div>
+      </div>
+      <div *ngIf="!isDocente">
+        <div class="calificacion-display" *ngIf="!saved">
+          {{ getCalificacionValue(section.id + '_calificacion') }}
+        </div>
+      </div>
 
     </div>
 
