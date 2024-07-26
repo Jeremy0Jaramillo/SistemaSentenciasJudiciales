@@ -1,12 +1,11 @@
 <app-header></app-header>
 
-<div class="alert-content">
-  <div *ngIf="alerta" class="alerta" (click)="cerrarAlerta()">
-    <p>Número de proceso ya en uso, ingrese otro.</p>
-  </div>
-</div>
-
 <div class="inputs-sent">
+  <div class="alert-content">
+    <div *ngFor="let alerta of alertas; let i = index" class="alerta" (click)="cerrarAlerta(i)">
+      <p>{{ alerta }}</p>
+  </div>
+  </div>
   
   <div class="tittle-sent">
     <h4>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h4>
@@ -36,20 +35,27 @@
   </select><br><br>
 </div>
 
+
 <div class="dato-sent-file">
   <label for="archivo"> Carga de sentencia: </label><br>
   <label for="archivo" id="cargar-archivo-label">
-      <img src="../../../assets/images/Cargar.png" alt="">
+    <img src="../../../assets/images/Cargar.png" alt="">
   </label>
-  <input type="file" id="archivo" name="archivo" (change)="onFileSelected($event)" style="display: none;"><br><br>
-  <p>Cargar pdf</p>
+  <input type="file" id="archivo" name="archivo" (change)="onFileSelected($event)" accept="application/pdf" style="display: none;">
 </div>
-<div *ngIf="fileLoaded" class="file-confirmation">
-  <p>PDF cargado correctamente!</p>
-</div>
+<p class="msg-file-status" [ngClass]="{'sin-archivo': !fileLoaded, 'archivo-subido': fileLoaded}">
+  {{ archivoMensaje }}
+</p>
 
 <div class="save">
-  <button class="bttn-stnd" type="submit">Guardar</button>
+  <button class="bttn-stnd" type="submit" [disabled]="cargando">Guardar</button>
+  <button class="custom-button" type="button" *ngIf="cargando">
+    <div class="spinner"></div>
+    <span class="button-text">Cargando sentencia...</span>
+  </button>
+</div>
+<div *ngIf="mostrarMensajeExito" class="mensaje-exito">
+  {{ mensajeExito }}
 </div>
 
 

@@ -1,6 +1,8 @@
 <div class="caja">
-    <h5 class="pregunta"> {{ titulo }} </h5>
-    <input class="informacion" type="text" [value]="value" [disabled]="disabled" (input)="onInput($event)"/><br><br>
+    <h5 class="pregunta">{{ titulo }}</h5>
+    <textarea class="informacion" 
+              [value]="value" 
+              [disabled]="disabled" 
+              (input)="onInput($event)">
+    </textarea>
 </div>
-
-

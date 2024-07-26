@@ -54,6 +54,14 @@ export class Analisis2Component implements OnInit {
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
   calificarState: { [key: string]: boolean } = {};
+  selectedButtons: { [key: string]: string } = {};
+  cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
+  mensajeExito: string = '';
+  mostrarMensaje: boolean = false;
+  mensajeError: string = '';
+  mostrarRetroalimentacion: {[key: string]: boolean} = {};
+
+
 
 
   constructor(
@@ -135,6 +143,14 @@ export class Analisis2Component implements OnInit {
     });
   }
   
+  toggleRetroalimentacion(sectionId: string) {
+    this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];
+  }
+
+  getRetroalimentacionValue(controlName: string): string {
+    return this.analisis2Form.get(controlName)?.value || '';
+  }
+
   loadUserData() {
     this.afAuth.user.subscribe(user => {
       if (user) {
@@ -156,6 +172,7 @@ export class Analisis2Component implements OnInit {
           if (analisis2Array && analisis2Array.length > 0) {
             const data: Analisis2 = analisis2Array[0];
             this.analisis2Form.patchValue(data);
+            this.updateSelectedButtons(data);
             this.dataLoaded = true;
           } else {
             // Handle case where no data is found
@@ -165,7 +182,22 @@ export class Analisis2Component implements OnInit {
       ).subscribe();
   }
 
+  updateSelectedButtons(data: Analisis2) {
+    const sections = [
+      'narracion_hechos', 'problema_juridico', 'cuestiones_subcuestiones', 
+      'respuesta_cuestiones', 'ratio_obiter', 'solucion_problema', 'decision'
+    ];
+    
+    sections.forEach(section => {
+      const calificacion = data[`${section}_calificacion` as keyof Analisis2];
+      if (calificacion === 'Correcto' || calificacion === 'Incorrecto') {
+        this.selectedButtons[section] = calificacion;
+      }
+    });
+  }
+
   submitForm() {
+    this.cargando = true;
     this.analisis2Form.patchValue({ saved: true });
     if (this.isDocente) {
       this.analisis2Form.patchValue({ docenteSaved: true });
@@ -181,14 +213,30 @@ export class Analisis2Component implements OnInit {
     this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
+        this.cargando = false; // Desactivar el estado de carga
         window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
+        this.cargando = false; // Desactivar el estado de carga
+
       });
   }
-  
 
+  mostrarMensajeExito(mensaje: string) {
+    // Aquí puedes implementar la lógica para mostrar el mensaje
+    // Por ejemplo, podrías usar un servicio de notificaciones o actualizar una variable en el componente
+    this.mensajeExito = mensaje;
+    this.mostrarMensaje = true;
+  }
+  
+  // Método para mostrar mensaje de error
+  mostrarMensajeError(mensaje: string) {
+    // Similar al método de éxito, pero para errores
+    this.mensajeError = mensaje;
+    this.mostrarMensaje = true;
+  }
+  
   redirectToAnalisis() {
     this.router.navigate(['/analisis'], {
       queryParams: {
@@ -226,8 +274,9 @@ export class Analisis2Component implements OnInit {
     this.calificarState[section] = !this.calificarState[section];
   }
 
-  setCalificacion(section: string, calificacion: string) {
-    this.analisis2Form.patchValue({ [`${section}_calificacion`]: calificacion });
+  setCalificacion(sectionId: string, calificacion: string) {
+    this.analisis2Form.get(sectionId + '_calificacion')?.setValue(calificacion);
+    this.selectedButtons[sectionId] = calificacion;
   }
 
   getCalificacionValue(controlName: string): string {

@@ -11,16 +11,17 @@
 }
 
 .sentencias {
-    display: flex;
-    margin: 0px 40px 0px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas automáticas con mínimo de 300px */
+    gap: 20px; /* Espacio entre cada sentencia */
+    padding: 20px; /* Ajuste de padding según necesidad */
+    justify-items: center; /* Centrar elementos horizontalmente */
 }
 
 .sent {
     width: 310px;
     height: 330px;
     flex-shrink: 0;
-    background-image: url('../../../assets/images/img-sentencias.png');
     background-size: 230px;
     background-position: center;
     background-repeat: no-repeat;
@@ -83,4 +84,23 @@
     border-radius: 10px;
     border-color: darkgray;
     padding-left:10px;
+}
+
+.more {
+    display: flex;
+    flex-direction: column;
+}
+
+.bttn-download {
+    background: none;
+    border: none;
+    border-bottom: solid 1px #172D5A;
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    color: #172D5A;
+    margin-top: 10px;
+    text-decoration: none;
 }

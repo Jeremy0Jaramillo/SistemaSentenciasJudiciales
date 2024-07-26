@@ -139,3 +139,154 @@ h2 {
 .label-for-text{
     font-family: Poppins;
   }
+
+  .correct-button,
+.incorrect-button {
+  background-color: #f1f1f1;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Estilos para los botones seleccionados */
+.correct-button.selected {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #45a049;
+}
+
+.incorrect-button.selected {
+  background-color: #f44336;
+  color: white;
+  border-color: #da190b;
+}
+
+/* Estilos para el hover de los botones */
+.correct-button:hover:not(.selected) {
+  background-color: #e7f3e8;
+}
+
+.incorrect-button:hover:not(.selected) {
+  background-color: #fde9e7;
+}
+
+/* Asegurarse de que cada conjunto de botones sea independiente */
+.bttns-rate {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+/* Ajustar el espaciado y alineación de los elementos de calificación */
+.rate {
+  margin-bottom: 10px;
+}
+
+.label-for-text {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.calificacion-display {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.calificacion-correcta {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.calificacion-incorrecta {
+  background-color: #f44336; /* Rojo */
+  color: white;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.calificacion-no-calificado{
+  background-color: none; /* Rojo */
+  color: rgb(0, 0, 0);
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal; 
+}
+
+.calificaciones{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    background-color: #004274;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .custom-button:hover {
+    background-color: #004274;
+  }
+  
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 5px solid #ffffff;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+  }
+  
+  .button-text {
+    font-weight: bold;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .bttn-toggle{
+    background: none; 
+    color: #004274;
+    font-family: Poppins;
+    font-size: 15px;
+    font-style: normal;
+    width: auto;
+    display: flex;
+    border: solid 2px #004274;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px;
+    margin-top: 40px;
+    padding: 5px 10px;
+  }
+
+  .retroalimentacion-contenido{
+    margin-top: 20px;
+    background: #EDEFF2;
+    border-radius: 5px;
+    padding: 10px 15px;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  }

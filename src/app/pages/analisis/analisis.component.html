@@ -12,7 +12,20 @@
   <form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
     <div formArrayName="normativas">
       <div *ngFor="let normativa of normativas.controls; let i=index" [formGroupName]="i">
+
         <div class="pa">
+          <div *ngIf="!isDocente && analisisForm.get('saved')?.value" class="calificaciones">
+            <div class="calificacion-display" [ngClass]="{
+              'calificacion-correcta': getCalificacionValue('normativas.' + i + '.calificacion') === 'Correcto',
+              'calificacion-incorrecta': getCalificacionValue('normativas.' + i + '.calificacion') === 'Incorrecto',
+              'calificacion-no-calificado': getCalificacionValue('normativas.' + i + '.calificacion') === 'No Calificado'
+            }">
+              {{ getCalificacionValue('normativas.' + i + '.calificacion') }}
+            </div>
+          </div>
+          <div *ngIf="mostrarMensaje" class="mensaje-exito">
+            {{ mensajeExito }}
+          </div>
           <div class="pregunta-container">
             <h5 class="pregunta">Pregunta del problema - Cuestión normativa</h5>
             <app-caja-texto formControlName="pregunta"></app-caja-texto>
@@ -29,35 +42,57 @@
               <input type="radio" formControlName="valida" value="No" class="valida"> No
             </div>
           </div>
-        </div>
-
-        <button class="bttn-stnd-delete" type="button" (click)="removeNormativa(i)">Eliminar Cuestión Normativa</button>
-        <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar(i, 'normativa')">Calificar</button>
-        <div *ngIf="normativa.get('showCalificar')?.value">
-
-          <div class="bttns-rate">
-            <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}"
-              (click)="setCalificacion(i, 'normativa', 'Correcto')">Correcto</button>
-            <button class="incorrect-button" type="button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}"
-              (click)="setCalificacion(i, 'normativa', 'Incorrecto')">Incorrecto</button>
+          <div class="retro">
+            <div *ngIf="!isDocente && normativa.get('retroalimentacion')?.value">
+              <button type="button" (click)="toggleRetroalimentacion($event, i)" class="bttn-toggle">
+                {{ mostrarRetroalimentacion[i] ? 'Ocultar' : 'Ver' }} retroalimentación
+              </button>
+              <div *ngIf="mostrarRetroalimentacion[i]" class="retroalimentacion-contenido">
+                {{ normativa.get('retroalimentacion')?.value }}
+              </div>
+            </div>
           </div>
-          <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
-          <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
-        </div>
+          <div class="button-container">
+            <button class="bttn-stnd-delete" type="button" (click)="removeNormativa(i)">Eliminar Cuestión
+              Normativa</button>
+            <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
+          </div>
 
-        <!-- Display the calificacion value conditionally -->
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
-            {{ getCalificacionValue('normativas.' + i + '.calificacion') }}
+          <div class="">
+            <button class="rate" *ngIf="isDocente" type="button"
+              (click)="toggleCalificar(i, 'normativa')">Calificar</button>
+            <div *ngIf="normativa.get('showCalificar')?.value">
+
+              <div class="bttns-rate">
+                <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('normativa', i)"
+                  type="button" (click)="setCalificacion(i, 'normativa', 'Correcto')">
+                  Correcto
+                </button>
+                <button class="incorrect-button"
+                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('normativa', i)" type="button"
+                  (click)="setCalificacion(i, 'normativa', 'Incorrecto')">
+                  Incorrecto
+                </button>
+              </div>
+              <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
+              <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <button class="bttn-stnd" type="button" (click)="addNormativa()">Agregar Cuestión Normativa</button>
 
     <div formArrayName="facticas">
       <div *ngFor="let factica of facticas.controls; let i=index" [formGroupName]="i">
+        <div *ngIf="!isDocente && analisisForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('facticas.' + i + '.calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('facticas.' + i + '.calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('facticas.' + i + '.calificacion') === 'No Calificado'
+          }">
+            {{ getCalificacionValue('facticas.' + i + '.calificacion') }}
+          </div>
+        </div>
         <div class="pa">
           <div class="pregunta-container">
             <h5 class="pregunta">Pregunta del problema - Cuestión fáctica</h5>
@@ -76,33 +111,53 @@
               <input type="radio" formControlName="valida" value="No" class="valida"> No
             </div>
           </div>
-        </div>
 
-        <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(i, 'factica')">Calificar</button>
-        <div *ngIf="factica.get('showCalificar')?.value">
-          <div class="bttns-rate">
-            <button class="correct-button" type="button" [ngClass]="{'selected': selectedButton === 'Correcto'}" (click)="setCalificacion(i, 'factica', 'Correcto')">Correcto</button>
-            <button class="incorrect-button" type="button" [ngClass]="{'selected': selectedButton === 'Incorrecto'}" type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">Incorrecto</button>
+          <div class="retro">
+            <div *ngIf="!isDocente && factica.get('retroalimentacion')?.value">
+              <button type="button" (click)="toggleRetroalimentacion($event, i)" class="bttn-toggle">
+                {{ mostrarRetroalimentacion[i] ? 'Ocultar' : 'Ver' }} retroalimentación
+              </button>
+              <div *ngIf="mostrarRetroalimentacion[i]" class="retroalimentacion-contenido">
+                {{ factica.get('retroalimentacion')?.value }}
+              </div>
+            </div>
           </div>
-          <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
-          <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
-        </div>
 
-        <!-- Display the calificacion value conditionally -->
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
-            {{ getCalificacionValue('facticas.' + i + '.calificacion') }}
+          <div class="button-container">
+            <button class="bttn-stnd-delete" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
+            <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
+          </div>
+
+          <div>
+            <button class="rate" *ngIf="isDocente" type="button"
+              (click)="toggleCalificar(i, 'factica')">Calificar</button>
+            <div *ngIf="factica.get('showCalificar')?.value">
+              <div class="bttns-rate">
+                <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('fatica', i)"
+                  type="button" (click)="setCalificacion(i, 'fatica', 'Correcto')">
+                  Correcto
+                </button>
+                <button class="incorrect-button"
+                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('fatica', i)" type="button"
+                  (click)="setCalificacion(i, 'fatica', 'Incorrecto')">
+                  Incorrecto
+                </button>
+              </div>
+              <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
+              <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
+            </div>
           </div>
         </div>
-        <button class="bttn-stnd-delete" type="button" (click)="removeFactica(i)">Eliminar Cuestión Fáctica</button>
       </div>
     </div>
-    <button class="bttn-stnd" type="button" (click)="addFactica()">Agregar Cuestión Fáctica</button>
 
     <div class="bttn">
       <button class="bttn-stnd" type="submit">Guardar</button>
-      <button class="bttn-sgt" (click)="redirectToAnalisis2()"
-      [disabled]="!docenteSaved">Siguiente</button>
+      <button class="custom-button" type="button" *ngIf="cargando">
+        <div class="spinner"></div>
+        <span class="button-text">Cargando...</span>
+      </button>
+      <button class="bttn-sgt" (click)="redirectToAnalisis2()" [disabled]="!docenteSaved">Siguiente</button>
     </div>
   </form>
 </div>

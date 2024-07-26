@@ -28,7 +28,12 @@ export class AnalisisComponent implements OnInit {
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null); // Allow null and undefined
-  selectedButton: string | null = null;
+  selectedButtons: { [key: string]: string } = {};
+  cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
+  mensajeExito: string = '';
+  mostrarMensaje: boolean = false;
+  mensajeError: string = '';
+  mostrarRetroalimentacion: boolean[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +49,13 @@ export class AnalisisComponent implements OnInit {
       saved: [false],
       docenteSaved: [false]
     });
+    this.mostrarRetroalimentacion = [];
+  }
+
+  toggleRetroalimentacion(event: Event, index: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mostrarRetroalimentacion[index] = !this.mostrarRetroalimentacion[index];
   }
 
   ngOnInit() {
@@ -52,10 +64,10 @@ export class AnalisisComponent implements OnInit {
       this.asunto = params.get('asunto') || '';
       this.estudiante = params.get('estudiante') || '';
       this.docente = params.get('docente') || '';
-
       this.analisisForm.patchValue({
         numero_proceso: this.numero_proceso
       });
+      this.inicializarMostrarRetroalimentacion();
 
       this.loadUserData();
       this.checkDocenteSaved();
@@ -63,6 +75,11 @@ export class AnalisisComponent implements OnInit {
         this.checkLockStatus();
       }, 1000);
     });
+  }
+
+  inicializarMostrarRetroalimentacion() {
+    const normativasArray = this.analisisForm.get('normativas') as FormArray;
+    this.mostrarRetroalimentacion = new Array(normativasArray.length).fill(false);
   }
 
   checkLockStatus() {
@@ -125,10 +142,12 @@ export class AnalisisComponent implements OnInit {
       retroalimentacion: [''],
       showCalificar: [false]
     }));
+    this.mostrarRetroalimentacion.push(false);
   }
 
   removeNormativa(index: number) {
     this.normativas.removeAt(index);
+    this.mostrarRetroalimentacion.splice(index, 1);
   }
 
   addFactica() {
@@ -152,9 +171,16 @@ export class AnalisisComponent implements OnInit {
         if (analisis) {
           this.analisisForm.patchValue({
             numero_proceso: analisis.numero_proceso,
-            saved: analisis.saved || false
+            saved: analisis.saved || false,
+            docenteSaved: analisis.docenteSaved || false
+
           });
-  
+          while (this.normativas.length !== 0) {
+            this.normativas.removeAt(0);
+          }
+          while (this.facticas.length !== 0) {
+            this.facticas.removeAt(0);
+          }
           analisis.normativas.forEach((normativa: any) => {
             this.normativas.push(this.fb.group({
               pregunta: normativa.pregunta,
@@ -179,8 +205,12 @@ export class AnalisisComponent implements OnInit {
   
           this.dataLoaded = true;
         } else {
-          this.addFactica();
-          this.addNormativa();
+          if (this.normativas.length === 0) {
+            this.addNormativa();
+          }
+          if (this.facticas.length === 0) {
+            this.addFactica();
+          }
           this.dataLoaded = true;
         }
       });
@@ -188,6 +218,8 @@ export class AnalisisComponent implements OnInit {
   
 
   submitForm() {
+    this.cargando = true; // Activar el estado de carga
+
     // Set the saved flag to true before submitting
     this.analisisForm.patchValue({ saved: true });
     if (this.isDocente) {
@@ -198,19 +230,33 @@ export class AnalisisComponent implements OnInit {
     this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
+        this.cargando = false; // Desactivar el estado de carga
+        this.mostrarMensajeExito('Guardado con éxito');
         window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
+        this.cargando = false; // Desactivar el estado de carga en caso de error
+        this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
       });
   }
   
-  
+  // Método para mostrar mensaje de éxito
+mostrarMensajeExito(mensaje: string) {
+  // Aquí puedes implementar la lógica para mostrar el mensaje
+  // Por ejemplo, podrías usar un servicio de notificaciones o actualizar una variable en el componente
+  this.mensajeExito = mensaje;
+  this.mostrarMensaje = true;
+}
+
+// Método para mostrar mensaje de error
+mostrarMensajeError(mensaje: string) {
+  // Similar al método de éxito, pero para errores
+  this.mensajeError = mensaje;
+  this.mostrarMensaje = true;
+}
 
   getCalificacionValue(controlName: string): string {
-    if (!this.saved) {
-      return '';
-    }
     const control = this.analisisForm.get(controlName);
     return control && control.value ? control.value : 'No Calificado';
   }
@@ -241,12 +287,37 @@ export class AnalisisComponent implements OnInit {
 
   toggleCalificar(index: number, type: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
-    control.patchValue({ showCalificar: !control.value.showCalificar });
+    const newShowCalificar = !control.value.showCalificar;
+    control.patchValue({ showCalificar: newShowCalificar });
+    if (!newShowCalificar) {
+      delete this.selectedButtons[`${type}_${index}`];
+    }
   }
 
   setCalificacion(index: number, type: string, calificacion: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     control.patchValue({ calificacion });
-    this.selectedButton = calificacion;
+  
+    // Actualizar en la base de datos
+    const updatedData = { [`${type}s`]: this.analisisForm.get(`${type}s`)?.value };
+    this.firestore.collection('analisis').doc(this.numero_proceso).update(updatedData)
+      .then(() => {
+        console.log('Calificación actualizada en la base de datos');
+      })
+      .catch(error => {
+        console.error('Error al actualizar la calificación:', error);
+      });
+  
+    this.selectedButtons[`${type}_${index}`] = calificacion;
+  }
+
+  isCalificacionCorrecta(type: string, index: number): boolean {
+    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
+    return control.get('calificacion')?.value === 'Correcto';
+  }
+  
+  isCalificacionIncorrecta(type: string, index: number): boolean {
+    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
+    return control.get('calificacion')?.value === 'Incorrecto';
   }
 }

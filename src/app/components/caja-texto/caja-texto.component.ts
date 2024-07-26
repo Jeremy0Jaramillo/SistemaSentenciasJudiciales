@@ -16,9 +16,9 @@ import { AbstractControl, ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, 
 export class CajaTextoComponent implements ControlValueAccessor {
   @Input() titulo: string = '';
   @Input() disabled: boolean = false;
-  value: string = '';
-  onChange = (value: any) => {};
-  onTouched = () => {};
+  @Input() value: string = '';  // Añade esta línea
+  onChange = (value: any) => { };
+  onTouched = () => { };
 
   formControl = new FormControl({ value: '', disabled: this.disabled });
 
@@ -29,6 +29,9 @@ export class CajaTextoComponent implements ControlValueAccessor {
   }
 
   onInput(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
     const input = event.target as HTMLInputElement;
     this.value = input.value;
     this.onChange(this.value);

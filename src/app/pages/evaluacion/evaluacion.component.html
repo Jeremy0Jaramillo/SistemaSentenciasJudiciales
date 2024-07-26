@@ -13,28 +13,48 @@
       <h3 class="titulo" for="motivationType">Tipo de Motivación</h3>
       <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
         los siguientes tipos</h5>
-      <select class="motivaciones" id="motivationType" formControlName="motivationType">
-        <option class="op" value="nonexistinence">Inexistencia</option>
-        <option class="op" value="insufficiency">Insuficiencia</option>
-        <option class="op" value="appearance">Apariencia</option>
-      </select>
+
+      <div *ngIf="!isDocente">
+        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType"
+          [disabled]="saved">
+          <option class="op" value="nonexistinence">Inexistencia</option>
+          <option class="op" value="insufficiency">Insuficiencia</option>
+          <option class="op" value="appearance">Apariencia</option>
+        </select>
+      </div>
+
+      <div *ngIf="isDocente">
+        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
+          <option class="op" value="nonexistinence">Inexistencia</option>
+          <option class="op" value="insufficiency">Insuficiencia</option>
+          <option class="op" value="appearance">Apariencia</option>
+        </select>
+      </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('motivationType')">Calificar</button>
       <div *ngIf="calificarState['motivationType']">
         <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">Correct</button>
-          <button class="incorrect-button" type="button"
-            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">Incorrect</button>
+          <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('motivationType')"
+            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">
+            Correcto
+          </button>
+          <button class="incorrect-button" [class.calificacion-incorrecta]="isCalificacionIncorrecta('motivationType')"
+            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">
+            Incorrecto
+          </button>
         </div>
         <div>
           <app-caja-texto formControlName="motivationType_retroalimentacion"
             [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
-          {{ getCalificacionValue('sentenceSubject_calificacion') }}
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('motivationType_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('motivationType_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('motivationType_calificacion') === 'No Calificado'
+        }">
+          {{ getCalificacionValue('motivationType_calificacion') }}
         </div>
       </div>
     </div>
@@ -48,7 +68,8 @@
         <input type="radio" name="lackFoundationNormative" value="No" formControlName="lackFoundationNormative"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsNormative" [disabled]="evaluacionForm.disabled" formControlName="reasonsNormative" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsNormative" [disabled]="evaluacionForm.disabled" formControlName="reasonsNormative"
+          [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
@@ -56,9 +77,9 @@
       <div *ngIf="calificarState['nonexistinence.reasonsNormative']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correct</button>
+            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
-            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Incorrecto')">Incorrect</button>
+            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <div>
@@ -67,11 +88,17 @@
           </div>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
-          {{ getCalificacionValue('normative_calificacion') }}
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('nonexistinence.normative_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('nonexistinence.normative_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('nonexistinence.normative_calificacion') === 'No Calificado'
+        }">
+          {{ getCalificacionValue('nonexistinence.normative_calificacion') }}
         </div>
       </div>
+
+
 
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
@@ -80,7 +107,8 @@
         <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsFactual" [disabled]="evaluacionForm.disabled" formControlName="reasonsFactual" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsFactual" [disabled]="evaluacionForm.disabled" formControlName="reasonsFactual"
+          [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
@@ -96,9 +124,13 @@
           <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
-          {{ getCalificacionValue('factual_calificacion') }}
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" *ngIf="saved" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('nonexistinence.factual_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('nonexistinence.factual_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('nonexistinence.factual_calificacion') === 'No Calificado'
+        }">
+          {{ getCalificacionValue('nonexistinence.factual_calificacion') }}
         </div>
       </div>
 
@@ -125,9 +157,13 @@
           </app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
-          {{ getCalificacionValue('motivation_calificacion') }}
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" *ngIf="saved" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('nonexistinence.motivation_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('nonexistinence.motivation_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('nonexistinence.motivation_calificacion') === 'No Calificado'
+        }">
+          {{ getCalificacionValue('nonexistinence.motivation_calificacion') }}
         </div>
       </div>
     </div>
@@ -148,17 +184,27 @@
         (click)="toggleCalificar('insufficiency.reasonsNormative')">Calificar</button>
       <div *ngIf="calificarState['insufficiency.reasonsNormative']">
         <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="selectButton('insufficiency', 'normative_calificacion', 'Correcto')">Correct</button>
-          <button class="incorrect-button" type="button"
-            (click)="selectButton('insufficiency', 'normative_calificacion', 'Incorrecto')">Incorrect</button>
+          <button class="correct-button"
+            [class.calificacion-correcta]="isCalificacionCorrecta('insufficiency.reasonsNormative')" type="button"
+            (click)="selectButton('insufficiency.reasonsNormative', 'normative_calificacion', 'Correcto')">
+            Correcto
+          </button>
+          <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isCalificacionIncorrecta('insufficiency.reasonsNormative')" type="button"
+            (click)="selectButton('insufficiency.reasonsNormative', 'normative_calificacion', 'Incorrecto')">
+            Incorrecto
+          </button>
         </div>
         <div>
           <app-caja-texto formControlName="normative_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('insufficiency.normative_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('insufficiency.normative_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('insufficiency.normative_calificacion') === 'No Calificado'
+        }">
           {{ getCalificacionValue('insufficiency.normative_calificacion') }}
         </div>
       </div>
@@ -170,7 +216,8 @@
         <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [disabled]="evaluacionForm.disabled"
+          [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
@@ -183,15 +230,22 @@
             (click)="selectButton('insufficiency', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
-          <label>Retroalimentación:</label>
-          <textarea formControlName="factual_retroalimentacion"></textarea> <!-- ##################-->
+          <div>
+            <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
+          </div>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
+
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('insufficiency.factual_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('insufficiency.factual_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('insufficiency.factual_calificacion') === 'No Calificado'
+          }">
           {{ getCalificacionValue('insufficiency.factual_calificacion') }}
         </div>
       </div>
+
 
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
@@ -199,7 +253,8 @@
         <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
       </div>
       <div>
-        <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+        <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
+          [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
         </app-caja-texto>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
@@ -212,12 +267,17 @@
             (click)="selectButton('insufficiency', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
-          <label>Retroalimentación:</label>
-          <textarea formControlName="motivation_retroalimentacion"></textarea> <!-- ##################-->
+          <app-caja-texto formControlName="motivation_retroalimentacion"
+            [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
+
+      <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('insufficiency.motivation_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('insufficiency.motivation_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('insufficiency.motivation_calificacion') === 'No Calificado'
+        }">
           {{ getCalificacionValue('insufficiency.motivation_calificacion') }}
         </div>
       </div>
@@ -228,10 +288,6 @@
       <h5 class="titulo">En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de
         los vicios
         motivacionales de la apariencia que constan a continuación.</h5>
-      <div>
-        <app-caja-texto name="appearanceReason" formControlName="appearanceReason" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
-        </app-caja-texto>
-      </div>
 
       <div class="appearance-options">
         <h3 class="titulo">Vicios motivacionales</h3>
@@ -250,18 +306,26 @@
           (click)="toggleCalificar('appearance.motivationalHabit')">Calificar</button>
         <div *ngIf="calificarState['appearance.motivationalHabit']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">Incorrect</button>
-          </div>
-          <div>
-            <app-caja-texto formControlName="motivationalHabit_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+            <button class="correct-button"
+              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.motivationalHabit_calificacion')"
+              type="button"
+              (click)="selectButton('appearance.motivationalHabit_calificacion', 'appearance.motivationalHabit_calificacion', 'Correcto')">
+              Correcto
+            </button>
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.motivationalHabit_calificacion')"
+              type="button"
+              (click)="selectButton('appearance.motivationalHabit_calificacion', 'appearance.motivationalHabit_calificacion', 'Incorrecto')">
+              Incorrecto
+            </button>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.motivationalHabit_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.motivationalHabit_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.motivationalHabit_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.motivationalHabit_calificacion') }}
           </div>
         </div>
@@ -277,7 +341,8 @@
           <input type="radio" name="existsLogicalNormative" value="No" formControlName="existsLogicalNormative"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -294,8 +359,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incoherence.logicaNormative_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incoherence.logicaNormative_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incoherence.logicaNormative_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incoherence.logicaNormative_calificacion') }}
           </div>
         </div>
@@ -308,8 +377,8 @@
           No
         </div>
         <div>
-          <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -326,8 +395,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incoherence.decisionalNormative_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incoherence.decisionalNormative_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incoherence.decisionalNormative_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incoherence.decisionalNormative_calificacion') }}
           </div>
         </div>
@@ -339,7 +412,8 @@
           <input type="radio" name="existsLogicalFactual" value="No" formControlName="existsLogicalFactual"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsLogicalFactual" formControlName="reasonsLogicalFactual" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsLogicalFactual" formControlName="reasonsLogicalFactual"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -356,8 +430,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incoherence.logicalFactual_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incoherence.logicalFactual_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incoherence.logicalFactual_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incoherence.logicalFactual_calificacion') }}
           </div>
         </div>
@@ -368,8 +446,8 @@
           <input type="radio" name="existsDecisionalFactual" value="No" formControlName="existsDecisionalFactual"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -386,8 +464,13 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incoherence.decisionalFactual_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incoherence.decisionalFactual_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incoherence.decisionalFactual_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incoherence.decisionalFactual_calificacion') }}
           </div>
         </div>
@@ -398,7 +481,8 @@
           <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"  [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -415,8 +499,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incoherence.motivation_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incoherence.motivation_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incoherence.motivation_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incoherence.motivation_calificacion') }}
           </div>
         </div>
@@ -424,7 +512,7 @@
 
       <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'inatinence'"
         formGroupName="inatinence">
-        <h3 class="titulo">Incoherencia</h3>
+        <h3 class="titulo">Inanitencia</h3>
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido?</h4>
@@ -434,26 +522,36 @@
           No
         </div>
         <div>
-          <app-caja-texto name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
-              (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
-              (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Incorrecto')">Incorrect</button>
+            <button class="correct-button"
+              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.inatinence')" type="button"
+              (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Correcto')">
+              Correcto
+            </button>
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.inatinence')" type="button"
+              (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Incorrecto')">
+              Incorrecto
+            </button>
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceJuridical_retroalimentacion"
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.inatinence.inatinenceJuridical_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.inatinence.inatinenceJuridical_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.inatinence.inatinenceJuridical_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.inatinence.inatinenceJuridical_calificacion') }}
           </div>
         </div>
@@ -466,26 +564,36 @@
           <input type="radio" name="existsInatinenceFactual" value="No" formControlName="existsInatinenceFactual"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
-              (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
-              (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')">Incorrect</button>
+            <button class="correct-button"
+              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.inatinence.factual')" type="button"
+              (click)="selectButton('appearance.inatinence.factual', 'appearance.inatinence.inatinenceFactual_calificacion', 'Correcto')">
+              Correcto
+            </button>
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.inatinence.factual')" type="button"
+              (click)="selectButton('appearance.inatinence.factual', 'appearance.inatinence.inatinenceFactual_calificacion', 'Incorrecto')">
+              Incorrecto
+            </button>
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceFactual_retroalimentacion"
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.inatinence.inatinenceFactual_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.inatinence.inatinenceFactual_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.inatinence.inatinenceFactual_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.inatinence.inatinenceFactual_calificacion') }}
           </div>
         </div>
@@ -493,7 +601,7 @@
 
       <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'incomprehensibility'"
         formGroupName="incomprehensibility">
-        <h3 class="titulo">Incoherencia</h3>
+        <h3 class="titulo">Incomprensibilidad</h3>
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
@@ -524,8 +632,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_calificacion') }}
           </div>
         </div>
@@ -543,8 +655,8 @@
           No
         </div>
         <div>
-          <app-caja-texto name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -561,8 +673,13 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityFactual_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityFactual_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incomprehensibility.incomprehensibilityFactual_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incomprehensibility.incomprehensibilityFactual_calificacion') }}
           </div>
         </div>
@@ -570,7 +687,7 @@
 
       <div *ngIf="evaluacionForm.get('appearance')?.get('motivationalHabit')?.value === 'incongruity'"
         formGroupName="incongruity">
-        <h3 class="titulo">Incoherencia</h3>
+        <h3 class="titulo">Incongruencia</h3>
         <h3 class="titulo ">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Existe incongruencia normativa frente a las partes?</h4>
@@ -598,8 +715,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('appearance.incongruity.normativeParticipants_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('appearance.incongruity.normativeParticipants_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('appearance.incongruity.normativeParticipants_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('appearance.incongruity.normativeParticipants_calificacion') }}
           </div>
         </div>
@@ -612,8 +733,8 @@
             formControlName="existsIncongruityNormativeLaw"> No
         </div>
         <div>
-          <app-caja-texto name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -630,8 +751,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('normativeLaw_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('normativeLaw_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('normativeLaw_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('normativeLaw_calificacion') }}
           </div>
         </div>
@@ -665,8 +790,12 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('factualParticipants_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('factualParticipants_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('factualParticipants_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('factualParticipants_calificacion') }}
           </div>
         </div>
@@ -674,13 +803,15 @@
         <div>
           <h4 class="titulo-eva ">¿Existe incongruencia fáctica frente al derecho?</h4>
           <input type="radio" name="existsIncongruityFactualLaw" value="Si"
-            formControlName="existsIncongruityFactualLaw"> Si
+            formControlName="existsIncongruityFactualLaw">
+          Si
           <input type="radio" name="existsIncongruityFactualLaw" value="No"
-            formControlName="existsIncongruityFactualLaw"> No
+            formControlName="existsIncongruityFactualLaw">
+          No
         </div>
         <div>
-          <app-caja-texto name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw" [disabled]="evaluacionForm.disabled"
-            [titulo]="'¿Por qué?'">
+          <app-caja-texto name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw"
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
@@ -697,18 +828,26 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
-        <div *ngIf="!isDocente">
-          <div class="calificacion-display" *ngIf="!saved">
+        <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
+          <div class="calificacion-display" [ngClass]="{
+            'calificacion-correcta': getCalificacionValue('factualLaw_calificacion') === 'Correcto',
+            'calificacion-incorrecta': getCalificacionValue('factualLaw_calificacion') === 'Incorrecto',
+            'calificacion-no-calificado': getCalificacionValue('factualLaw_calificacion') === 'No Calificado'
+          }">
             {{ getCalificacionValue('factualLaw_calificacion') }}
           </div>
         </div>
       </div>
     </div>
-    <button class="bttn-stnd" type="submit">Guardar</button>
+    <button class="bttn-stnd-g" type="submit">Guardar</button>
   </form>
 </div>
 
 <div class="bttn">
   <button class="bttn-stnd" (click)="redirectToAnalisis2()">Análisis</button>
+  <button class="custom-button" type="button" *ngIf="cargando">
+    <div class="spinner"></div>
+    <span class="button-text">Cargando...</span>
+  </button>
   <button class="bttn-stnd" [disabled]="!docenteSaved" (click)="redirectToEvaluacion2()">Siguiente</button>
 </div>

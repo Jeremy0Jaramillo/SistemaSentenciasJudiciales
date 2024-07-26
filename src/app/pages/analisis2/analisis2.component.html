@@ -18,7 +18,7 @@
       {id: 'ratio_obiter', title: '5. Ratio decidendi y obiter dictum'},
       {id: 'solucion_problema', title: '6. Solución al problema'},
       {id: 'decision', title: '7. Decisión'}
-    ]">
+    ]; let i = index">
 
       <app-caja-texto [id]="section.id" [formControlName]="section.id" [titulo]="section.title">
       </app-caja-texto>
@@ -27,18 +27,36 @@
       <div *ngIf="calificarState[section.id]">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-            (click)="setCalificacion(section.id + '_calificacion', 'Correcto')">Correct</button>
+            [ngClass]="{'selected': selectedButtons[section.id] === 'Correcto'}"
+            (click)="setCalificacion(section.id, 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
-            (click)="setCalificacion(section.id + '_calificacion', 'Incorrecto')">Incorrect</button>
+            [ngClass]="{'selected': selectedButtons[section.id] === 'Incorrecto'}"
+            (click)="setCalificacion(section.id, 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <app-caja-texto [formControlName]="section.id + '_retroalimentacion'"
             [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      <div *ngIf="!isDocente">
-        <div class="calificacion-display" *ngIf="!saved">
-          {{ getCalificacionValue(section.id + '_calificacion') }}
+      
+      <div *ngIf="!isDocente && analisis2Form.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue(section.id + '_calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue(section.id + '_calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue(section.id + '_calificacion') === 'No Calificado'
+        }">
+      {{ getCalificacionValue(section.id + '_calificacion') }}
+        </div>
+      </div>
+
+      <div *ngIf="!isDocente && getRetroalimentacionValue(section.id + '_retroalimentacion')">
+        <button type="button" (click)="toggleRetroalimentacion(section.id)" class="bttn-toggle">
+          {{ mostrarRetroalimentacion[section.id] ? 'Ocultar' : 'Ver' }} retroalimentación
+        </button>
+        <div *ngIf="mostrarRetroalimentacion[section.id]" class="retroalimentacion-contenido">
+          <div class="retroalimentacion-texto">
+            {{ getRetroalimentacionValue(section.id + '_retroalimentacion') }}
+          </div>
         </div>
       </div>
 
@@ -49,6 +67,10 @@
 
   <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
+        <button class="custom-button" type="button" *ngIf="cargando">
+      <div class="spinner"></div>
+      <span class="button-text">Cargando...</span>
+    </button>
     <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!docenteSaved">Evaluación</button>
   </div>
 </div>

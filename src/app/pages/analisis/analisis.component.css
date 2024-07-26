@@ -71,9 +71,11 @@
   background: #C80036;
 }
 
-.pa{
+.pa {
   border-bottom: solid 1px #222940;
-  height: 460px;
+  min-height: 460px; /* Cambiamos height por min-height */
+  display: flex;
+  flex-direction: column;
 }
 
 .line{
@@ -124,3 +126,198 @@ margin: 15px 40px 15px 40px;
   margin: 20px 0px 0px;
 }
 
+/* Estilos base para los botones de calificación */
+.correct-button,
+.incorrect-button {
+  background-color: #f1f1f1;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Estilos para los botones seleccionados */
+.correct-button.selected {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #45a049;
+}
+
+.incorrect-button.selected {
+  background-color: #f44336;
+  color: white;
+  border-color: #da190b;
+}
+
+/* Estilos para el hover de los botones */
+.correct-button:hover:not(.selected) {
+  background-color: #e7f3e8;
+}
+
+.incorrect-button:hover:not(.selected) {
+  background-color: #fde9e7;
+}
+
+/* Asegurarse de que cada conjunto de botones sea independiente */
+.bttns-rate {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+/* Ajustar el espaciado y alineación de los elementos de calificación */
+.rate {
+  margin-bottom: 10px;
+}
+
+.label-for-text {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.calificacion-display {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.calificacion-correcta {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.calificacion-incorrecta {
+  background-color: #f44336; /* Rojo */
+  color: white;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.calificacion-no-calificado{
+  background-color: none; /* Rojo */
+  color: rgb(0, 0, 0);
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal; 
+}
+
+.calificaciones{
+  display: flex;
+  justify-content: end;
+}
+
+.mensaje-exito {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.custom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  background-color: #004274;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #004274;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 5px solid #ffffff;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+.button-text {
+  font-weight: bold;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pregunta-container,
+.razones-container,
+.validar {
+  flex-grow: 1;
+}
+
+.button-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-direction: column;
+  width: 19%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.bttn-stnd-delete,
+.bttn-stnd,
+.rate {
+  margin: 0; /* Eliminamos los márgenes individuales */
+}
+
+.bttn-stnd-delete,
+.bttn-stnd,
+.rate {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-family: Poppins;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bttn-stnd-delete {
+  background: #EE4E4E;
+  color: #FFF;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.bttn-stnd {
+  background: #044170;
+  color: #FFF;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+
+.bttn-stnd-delete:hover {
+  background: #C80036;
+}
+
+.bttn-stnd:hover {
+  background: #022d4e;
+}

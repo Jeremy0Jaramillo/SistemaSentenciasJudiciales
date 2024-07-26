@@ -12,6 +12,15 @@
         <div class="checkbox-class">
             <h2 class="titulo">MOTIVACIÓN CORRECTA</h2>
             <h3 class="tittle-check">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
+            <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+                <div class="calificacizzzzzon-display" *ngIf="!saved" [ngClass]="{
+                    'calificacion-correcta': getCalificacionValue('sentenceSubject_calificacion') === 'Correcto',
+                    'calificacion-incorrecta': getCalificacionValue('sentenceSubject_calificacion') === 'Incorrecto',
+                    'calificacion-no-calificado': getCalificacionValue('sentenceSubject_calificacion') === 'No Calificado'
+                  }">
+                    {{ getCalificacionValue('sentenceSubject_calificacion') }}
+                </div>
+            </div>
             <h5 class="description">Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
             <div class="options">
                 <!-- Columna 1 -->
@@ -88,11 +97,13 @@
                         <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value.includes('MultiComponent')"
                             formGroupName="multicomponent">
                             <input type="checkbox" name="multiOption" value="MultiCivil"
-                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')" [disabled]="evaluacion2Form.disabled"
+                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')"
+                                [disabled]="evaluacion2Form.disabled"
                                 [checked]="evaluacion2Form.get('multicomponent.multiOption')?.value.includes('MultiCivil')">
                             <label class="description">Mult. civil</label>
                             <input type="checkbox" name="multiOption" value="MultiPenal"
-                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')" [disabled]="evaluacion2Form.disabled"
+                                (change)="onCheckboxChange($event, 'multicomponent.multiOption')"
+                                [disabled]="evaluacion2Form.disabled"
                                 [checked]="evaluacion2Form.get('multicomponent.multiOption')?.value.includes('MultiPenal')">
                             <label class="description">Mult. penal</label>
                         </div>
@@ -125,16 +136,14 @@
                         <label class="description">Contencioso tributario</label>
                     </div>
                 </div>
-                <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceSubject')">Calificar</button>
+                <button class="rate" *ngIf="isDocente" type="button"
+                    (click)="toggleCalificar('sentenceSubject')">Calificar</button>
                 <div *ngIf="calificarState['sentenceSubject']">
                     <div class="bttns-rate">
-                        <button class="correct-button" type="button" (click)="setCalificacion('sentenceSubject_calificacion', 'Correcto')">Correct</button>
-                        <button class="incorrect-button" type="button" (click)="setCalificacion('sentenceSubject_calificacion', 'Incorrecto')">Incorrect</button>
-                    </div>
-                </div>
-                <div *ngIf="!isDocente">
-                    <div class="calificacion-display" *ngIf="!saved">
-                      {{ getCalificacionValue('sentenceSubject_calificacion') }}
+                        <button class="correct-button" type="button"
+                            (click)="setCalificacion('sentenceSubject_calificacion', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" type="button"
+                            (click)="setCalificacion('sentenceSubject_calificacion', 'Incorrecto')">Incorrecto</button>
                     </div>
                 </div>
             </div>
@@ -157,32 +166,38 @@
             </h3>
             <div class="likert-table">
                 <div class="likert-row">
-                    <label class="likert-label">Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.</label>
+                    <label class="likert-label">Resumen de los hechos y fundamentos de Derecho encontrados como válidos
+                        para establecer la motivación correspondiente a la parte considerativa y expositiva de la
+                        resolución.</label>
                     <div class="likert-options">
-                      <label>
-                        <input type="checkbox" name="sentenceOptions1" value="1"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('1')">
-                        <span>1</span>
-                      </label>
-                      <label>
-                        <input type="checkbox" name="sentenceOptions1" value="2"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('2')">
-                        <span>2</span>
-                      </label>
-                      <label>
-                        <input type="checkbox" name="sentenceOptions1" value="3"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('3')">
-                        <span>3</span>
-                      </label>
-                      <label>
-                        <input type="checkbox" name="sentenceOptions1" value="4"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('4')">
-                        <span>4</span>
-                      </label>
+                        <label>
+                            <input type="checkbox" name="sentenceOptions1" value="1"
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('1')">
+                            <span>1</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" name="sentenceOptions1" value="2"
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('2')">
+                            <span>2</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" name="sentenceOptions1" value="3"
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('3')">
+                            <span>3</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" name="sentenceOptions1" value="4"
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('4')">
+                            <span>4</span>
+                        </label>
                     </div>
                 </div>
                 <div class="likert-row">
@@ -192,26 +207,30 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="5"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('5')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('5')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="6"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('6')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('6')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="7"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('7')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('7')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="8"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('8')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('8')">
                             <span>4</span>
                         </label>
                     </div>
@@ -222,26 +241,30 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="9"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('9')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('9')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="10"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('10')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('10')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="11"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('11')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('11')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="12"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('12')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('12')">
                             <span>4</span>
                         </label>
                     </div>
@@ -252,43 +275,54 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="13"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('13')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('13')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="14"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('14')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('14')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="15"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('15')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('15')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions1" value="16"
-                            (change)="onCheckboxChange($event, 'sentenceOptions1')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('16')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions1')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions1')?.value.includes('16')">
                             <span>4</span>
                         </label>
                     </div>
                 </div>
-                <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceOptions1')">Calificar</button>
+                <button class="rate" *ngIf="isDocente" type="button"
+                    (click)="toggleCalificar('sentenceOptions1')">Calificar</button>
                 <div *ngIf="calificarState['sentenceOptions1']">
                     <div class="bttns-rate">
-                        <button class="correct-button" type="button" (click)="setCalificacion('sentenceOptions1_calificacion', 'Correcto')">Correct</button>
-                        <button class="incorrect-button" type="button"(click)="setCalificacion('sentenceOptions1_calificacion', 'Incorrecto')">Incorrect</button>
-                    </div>
-                </div>
-                <div *ngIf="!isDocente">
-                    <div class="calificacion-display" *ngIf="!saved">
-                      {{ getCalificacionValue('sentenceOptions1_calificacion') }}
+                        <button class="correct-button" type="button"
+                            (click)="setCalificacion('sentenceOptions1_calificacion', 'Correcto')">Correcto</button>
+                        <button class="incorrect-button" type="button"
+                            (click)="setCalificacion('sentenceOptions1_calificacion', 'Incorrecto')">Incorrecto</button>
                     </div>
                 </div>
             </div>
+            <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+                <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                    'calificacion-correcta': getCalificacionValue('sentenceOptions1_calificacion') === 'Correcto',
+                    'calificacion-incorrecta': getCalificacionValue('sentenceOptions1_calificacion') === 'Incorrecto',
+                    'calificacion-no-calificado': getCalificacionValue('sentenceOptions1_calificacion') === 'No Calificado'
+                  }">
+                  {{ getCalificacionValue('sentenceOptions1_calificacion') }}
+                </div>
+              </div>
 
             <div class="likert-table">
                 <h3 class="titulo">Principios constitucionales.</h3>
@@ -299,26 +333,30 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="1"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('1')">                               
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('1')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="2"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('2')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('2')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="3"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('3')">                                
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('3')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="4"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('4')">                                
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('4')">
                             <span>4</span>
                         </label>
                     </div>
@@ -332,41 +370,57 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="5"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('5')">    
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('5')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="6"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('6')"> 
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('6')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="7"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('7')"> 
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('7')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions2" value="8"
-                            (change)="onCheckboxChange($event, 'sentenceOptions2')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('8')"> 
+                                (change)="onCheckboxChange($event, 'sentenceOptions2')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions2')?.value.includes('8')">
                             <span>4</span>
                         </label>
                     </div>
                 </div>
-                <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceOptions2')">Calificar</button>
+                <button class="rate" *ngIf="isDocente" type="button"
+                    (click)="toggleCalificar('sentenceOptions2')">Calificar</button>
                 <div *ngIf="calificarState['sentenceOptions2']">
                     <div class="bttns-rate">
-                        <button class="correct-button" type="button" (click)="setCalificacion('sentenceOptions2_calificacion', 'Correcto')">Correct</button>
-                        <button class="incorrect-button" type="button" (click)="setCalificacion('sentenceOptions2_calificacion', 'Incorrecto')">Incorrect</button>
+                        <button class="correct-button" type="button"
+                            (click)="setCalificacion('sentenceOptions2_calificacion', 'Correcto')">Correct</button>
+                        <button class="incorrect-button" type="button"
+                            (click)="setCalificacion('sentenceOptions2_calificacion', 'Incorrecto')">Incorrect</button>
                     </div>
                 </div>
                 <div *ngIf="!isDocente">
                     <div class="calificacion-display" *ngIf="!saved">
-                      {{ getCalificacionValue('sentenceOptions2_calificacion') }}
+                        {{ getCalificacionValue('sentenceOptions2_calificacion') }}
                     </div>
+                </div>
+            </div>
+            <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+                <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                    'calificacion-correcta': getCalificacionValue('sentenceOptions2_calificacion') === 'Correcto',
+                    'calificacion-incorrecta': getCalificacionValue('sentenceOptions2_calificacion') === 'Incorrecto',
+                    'calificacion-no-calificado': getCalificacionValue('sentenceOptions2_calificacion') === 'No Calificado'
+                  }">
+                  {{ getCalificacionValue('sentenceOptions2_calificacion') }}
                 </div>
             </div>
 
@@ -381,26 +435,30 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="1"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('1')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('1')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="2"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('2')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('2')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="3"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('3')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('3')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="4"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('4')">
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('4')">
                             <span>4</span>
                         </label>
                     </div>
@@ -412,42 +470,53 @@
                     <div class="likert-options">
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="5"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('5')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('5')">
                             <span>1</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="6"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('6')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('6')">
                             <span>2</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="7"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('7')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('7')">
                             <span>3</span>
                         </label>
                         <label>
                             <input type="checkbox" name="sentenceOptions3" value="8"
-                            (change)="onCheckboxChange($event, 'sentenceOptions3')" [disabled]="evaluacion2Form.disabled"
-                            [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('8')">                            
+                                (change)="onCheckboxChange($event, 'sentenceOptions3')"
+                                [disabled]="evaluacion2Form.disabled"
+                                [checked]="evaluacion2Form.get('sentenceOptions3')?.value.includes('8')">
                             <span>4</span>
                         </label>
                     </div>
                 </div>
-                <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceOptions3')">Calificar</button>
+                <button class="rate" *ngIf="isDocente" type="button"
+                    (click)="toggleCalificar('sentenceOptions3')">Calificar</button>
                 <div *ngIf="calificarState['sentenceOptions3']">
                     <div class="bttns-rate">
-                        <button class="correct-button" type="button" (click)="setCalificacion('sentenceOptions3_calificacion', 'Correcto')">Correct</button>
-                        <button class="incorrect-button" type="button" (click)="setCalificacion('sentenceOptions3_calificacion', 'Incorrecto')">Incorrect</button>
+                        <button class="correct-button" type="button"
+                            (click)="setCalificacion('sentenceOptions3_calificacion', 'Correcto')">Correct</button>
+                        <button class="incorrect-button" type="button"
+                            (click)="setCalificacion('sentenceOptions3_calificacion', 'Incorrecto')">Incorrect</button>
                     </div>
                 </div>
-                <div *ngIf="!isDocente">
-                    <div class="calificacion-display" *ngIf="!saved">
-                      {{ getCalificacionValue('sentenceOptions3_calificacion') }}
-                    </div>
-                </div>
+            </div>
+        </div>
+        <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+            <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                'calificacion-correcta': getCalificacionValue('sentenceOptions3_calificacion') === 'Correcto',
+                'calificacion-incorrecta': getCalificacionValue('sentenceOptions3_calificacion') === 'Incorrecto',
+                'calificacion-no-calificado': getCalificacionValue('sentenceOptions3_calificacion') === 'No Calificado'
+              }">
+              {{ getCalificacionValue('sentenceOptions3_calificacion') }}
             </div>
         </div>
 
@@ -459,26 +528,30 @@
                 <div class="likert-options">
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="1"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('1')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('1')">
                         <span>1</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="2"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('2')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('2')">
                         <span>2</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="3"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('3')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('3')">
                         <span>3</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="4"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('4')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('4')">
                         <span>4</span>
                     </label>
                 </div>
@@ -493,26 +566,30 @@
                 <div class="likert-options">
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="5"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('5')">                          
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('5')">
                         <span>1</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="6"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('6')">                          
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('6')">
                         <span>2</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="7"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('7')">                          
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('7')">
                         <span>3</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="8"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('8')">                          
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('8')">
                         <span>4</span>
                     </label>
                 </div>
@@ -526,43 +603,54 @@
                 <div class="likert-options">
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="9"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('9')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('9')">
                         <span>1</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="10"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('10')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('10')">
                         <span>2</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="11"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('11')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('11')">
                         <span>3</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions4" value="12"
-                        (change)="onCheckboxChange($event, 'sentenceOptions4')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('12')">                         
+                            (change)="onCheckboxChange($event, 'sentenceOptions4')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions4')?.value.includes('12')">
                         <span>4</span>
                     </label>
                 </div>
             </div>
-            <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceOptions4')">Calificar</button>
+            <button class="rate" *ngIf="isDocente" type="button"
+                (click)="toggleCalificar('sentenceOptions4')">Calificar</button>
             <div *ngIf="calificarState['sentenceOptions4']">
                 <div class="bttns-rate">
-                    <button class="correct-button" type="button" (click)="setCalificacion('sentenceOptions4_calificacion', 'Correcto')">Correct</button>
-                    <button class="incorrect-button" type="button" (click)="setCalificacion('sentenceOptions4_calificacion', 'Incorrecto')">Incorrect</button>
-                </div>
-            </div>
-            <div *ngIf="!isDocente">
-                <div class="calificacion-display" *ngIf="!saved">
-                  {{ getCalificacionValue('sentenceOptions4_calificacion') }}
+                    <button class="correct-button" type="button"
+                        (click)="setCalificacion('sentenceOptions4_calificacion', 'Correcto')">Correct</button>
+                    <button class="incorrect-button" type="button"
+                        (click)="setCalificacion('sentenceOptions4_calificacion', 'Incorrecto')">Incorrect</button>
                 </div>
             </div>
         </div>
+        <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+                <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                    'calificacion-correcta': getCalificacionValue('sentenceOptions4_calificacion') === 'Correcto',
+                    'calificacion-incorrecta': getCalificacionValue('sentenceOptions4_calificacion') === 'Incorrecto',
+                    'calificacion-no-calificado': getCalificacionValue('sentenceOptions4_calificacion') === 'No Calificado'
+                  }">
+                  {{ getCalificacionValue('sentenceOptions4_calificacion') }}
+                </div>
+            </div>
 
         <div class="likert-table">
             <h3 class="titulo">Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en
@@ -578,26 +666,30 @@
                 <div class="likert-options">
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="1"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('1')">
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('1')">
                         <span>1</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="2"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('2')">
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('2')">
                         <span>2</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="3"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('3')">
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('3')">
                         <span>3</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="4"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('4')">
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('4')">
                         <span>4</span>
                     </label>
                 </div>
@@ -609,41 +701,52 @@
                 <div class="likert-options">
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="5"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('5')">                        
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('5')">
                         <span>1</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="6"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('6')">                        
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('6')">
                         <span>2</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="7"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('7')">                        
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('7')">
                         <span>3</span>
                     </label>
                     <label>
                         <input type="checkbox" name="sentenceOptions5" value="8"
-                        (change)="onCheckboxChange($event, 'sentenceOptions5')" [disabled]="evaluacion2Form.disabled"
-                        [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('8')">                        
+                            (change)="onCheckboxChange($event, 'sentenceOptions5')"
+                            [disabled]="evaluacion2Form.disabled"
+                            [checked]="evaluacion2Form.get('sentenceOptions5')?.value.includes('8')">
                         <span>4</span>
                     </label>
                 </div>
             </div>
-            <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('sentenceOptions5')">Calificar</button>
+            <button class="rate" *ngIf="isDocente" type="button"
+                (click)="toggleCalificar('sentenceOptions5')">Calificar</button>
             <div *ngIf="calificarState['sentenceOptions5']">
                 <div class="bttns-rate">
-                    <button class="correct-button" type="button" (click)="setCalificacion('sentenceOptions5_calificacion', 'Correcto')">Correct</button>
-                    <button class="incorrect-button" type="button" (click)="setCalificacion('sentenceOptions5_calificacion', 'Incorrecto')">Incorrect</button>
+                    <button class="correct-button" type="button"
+                        (click)="setCalificacion('sentenceOptions5_calificacion', 'Correcto')">Correct</button>
+                    <button class="incorrect-button" type="button"
+                        (click)="setCalificacion('sentenceOptions5_calificacion', 'Incorrecto')">Incorrect</button>
                 </div>
             </div>
-            <div *ngIf="!isDocente">
-                <div class="calificacion-display" *ngIf="!saved">
-                  {{ getCalificacionValue('sentenceOptions5_calificacion') }}
-                </div>
+        </div>
+        <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+            <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                'calificacion-correcta': getCalificacionValue('sentenceOptions5_calificacion') === 'Correcto',
+                'calificacion-incorrecta': getCalificacionValue('sentenceOptions5_calificacion') === 'Incorrecto',
+                'calificacion-no-calificado': getCalificacionValue('sentenceOptions5_calificacion') === 'No Calificado'
+              }">
+              {{ getCalificacionValue('sentenceOptions5_calificacion') }}
             </div>
         </div>
 
@@ -662,25 +765,32 @@
                     [titulo]="'Justifique su respuesta (500 palabras)'">
                 </app-caja-texto>
             </div>
-            <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar('reasonsNormative')">Calificar</button>
+            <button class="rate" *ngIf="isDocente" type="button"
+                (click)="toggleCalificar('reasonsNormative')">Calificar</button>
             <div *ngIf="calificarState['reasonsNormative']">
                 <div class="bttns-rate">
-                    <button class="correct-button" type="button" (click)="setCalificacion('reasonsNormative_calificacion', 'Correcto')">Correct</button>
-                    <button class="incorrect-button" type="button" (click)="setCalificacion('reasonsNormative_calificacion', 'Incorrecto')">Incorrect</button>
+                    <button class="correct-button" type="button"
+                        (click)="setCalificacion('reasonsNormative_calificacion', 'Correcto')">Correct</button>
+                    <button class="incorrect-button" type="button"
+                        (click)="setCalificacion('reasonsNormative_calificacion', 'Incorrecto')">Incorrect</button>
                 </div>
                 <div>
-                    <app-caja-texto [formControlName]="'reasonsNormative_retroalimentacion'" [disabled]="evaluacion2Form.disabled"
-                      [titulo]="'Retroalimentación'"></app-caja-texto>
+                    <app-caja-texto [formControlName]="'reasonsNormative_retroalimentacion'"
+                        [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación'"></app-caja-texto>
                 </div>
             </div>
-            <div *ngIf="!isDocente">
-                <div class="calificacion-display" *ngIf="!saved">
-                  {{ getCalificacionValue('reasonsNormative_calificacion') }}
+            <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">
+                <div class="calificacion-display" *ngIf="!saved" [ngClass]="{
+                    'calificacion-correcta': getCalificacionValue('reasonsNormative_retroalimentacion') === 'Correcto',
+                    'calificacion-incorrecta': getCalificacionValue('reasonsNormative_retroalimentacion') === 'Incorrecto',
+                    'calificacion-no-calificado': getCalificacionValue('reasonsNormative_retroalimentacion') === 'No Calificado'
+                  }">
+                  {{ getCalificacionValue('reasonsNormative_retroalimentacion') }}
                 </div>
             </div>
         </div>
     </div>
-    <button class="bttn-stnd" type="submit">Guardar</button>
+    <button class="bttn-stnd-g" type="submit">Guardar</button>
 </form>
 
 <div class="bttn">

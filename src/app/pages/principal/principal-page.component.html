@@ -6,7 +6,9 @@
 </div>
 
 <div class="search-bar">
-  <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()" placeholder="Buscar por nombre de estudiante">
+  <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"
+  *ngIf="userRole == 'docente'"
+  placeholder="Buscar por nombre de estudiante">
 </div>
 
 <div class="sentencias">
@@ -33,8 +35,8 @@
 
     <div class="more">
       <button class="bttn-stnd" (click)="redirectToAnalisis(sentencia)">Ver más</button>
-      <a *ngIf="sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank">
-        <button class="bttn-stnd">Descargar PDF</button>
+      <a *ngIf="userRole === 'docente' && sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank" class="bttn-download">
+        Descargar PDF
       </a>
     </div>
   </div>

@@ -146,6 +146,7 @@ checkLockStatus() {
         console.error("Error saving document: ", error);
       });
   }
+  
   loadEvaluacion2Data() {
     this.firestore.collection('evaluacion2').doc(this.numero_proceso)
       .valueChanges()
@@ -232,11 +233,7 @@ checkLockStatus() {
   setCalificacion(controlPath: string, calificacion: string): void {
     const control = this.evaluacion2Form.get(controlPath);
     if (control) {
-      const currentValue = control.value;
-      control.setValue({
-        ...currentValue,
-        calificacion,
-      });
+      control.setValue(calificacion);
       this.selectedButton = calificacion;
     }
   }
@@ -251,7 +248,10 @@ checkLockStatus() {
 
   getCalificacionValue(controlName: string): string {
     const control = this.evaluacion2Form.get(controlName);
-    return control && control.value ? control.value : 'No Calificado';
+    if (control && control.value && control.value.calificacion) {
+      return control.value.calificacion;
+    }
+    return 'No Calificado';
   }
 
   redirectToEvaluacion() {

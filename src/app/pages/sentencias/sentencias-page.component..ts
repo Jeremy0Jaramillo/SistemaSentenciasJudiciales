@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 interface Sentencia {
   numero_proceso: string;
@@ -21,6 +22,7 @@ interface Sentencia {
 export class SentenciasPageComponent implements OnInit {
   alerta: boolean = false;
   fileLoaded: boolean = false;
+  cargando = false;
   sentencia: Sentencia = {
     numero_proceso: '',
     asunto: '',
@@ -29,11 +31,18 @@ export class SentenciasPageComponent implements OnInit {
   };
   docentes$: Observable<any[]> = new Observable<any[]>();
   selectedFile: File | null = null;
+  archivoMensaje: string = 'Sin subir archivo'; // Inicialización del mensaje de archivo
+  alertas: string[] = [];
+  mensajeExito: string = '';
+  mostrarMensajeExito: boolean = false;
+  archivo: File | null = null; // Almacena el archivo seleccionado
 
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private router: Router  // Añade esta línea
+
   ) { }
 
   ngOnInit(): void {
@@ -49,60 +58,88 @@ export class SentenciasPageComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
-    this.fileLoaded = !!this.selectedFile;  // Set fileLoaded to true if a file is selected
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.archivo = file;  // Asigna el archivo a la propiedad 'archivo'
+      this.fileLoaded = true;
+      this.archivoMensaje = 'Archivo cargado: ' + file.name;
+    } else {
+      this.selectedFile = null;
+      this.archivo = null;
+      this.fileLoaded = false;
+      this.archivoMensaje = 'Sin subir archivo';
+    }
   }
 
   submitForm(): void {
+  this.alertas = [];
+  this.cargando = true;
+
+  const checkArchivo = new Promise<void>((resolve) => {
+    if (!this.archivo) {
+      this.alertas.push('Debe seleccionar un archivo PDF.');
+    }
+    resolve();
+  });
+
+  const checkNumeroProceso = new Promise<void>((resolve) => {
     this.firestore.collection('sentencias', ref => ref.where('numero_proceso', '==', this.sentencia.numero_proceso))
       .get()
       .subscribe(querySnapshot => {
         if (querySnapshot.size > 0) {
-          // Duplicate found
-          this.alerta = true;
-          console.error('Duplicate numero_proceso found.');
-        } else {
-          // No duplicate found, proceed with submission
-          if (this.selectedFile) {
-            const filePath = `sentencias/${this.selectedFile.name}_${Date.now()}`;
-            const fileRef = this.storage.ref(filePath);
-            const uploadTask = this.storage.upload(filePath, this.selectedFile);
-  
-            uploadTask.snapshotChanges().pipe(
-              finalize(() => {
-                fileRef.getDownloadURL().subscribe(url => {
-                  this.sentencia.archivoURL = url;
-                  this.saveSentencia();
-                });
-              })
-            ).subscribe();
-          } else {
-            this.saveSentencia();
-          }
+          this.alertas.push('El número de proceso ya existe.');
         }
+        resolve();
       }, error => {
         console.error('Error checking for duplicate numero_proceso: ', error);
-        this.alerta = true;
+        this.alertas.push('Error al verificar el número de proceso.');
+        resolve();
       });
-  }
-  
-  saveSentencia(): void {
-    this.firestore.collection('sentencias').add(this.sentencia)
-      .then(() => {
-        console.log('Sentencia added successfully!');
-        this.alerta = true;
-        this.fileLoaded = false; // Reset the fileLoaded flag after saving
-        // Clear the form or navigate to another page
-      })
-      .catch(error => {
-        console.error('Error adding sentencia: ', error);
-        this.alerta = true;
-      });
-  }
-  
+  });
 
-  cerrarAlerta(): void {
-    this.alerta = false;
+  Promise.all([checkArchivo, checkNumeroProceso]).then(() => {
+    if (this.alertas.length === 0) {
+      this.uploadFileAndSaveSentencia();
+    } else {
+      this.cargando = false;
+    }
+  });
+}
+  
+  private uploadFileAndSaveSentencia(): void {
+    const filePath = `sentencias/${this.archivo!.name}_${Date.now()}`;
+    const fileRef = this.storage.ref(filePath);
+    const uploadTask = this.storage.upload(filePath, this.archivo);
+  
+    uploadTask.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(url => {
+          this.sentencia.archivoURL = url;
+          this.firestore.collection('sentencias').add(this.sentencia)
+            .then(() => {
+              console.log('Sentencia added successfully!');
+              this.mensajeExito = 'Sentencia guardada';
+              this.mostrarMensajeExito = true;
+              this.cargando = false;
+              
+              // Espera 2 segundos antes de redirigir
+              setTimeout(() => {
+                this.router.navigate(['/principal']);
+              }, 2000);
+            })
+            .catch(error => {
+              console.error('Error adding sentencia: ', error);
+              this.alertas.push('Error al guardar la sentencia.');
+              this.cargando = false;
+            });
+        });
+      })
+    ).subscribe();
+  }
+
+  cerrarAlerta(index: number) {
+    this.alertas.splice(index, 1);
   }
 }
 
