@@ -311,10 +311,16 @@
           (click)="toggleCalificar('appearance.motivationalHabit')">Calificar</button>
         <div *ngIf="calificarState['appearance.motivationalHabit']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">Incorrect</button>
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Correcto')"
+            type="button"
+              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">
+              Correct</button>
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Incorrecto')"
+            type="button"
+              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">
+              Incorrect</button>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -346,9 +352,13 @@
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -382,9 +392,13 @@
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button"
+            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -417,9 +431,13 @@
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')"
+             type="button"
               (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -451,9 +469,13 @@
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -486,9 +508,13 @@
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -624,9 +650,13 @@
           (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -665,9 +695,13 @@
           (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -707,9 +741,13 @@
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -743,9 +781,13 @@
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -782,9 +824,13 @@
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -820,9 +866,13 @@
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" type="button"
+            <button class="correct-button" 
+            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" type="button"
+            <button class="incorrect-button" 
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')"
+            type="button"
               (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>

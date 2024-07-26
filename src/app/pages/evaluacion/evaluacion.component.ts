@@ -189,8 +189,15 @@ export class EvaluacionComponent implements OnInit {
   }
 
   isButtonSelected(section: string, controlName: string, value: string): boolean {
-    const fullPath = `${section}.${controlName}`;
-    return this.buttonStates[fullPath] === value;
+      this.calificaciones[section] = value;
+      let controlPath = "";
+      if (section === "motivationType") {
+        controlPath = controlName
+      } else {
+        controlPath = `${section}.${controlName}`
+        console.log(controlPath)
+      }
+    return this.buttonStates[controlPath] === value;
   }
 
   loadCalificaciones(data: any) {
@@ -438,7 +445,6 @@ export class EvaluacionComponent implements OnInit {
     if(control){
       control.setValue(value);
       this.buttonStates[controlPath] = value;
-
     }
     this.changeDetectorRef.detectChanges();
   }
