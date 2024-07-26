@@ -30,16 +30,21 @@
           <option class="op" value="appearance">Apariencia</option>
         </select>
       </div>
+
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('motivationType')">Calificar</button>
       <div *ngIf="calificarState['motivationType']">
         <div class="bttns-rate">
-          <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('motivationType')"
-            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">
+          <button class="correct-button"
+            [class.calificacion-correcta]="isButtonSelected('motivationType', 'motivationType_calificacion', 'Correcto')"
+            type="button"
+            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">
             Correcto
           </button>
-          <button class="incorrect-button" [class.calificacion-incorrecta]="isCalificacionIncorrecta('motivationType')"
-            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">
+          <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('motivationType', 'motivationType_calificacion', 'Incorrecto')"
+            type="button"
+            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">
             Incorrecto
           </button>
         </div>
@@ -306,18 +311,10 @@
           (click)="toggleCalificar('appearance.motivationalHabit')">Calificar</button>
         <div *ngIf="calificarState['appearance.motivationalHabit']">
           <div class="bttns-rate">
-            <button class="correct-button"
-              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.motivationalHabit_calificacion')"
-              type="button"
-              (click)="selectButton('appearance.motivationalHabit_calificacion', 'appearance.motivationalHabit_calificacion', 'Correcto')">
-              Correcto
-            </button>
-            <button class="incorrect-button"
-              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.motivationalHabit_calificacion')"
-              type="button"
-              (click)="selectButton('appearance.motivationalHabit_calificacion', 'appearance.motivationalHabit_calificacion', 'Incorrecto')">
-              Incorrecto
-            </button>
+            <button class="correct-button" type="button"
+              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">Correct</button>
+            <button class="incorrect-button" type="button"
+              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -531,12 +528,14 @@
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
             <button class="correct-button"
-              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.inatinence')" type="button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Correcto')">
               Correcto
             </button>
             <button class="incorrect-button"
-              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.inatinence')" type="button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.inatinence', 'inatinenceJuridical_calificacion', 'Incorrecto')">
               Incorrecto
             </button>
@@ -546,6 +545,7 @@
               [titulo]="'Retroalimentación'"></app-caja-texto>
           </div>
         </div>
+
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
           <div class="calificacion-display" [ngClass]="{
             'calificacion-correcta': getCalificacionValue('appearance.inatinence.inatinenceJuridical_calificacion') === 'Correcto',
@@ -573,15 +573,17 @@
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
             <button class="correct-button"
-              [class.calificacion-correcta]="isCalificacionCorrecta('appearance.inatinence.factual')" type="button"
-              (click)="selectButton('appearance.inatinence.factual', 'appearance.inatinence.inatinenceFactual_calificacion', 'Correcto')">
-              Correcto
-            </button>
-            <button class="incorrect-button"
-              [class.calificacion-incorrecta]="isCalificacionIncorrecta('appearance.inatinence.factual')" type="button"
-              (click)="selectButton('appearance.inatinence.factual', 'appearance.inatinence.inatinenceFactual_calificacion', 'Incorrecto')">
-              Incorrecto
-            </button>
+            [class.calificacion-correcta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')"
+            type="button"
+            (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')">
+            Correcto
+          </button>
+          <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')"
+            type="button"
+            (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')">
+            Incorrecto
+          </button>
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceFactual_retroalimentacion"
