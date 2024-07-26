@@ -14,17 +14,17 @@
       <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
         los siguientes tipos</h5>
 
+        <div *ngIf="isDocente">
+          <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
+            <option class="op" value="nonexistinence">Inexistencia</option>
+            <option class="op" value="insufficiency">Insuficiencia</option>
+            <option class="op" value="appearance">Apariencia</option>
+          </select>
+        </div>
+
       <div *ngIf="!isDocente">
         <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType"
           [disabled]="saved">
-          <option class="op" value="nonexistinence">Inexistencia</option>
-          <option class="op" value="insufficiency">Insuficiencia</option>
-          <option class="op" value="appearance">Apariencia</option>
-        </select>
-      </div>
-
-      <div *ngIf="isDocente">
-        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
           <option class="op" value="nonexistinence">Inexistencia</option>
           <option class="op" value="insufficiency">Insuficiencia</option>
           <option class="op" value="appearance">Apariencia</option>
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'nonexistinence'" formGroupName="nonexistinence">
+    <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'nonexistinence'" formGroupName="nonexistinence">
       <h2 class="titulo">Inexistencia</h2>
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
@@ -81,9 +81,13 @@
         (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
       <div *ngIf="calificarState['nonexistinence.reasonsNormative']">
         <div class="bttns-rate">
-          <button class="correct-button" type="button"
-            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correcto</button>
-          <button class="incorrect-button" type="button"
+          <button class="correct-button" 
+          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Correcto')"
+          type="button"            
+          (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correct</button>
+          <button class="incorrect-button" 
+          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Incorrecto')"
+          type="button"
             (click)="selectButton('nonexistinence', 'normative_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
@@ -120,9 +124,12 @@
         (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
       <div *ngIf="calificarState['nonexistinence.reasonsFactual']">
         <div class="bttns-rate">
-          <button class="correct-button" type="button"
+          <button class="correct-button" 
+          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Correcto')"
+          type="button"
             (click)="selectButton('nonexistinence', 'factual_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
+          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Incorrecto')"
             (click)="selectButton('nonexistinence', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -153,12 +160,14 @@
       <div *ngIf="calificarState['nonexistinence.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
+          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Correcto')"
             (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
+          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Incorrecto')"
             (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
-          <app-caja-texto formControlName="motivation_retroalimentacion" [titulo]="'¿Por qué?'">
+          <app-caja-texto formControlName="motivation_retroalimentacion" [titulo]="'Retroalimentación'">
           </app-caja-texto>
         </div>
       </div>
@@ -173,7 +182,7 @@
       </div>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'insufficiency'" formGroupName="insufficiency">
+    <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'insufficiency'" formGroupName="insufficiency">
       <h2 class="titulo">Insuficiencia</h2>
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
@@ -190,13 +199,15 @@
       <div *ngIf="calificarState['insufficiency.reasonsNormative']">
         <div class="bttns-rate">
           <button class="correct-button"
-            [class.calificacion-correcta]="isCalificacionCorrecta('insufficiency.reasonsNormative')" type="button"
-            (click)="selectButton('insufficiency.reasonsNormative', 'normative_calificacion', 'Correcto')">
+          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
+          type="button"
+            (click)="selectButton('insufficiency', 'normative_calificacion', 'Correcto')">
             Correcto
           </button>
           <button class="incorrect-button"
-            [class.calificacion-incorrecta]="isCalificacionIncorrecta('insufficiency.reasonsNormative')" type="button"
-            (click)="selectButton('insufficiency.reasonsNormative', 'normative_calificacion', 'Incorrecto')">
+          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
+            type="button"
+            (click)="selectButton('insufficiency', 'normative_calificacion', 'Incorrecto')">
             Incorrecto
           </button>
         </div>
@@ -230,8 +241,10 @@
       <div *ngIf="calificarState['insufficiency.reasonsFactual']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
+          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
             (click)="selectButton('insufficiency', 'factual_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
+          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
             (click)="selectButton('insufficiency', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -267,8 +280,10 @@
       <div *ngIf="calificarState['insufficiency.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
+          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Correcto')"
             (click)="selectButton('insufficiency', 'motivation_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
+          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Incorrecto')"
             (click)="selectButton('insufficiency', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -288,7 +303,7 @@
       </div>
     </div>
 
-    <div *ngIf="evaluacionForm.get('motivationType')?.value === 'appearance'" formGroupName="appearance">
+    <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'appearance'" formGroupName="appearance">
       <h2 class="titulo">Apariencia</h2>
       <h5 class="titulo">En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de
         los vicios

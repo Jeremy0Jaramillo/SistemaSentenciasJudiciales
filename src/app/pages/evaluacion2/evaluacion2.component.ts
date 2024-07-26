@@ -29,6 +29,8 @@ export class Evaluacion2Component implements OnInit {
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null);
   calificarState: { [key: string]: boolean } = {};
+  calificaciones: { [key: string]: string } = {};
+  buttonStates: { [key: string]: string } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -229,14 +231,27 @@ checkLockStatus() {
     this.calificarState[section] = !this.calificarState[section];
   }
 
-
-  setCalificacion(controlPath: string, calificacion: string): void {
-    const control = this.evaluacion2Form.get(controlPath);
-    if (control) {
-      control.setValue(calificacion);
-      this.selectedButton = calificacion;
+  isButtonSelected(section: string, controlName: string, value: string): boolean {
+    this.calificaciones[section] = value;
+    let controlPath = "";
+    if (section === "motivationType") {
+      controlPath = controlName
+    } else {
+      controlPath = `${section}.${controlName}`
+      console.log(controlPath)
     }
+  return this.buttonStates[controlPath] === value;
+}
+setCalificacion(controlPath: string, calificacion: string): any {
+  console.log(controlPath, calificacion)
+  const control = this.evaluacion2Form.get(controlPath);
+  if (control) {
+    control.setValue(calificacion);
+    console.log(control)
+    this.selectedButton = calificacion;
+    return this.selectedButton
   }
+}
 
   resetOtherCheckboxes(controlName: string) {
     Object.keys(this.evaluacion2Form.controls).forEach(key => {

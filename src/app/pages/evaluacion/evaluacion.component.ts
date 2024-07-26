@@ -294,36 +294,9 @@ export class EvaluacionComponent implements OnInit {
   }
 
   handleMotivationTypeChange(value: string): void {
-    const nonexistinence = this.evaluacionForm.get('nonexistinence') as FormGroup;
-    const insufficiency = this.evaluacionForm.get('insufficiency') as FormGroup;
-    const appearance = this.evaluacionForm.get('appearance') as FormGroup;
-  
-    if (nonexistinence && insufficiency && appearance) {
-      // Disable and clear the other sections
-      if (value === 'nonexistinence') {
-        insufficiency.reset();
-        insufficiency.disable();
-        appearance.reset();
-        appearance.disable();
-        nonexistinence.enable();
-      } else if (value === 'insufficiency') {
-        nonexistinence.reset();
-        nonexistinence.disable();
-        appearance.reset();
-        appearance.disable();
-        insufficiency.enable();
-      } else if (value === 'appearance') {
-        nonexistinence.reset();
-        nonexistinence.disable();
-        insufficiency.reset();
-        insufficiency.disable();
-        appearance.enable();
-      } else {
-        nonexistinence.disable();
-        insufficiency.disable();
-        appearance.disable();
-      }
-    }
+    // No resetear ni deshabilitar los FormGroups
+    // Solo actualizar la visibilidad en el HTML
+    this.evaluacionForm.patchValue({ motivationType: value });
   }
 
   resetOtherAppearanceFields(selectedField: string): void {

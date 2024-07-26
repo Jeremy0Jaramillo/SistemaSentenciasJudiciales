@@ -141,8 +141,10 @@
                 <div *ngIf="calificarState['sentenceSubject']">
                     <div class="bttns-rate">
                         <button class="correct-button" type="button"
+                        [class.calificacion-correcta]="isButtonSelected('sentenceSubject','sentenceSubject_calificacion', 'Correcto')"
                             (click)="setCalificacion('sentenceSubject_calificacion', 'Correcto')">Correcto</button>
                         <button class="incorrect-button" type="button"
+                        [class.calificacion-incorrecta]="isButtonSelected('sentenceSubject','sentenceSubject_calificacion', 'Incorrecto')"
                             (click)="setCalificacion('sentenceSubject_calificacion', 'Incorrecto')">Incorrecto</button>
                     </div>
                 </div>
