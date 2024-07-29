@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormA
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable,of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 interface User {
   uid: string;
@@ -31,8 +31,7 @@ export class EvaluacionComponent implements OnInit {
   selectedButtons: { [key: string]: string } = {};
   calificarState: { [key: string]: boolean } = {};
   cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
-
-  
+  mostrarRetroalimentacion: { [key: string]: boolean } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -43,104 +42,104 @@ export class EvaluacionComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef
   ) {
     this.evaluacionForm = this.fb.group({
-      numero_proceso: new FormControl (''),
+      numero_proceso: new FormControl(''),
       saved: [false],
       docenteSaved: [false],
-      motivationType: new FormControl (''),
-      motivationType_calificacion: new FormControl (''),
-      motivationType_retroalimentacion: new FormControl (''),
+      motivationType: new FormControl(''),
+      motivationType_calificacion: new FormControl(''),
+      motivationType_retroalimentacion: new FormControl(''),
       nonexistinence: this.fb.group({
-        lackFoundationNormative: new FormControl (''),
-        reasonsNormative: new FormControl (''),
-        normative_calificacion: new FormControl (''),
-        normative_retroalimentacion: new FormControl (''),
-        lackFoundationFactual: new FormControl (''),
-        reasonsFactual: new FormControl (''),
-        factual_calificacion: new FormControl (''),
-        factual_retroalimentacion: new FormControl (''),
-        lackMotivation: new FormControl (''),
-        reasonsMotivation: new FormControl (''),
-        motivation_calificacion: new FormControl (''),
-        motivation_retroalimentacion: new FormControl ('')
+        lackFoundationNormative: new FormControl(''),
+        reasonsNormative: new FormControl(''),
+        normative_calificacion: new FormControl(''),
+        normative_retroalimentacion: new FormControl(''),
+        lackFoundationFactual: new FormControl(''),
+        reasonsFactual: new FormControl(''),
+        factual_calificacion: new FormControl(''),
+        factual_retroalimentacion: new FormControl(''),
+        lackMotivation: new FormControl(''),
+        reasonsMotivation: new FormControl(''),
+        motivation_calificacion: new FormControl(''),
+        motivation_retroalimentacion: new FormControl('')
       }),
       insufficiency: this.fb.group({
-        lackFoundationNormative: new FormControl (''),
-        reasonsNormative: new FormControl (''),
-        normative_calificacion: new FormControl (''),
-        normative_retroalimentacion: new FormControl (''),
-        lackFoundationFactual: new FormControl (''),
-        reasonsFactual: new FormControl (''),
-        factual_calificacion: new FormControl (''),
-        factual_retroalimentacion: new FormControl (''),
-        lackMotivation: new FormControl (''),
-        reasonsMotivation: new FormControl (''),
-        motivation_calificacion: new FormControl (''),
-        motivation_retroalimentacion: new FormControl ('')
+        lackFoundationNormative: new FormControl(''),
+        reasonsNormative: new FormControl(''),
+        normative_calificacion: new FormControl(''),
+        normative_retroalimentacion: new FormControl(''),
+        lackFoundationFactual: new FormControl(''),
+        reasonsFactual: new FormControl(''),
+        factual_calificacion: new FormControl(''),
+        factual_retroalimentacion: new FormControl(''),
+        lackMotivation: new FormControl(''),
+        reasonsMotivation: new FormControl(''),
+        motivation_calificacion: new FormControl(''),
+        motivation_retroalimentacion: new FormControl('')
       }),
       appearance: this.fb.group({
-        appearanceReason: new FormControl (''),
-        motivationalHabit: new FormControl (''),
-        motivationalHabit_calificacion: new FormControl (''),
-        motivationalHabit_retroalimentacion: new FormControl (''),
+        appearanceReason: new FormControl(''),
+        motivationalHabit: new FormControl(''),
+        motivationalHabit_calificacion: new FormControl(''),
+        motivationalHabit_retroalimentacion: new FormControl(''),
         incoherence: this.fb.group({
-          existsLogicalNormative: new FormControl (''),
-          reasonsLogicaNormative: new FormControl (''),
-          logicaNormative_calificacion: new FormControl (''),
-          logicaNormative_retroalimentacion: new FormControl (''),
-          existsDecisionalNormative: new FormControl (''),
-          reasonsDecisionalNormative: new FormControl (''),
-          decisionalNormative_calificacion: new FormControl (''),
-          decisionalNormative_retroalimentacion: new FormControl (''),
-          existsLogicalFactual: new FormControl (''),
-          reasonsLogicalFactual: new FormControl (''),
-          logicalFactual_calificacion: new FormControl (''),
-          logicalFactual_retroalimentacion: new FormControl (''),
-          existsDecisionalFactual: new FormControl (''),
-          reasonsDecisionalFactual: new FormControl (''),
-          decisionalFactual_calificacion: new FormControl (''),
-          decisionalFactual_retroalimentacion: new FormControl (''),
-          lackMotivation: new FormControl (''),
-          reasonsMotivation: new FormControl (''),
-          motivation_calificacion: new FormControl (''),
-          motivation_retroalimentacion: new FormControl ('')
+          existsLogicalNormative: new FormControl(''),
+          reasonsLogicaNormative: new FormControl(''),
+          logicaNormative_calificacion: new FormControl(''),
+          logicaNormative_retroalimentacion: new FormControl(''),
+          existsDecisionalNormative: new FormControl(''),
+          reasonsDecisionalNormative: new FormControl(''),
+          decisionalNormative_calificacion: new FormControl(''),
+          decisionalNormative_retroalimentacion: new FormControl(''),
+          existsLogicalFactual: new FormControl(''),
+          reasonsLogicalFactual: new FormControl(''),
+          logicalFactual_calificacion: new FormControl(''),
+          logicalFactual_retroalimentacion: new FormControl(''),
+          existsDecisionalFactual: new FormControl(''),
+          reasonsDecisionalFactual: new FormControl(''),
+          decisionalFactual_calificacion: new FormControl(''),
+          decisionalFactual_retroalimentacion: new FormControl(''),
+          lackMotivation: new FormControl(''),
+          reasonsMotivation: new FormControl(''),
+          motivation_calificacion: new FormControl(''),
+          motivation_retroalimentacion: new FormControl('')
         }),
         inatinence: this.fb.group({
-          existsInatinenceJuridical: new FormControl (''),
-          reasonsInatinenceJuridical: new FormControl (''),
-          inatinenceJuridical_calificacion: new FormControl (''),
-          inatinenceJuridical_retroalimentacion: new FormControl (''),
-          existsInatinenceFactual: new FormControl (''),
-          reasonsInatinenceFactual: new FormControl (''),
-          inatinenceFactual_calificacion: new FormControl (''),
-          inatinenceFactual_retroalimentacion: new FormControl ('')
+          existsInatinenceJuridical: new FormControl(''),
+          reasonsInatinenceJuridical: new FormControl(''),
+          inatinenceJuridical_calificacion: new FormControl(''),
+          inatinenceJuridical_retroalimentacion: new FormControl(''),
+          existsInatinenceFactual: new FormControl(''),
+          reasonsInatinenceFactual: new FormControl(''),
+          inatinenceFactual_calificacion: new FormControl(''),
+          inatinenceFactual_retroalimentacion: new FormControl('')
         }),
         incomprehensibility: this.fb.group({
-          existsIncomprehensibilityJuridical: new FormControl (''),
-          reasonsIncomprehensibilityJuridical: new FormControl (''),
-          incomprehensibilityJuridical_calificacion: new FormControl (''),
-          incomprehensibilityJuridical_retroalimentacion: new FormControl (''),
-          existsIncomprehensibilityFactual: new FormControl (''),
-          reasonsIncomprehensibilityFactual: new FormControl (''),
-          incomprehensibilityFactual_calificacion: new FormControl (''),
-          incomprehensibilityFactual_retroalimentacion: new FormControl ('')
+          existsIncomprehensibilityJuridical: new FormControl(''),
+          reasonsIncomprehensibilityJuridical: new FormControl(''),
+          incomprehensibilityJuridical_calificacion: new FormControl(''),
+          incomprehensibilityJuridical_retroalimentacion: new FormControl(''),
+          existsIncomprehensibilityFactual: new FormControl(''),
+          reasonsIncomprehensibilityFactual: new FormControl(''),
+          incomprehensibilityFactual_calificacion: new FormControl(''),
+          incomprehensibilityFactual_retroalimentacion: new FormControl('')
         }),
         incongruity: this.fb.group({
-          existsIncongruityNormativeParticipants: new FormControl (''),
-          reasonsIncongruityNormativeParticipants: new FormControl (''),
-          normativeParticipants_calificacion: new FormControl (''),
-          normativeParticipants_retroalimentacion: new FormControl (''),
-          existsIncongruityNormativeLaw: new FormControl (''),
-          reasonsIncongruityNormativeLaw: new FormControl (''),
-          normativeLaw_calificacion: new FormControl (''),
-          normativeLaw_retroalimentacion: new FormControl (''),
-          existsIncongruityFactualParticipants: new FormControl (''),
-          reasonsIncongruityFactualParticipants: new FormControl (''),
-          factualParticipants_calificacion: new FormControl (''),
-          factualParticipants_retroalimentacion: new FormControl (''),
-          existsIncongruityFactualLaw: new FormControl (''),
-          reasonsIncongruityFactualLaw: new FormControl (''),
-          factualLaw_calificacion: new FormControl (''),
-          factualLaw_retroalimentacion: new FormControl ('')
+          existsIncongruityNormativeParticipants: new FormControl(''),
+          reasonsIncongruityNormativeParticipants: new FormControl(''),
+          normativeParticipants_calificacion: new FormControl(''),
+          normativeParticipants_retroalimentacion: new FormControl(''),
+          existsIncongruityNormativeLaw: new FormControl(''),
+          reasonsIncongruityNormativeLaw: new FormControl(''),
+          normativeLaw_calificacion: new FormControl(''),
+          normativeLaw_retroalimentacion: new FormControl(''),
+          existsIncongruityFactualParticipants: new FormControl(''),
+          reasonsIncongruityFactualParticipants: new FormControl(''),
+          factualParticipants_calificacion: new FormControl(''),
+          factualParticipants_retroalimentacion: new FormControl(''),
+          existsIncongruityFactualLaw: new FormControl(''),
+          reasonsIncongruityFactualLaw: new FormControl(''),
+          factualLaw_calificacion: new FormControl(''),
+          factualLaw_retroalimentacion: new FormControl('')
         })
       })
     });
@@ -189,14 +188,14 @@ export class EvaluacionComponent implements OnInit {
   }
 
   isButtonSelected(section: string, controlName: string, value: string): boolean {
-      this.calificaciones[section] = value;
-      let controlPath = "";
-      if (section === "motivationType") {
-        controlPath = controlName
-      } else {
-        controlPath = `${section}.${controlName}`
-        console.log(controlPath)
-      }
+    this.calificaciones[section] = value;
+    let controlPath = "";
+    if (section === "motivationType") {
+      controlPath = controlName
+    } else {
+      controlPath = `${section}.${controlName}`
+      console.log(controlPath)
+    }
     return this.buttonStates[controlPath] === value;
   }
 
@@ -205,7 +204,7 @@ export class EvaluacionComponent implements OnInit {
     this.updateButtonStates(data, '');
     this.changeDetectorRef.detectChanges(); // Forzar actualización de la vista
   }
-  
+
 
   updateButtonStates(obj: any, prefix: string) {
     for (const key in obj) {
@@ -244,7 +243,7 @@ export class EvaluacionComponent implements OnInit {
       }
     });
   }
-  
+
 
   lockForm() {
     this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
@@ -255,7 +254,7 @@ export class EvaluacionComponent implements OnInit {
         console.error("Error locking form: ", error);
       });
   }
-  
+
   disableFormControls(formGroup: FormGroup | FormArray) {
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
@@ -264,8 +263,8 @@ export class EvaluacionComponent implements OnInit {
         this.disableFormControls(control); // Recursively disable nested controls
       }
     });
-  }  
-  
+  }
+
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -301,11 +300,11 @@ export class EvaluacionComponent implements OnInit {
 
   resetOtherAppearanceFields(selectedField: string): void {
     const appearance = this.evaluacionForm.get('appearance') as FormGroup;
-  
+
     if (!appearance) return;
-  
+
     const fields = ['incoherence', 'inatinence', 'incomprehensibility', 'incongruity'];
-  
+
     fields.forEach(field => {
       if (field !== selectedField) {
         const control = appearance.get(field);
@@ -319,7 +318,7 @@ export class EvaluacionComponent implements OnInit {
   handleAppearanceFieldChange(selectedField: string): void {
     this.resetOtherAppearanceFields(selectedField);
   }
-  
+
   checkDocenteSaved() {
     this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
       .subscribe((data: any) => {
@@ -336,23 +335,24 @@ export class EvaluacionComponent implements OnInit {
     }
     return 'No Calificado';
   }
-  
-  
+
+
   setCalificacion(controlPath: string, calificacion: string): void {
     const control = this.evaluacionForm.get(controlPath);
     if (control) {
       control.setValue(calificacion);
-      this.selectedButtons['motivationType'] = calificacion;    }
+      this.selectedButtons['motivationType'] = calificacion;
+    }
   }
-  
-  
+
+
   submitForm() {
     this.cargando = true; // Activar el estado de carga
     this.evaluacionForm.patchValue({ saved: true });
     if (this.isDocente) {
       this.evaluacionForm.patchValue({ docenteSaved: true });
     }
-    
+
     const analisisData = this.evaluacionForm.value;
 
     for (const [key, value] of Object.entries(this.buttonStates)) {
@@ -415,7 +415,7 @@ export class EvaluacionComponent implements OnInit {
       controlPath = `${section}.${controlName}`
     }
     let control = this.evaluacionForm.get(controlPath);
-    if(control){
+    if (control) {
       control.setValue(value);
       this.buttonStates[controlPath] = value;
     }
@@ -425,11 +425,17 @@ export class EvaluacionComponent implements OnInit {
   isCalificacionCorrecta(field: string): boolean {
     return this.calificaciones[field] === 'Correcto';
   }
-  
+
   isCalificacionIncorrecta(field: string): boolean {
     return this.calificaciones[field] === 'Incorrecto';
   }
+  getRetroalimentacionValue(controlName: string): string {
+    return this.evaluacionForm.get(controlName)?.value || '';
+  }
 
+  toggleRetroalimentacion(sectionId: string) {
+    this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];
+  }
 }
 
 
@@ -480,4 +486,6 @@ interface evaluacionData {
       motivoDeficitMotivacion: string;
     };
   };
+
+
 }

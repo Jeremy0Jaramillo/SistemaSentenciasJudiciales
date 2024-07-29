@@ -14,13 +14,13 @@
       <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
         los siguientes tipos</h5>
 
-        <div *ngIf="isDocente">
-          <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
-            <option class="op" value="nonexistinence">Inexistencia</option>
-            <option class="op" value="insufficiency">Insuficiencia</option>
-            <option class="op" value="appearance">Apariencia</option>
-          </select>
-        </div>
+      <div *ngIf="isDocente">
+        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
+          <option class="op" value="nonexistinence">Inexistencia</option>
+          <option class="op" value="insufficiency">Insuficiencia</option>
+          <option class="op" value="appearance">Apariencia</option>
+        </select>
+      </div>
 
       <div *ngIf="!isDocente">
         <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType"
@@ -37,14 +37,12 @@
         <div class="bttns-rate">
           <button class="correct-button"
             [class.calificacion-correcta]="isButtonSelected('motivationType', 'motivationType_calificacion', 'Correcto')"
-            type="button"
-            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">
+            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Correcto')">
             Correcto
           </button>
           <button class="incorrect-button"
             [class.calificacion-incorrecta]="isButtonSelected('motivationType', 'motivationType_calificacion', 'Incorrecto')"
-            type="button"
-            (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">
+            type="button" (click)="selectButton('motivationType', 'motivationType_calificacion', 'Incorrecto')">
             Incorrecto
           </button>
         </div>
@@ -81,13 +79,13 @@
         (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
       <div *ngIf="calificarState['nonexistinence.reasonsNormative']">
         <div class="bttns-rate">
-          <button class="correct-button" 
-          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Correcto')"
-          type="button"            
-          (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correct</button>
-          <button class="incorrect-button" 
-          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Incorrecto')"
-          type="button"
+          <button class="correct-button"
+            [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Correcto')"
+            type="button"
+            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correct</button>
+          <button class="incorrect-button"
+            [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Incorrecto')"
+            type="button"
             (click)="selectButton('nonexistinence', 'normative_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
@@ -124,12 +122,11 @@
         (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
       <div *ngIf="calificarState['nonexistinence.reasonsFactual']">
         <div class="bttns-rate">
-          <button class="correct-button" 
-          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Correcto')"
-          type="button"
-            (click)="selectButton('nonexistinence', 'factual_calificacion', 'Correcto')">Correct</button>
+          <button class="correct-button"
+            [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Correcto')"
+            type="button" (click)="selectButton('nonexistinence', 'factual_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
-          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Incorrecto')"
+            [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Incorrecto')"
             (click)="selectButton('nonexistinence', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -160,10 +157,10 @@
       <div *ngIf="calificarState['nonexistinence.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-          [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Correcto')"
+            [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Correcto')"
             (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
-          [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Incorrecto')"
+            [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Incorrecto')"
             (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -193,21 +190,29 @@
       <div>
         <app-caja-texto name="reasonsNormative" formControlName="reasonsNormative" [disabled]="evaluacionForm.disabled"
           [titulo]="'¿Por qué?'"></app-caja-texto>
+        <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.normative_retroalimentacion')">
+          <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+            {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+          </button>
+          <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+            <div class="retroalimentacion-texto">
+              {{ getRetroalimentacionValue('insufficiency.normative_retroalimentacion') }}
+            </div>
+          </div>
+        </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('insufficiency.reasonsNormative')">Calificar</button>
       <div *ngIf="calificarState['insufficiency.reasonsNormative']">
         <div class="bttns-rate">
           <button class="correct-button"
-          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
-          type="button"
-            (click)="selectButton('insufficiency', 'normative_calificacion', 'Correcto')">
+            [class.calificacion-correcta]="isButtonSelected('insufficiency', 'normative_calificacion', 'Correcto')"
+            type="button" (click)="selectButton('insufficiency', 'normative_calificacion', 'Correcto')">
             Correcto
           </button>
           <button class="incorrect-button"
-          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
-            type="button"
-            (click)="selectButton('insufficiency', 'normative_calificacion', 'Incorrecto')">
+            [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'normative_calificacion', 'Incorrecto')"
+            type="button" (click)="selectButton('insufficiency', 'normative_calificacion', 'Incorrecto')">
             Incorrecto
           </button>
         </div>
@@ -235,16 +240,26 @@
         <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [disabled]="evaluacionForm.disabled"
           [titulo]="'¿Por qué?'">
         </app-caja-texto>
+        <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.factual_retroalimentacion')">
+          <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+            {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+          </button>
+          <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+            <div class="retroalimentacion-texto">
+              {{ getRetroalimentacionValue('insufficiency.factual_retroalimentacion') }}
+            </div>
+          </div>
+        </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('insufficiency.reasonsFactual')">Calificar</button>
       <div *ngIf="calificarState['insufficiency.reasonsFactual']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
+            [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
             (click)="selectButton('insufficiency', 'factual_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
-          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
+            [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
             (click)="selectButton('insufficiency', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -264,7 +279,6 @@
         </div>
       </div>
 
-
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
         <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
@@ -274,16 +288,26 @@
         <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
           [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
         </app-caja-texto>
+        <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.motivation_retroalimentacion')">
+          <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+            {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+          </button>
+          <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+            <div class="retroalimentacion-texto">
+              {{ getRetroalimentacionValue('insufficiency.motivation_retroalimentacion') }}
+            </div>
+          </div>
+        </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('insufficiency.reasonsMotivation')">Calificar</button>
       <div *ngIf="calificarState['insufficiency.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
-          [class.calificacion-correcta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Correcto')"
+            [class.calificacion-correcta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Correcto')"
             (click)="selectButton('insufficiency', 'motivation_calificacion', 'Correcto')">Correct</button>
           <button class="incorrect-button" type="button"
-          [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Incorrecto')"
+            [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Incorrecto')"
             (click)="selectButton('insufficiency', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
         </div>
         <div>
@@ -302,7 +326,7 @@
         </div>
       </div>
     </div>
-
+    
     <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'appearance'" formGroupName="appearance">
       <h2 class="titulo">Apariencia</h2>
       <h5 class="titulo">En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de
@@ -326,15 +350,13 @@
           (click)="toggleCalificar('appearance.motivationalHabit')">Calificar</button>
         <div *ngIf="calificarState['appearance.motivationalHabit']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Correcto')"
-            type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Correcto')"
+              type="button" (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">
               Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Incorrecto')"
-            type="button"
-              (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Incorrecto')"
+              type="button" (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">
               Incorrect</button>
           </div>
         </div>
@@ -362,18 +384,28 @@
           <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.logicaNormative_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incoherence.logicaNormative_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')">Correct</button>
             <button class="incorrect-button"
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')"
-            type="button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -402,18 +434,28 @@
           <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.decisionalNormative_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incoherence.decisionalNormative_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
-            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')"
-            type="button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')">Correct</button>
             <button class="incorrect-button"
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')"
-            type="button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -441,18 +483,28 @@
           <app-caja-texto name="reasonsLogicalFactual" formControlName="reasonsLogicalFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.logicalFactual_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incoherence.logicalFactual_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')">Correct</button>
             <button class="incorrect-button"
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')"
-             type="button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -479,18 +531,28 @@
           <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.decisionalFactual_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incoherence.decisionalFactual_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -518,18 +580,28 @@
           <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.motivation_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incoherence.motivation_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -563,6 +635,16 @@
           <app-caja-texto name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.inatinence.inatinenceJuridical_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.inatinence.inatinenceJuridical_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
@@ -608,23 +690,33 @@
           <app-caja-texto name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.inatinence.inatinenceFactual_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.inatinence.inatinenceFactual_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
             <button class="correct-button"
-            [class.calificacion-correcta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')"
-            type="button"
-            (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')">
-            Correcto
-          </button>
-          <button class="incorrect-button"
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')"
-            type="button"
-            (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')">
-            Incorrecto
-          </button>
+              [class.calificacion-correcta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')"
+              type="button"
+              (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Correcto')">
+              Correcto
+            </button>
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')"
+              type="button"
+              (click)="selectButton('appearance.inatinence', 'inatinenceFactual_calificacion', 'Incorrecto')">
+              Incorrecto
+            </button>
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceFactual_retroalimentacion"
@@ -660,18 +752,28 @@
           <app-caja-texto name="reasonsIncomprehensibilityJuridical" [disabled]="evaluacionForm.disabled"
             formControlName="reasonsIncomprehensibilityJuridical" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -705,18 +807,28 @@
           <app-caja-texto name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityFactual_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityFactual_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -751,18 +863,28 @@
           <app-caja-texto name="reasonsIncongruityNormativeParticipants" [disabled]="evaluacionForm.disabled"
             formControlName="reasonsIncongruityNormativeParticipants" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.normativeParticipants_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incongruity.normativeParticipants_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -791,18 +913,28 @@
           <app-caja-texto name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.normativeLaw_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incongruity.normativeLaw_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -834,18 +966,28 @@
           <app-caja-texto name="reasonsIncongruityFactualParticipants" [disabled]="evaluacionForm.disabled"
             formControlName="reasonsIncongruityFactualParticipants" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.factualParticipants_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incongruity.factualParticipants_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
@@ -876,18 +1018,28 @@
           <app-caja-texto name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
           </app-caja-texto>
+          <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.factualLaw_retroalimentacion')">
+            <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+              {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+            </button>
+            <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+              <div class="retroalimentacion-texto">
+                {{ getRetroalimentacionValue('appearance.incongruity.factualLaw_retroalimentacion') }}
+              </div>
+            </div>
+          </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
           (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
-            <button class="correct-button" 
-            [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')"
-            type="button"
+            <button class="correct-button"
+              [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')">Correct</button>
-            <button class="incorrect-button" 
-            [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')"
-            type="button"
+            <button class="incorrect-button"
+              [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')"
+              type="button"
               (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')">Incorrect</button>
           </div>
           <div>
