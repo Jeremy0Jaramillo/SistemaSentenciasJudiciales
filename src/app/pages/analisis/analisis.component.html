@@ -10,6 +10,11 @@
 <div class="info-analisis">
   <h3 class="titulo-analisis">Esquema de las argumentaciones</h3>
   <form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
+
+    <div *ngIf="analisisForm.disabled" class="locked-message">
+      Esta sentencia está bloqueada y no puede ser editada.
+  </div>
+
     <div formArrayName="normativas">
       <div *ngFor="let normativa of normativas.controls; let i=index" [formGroupName]="i">
 

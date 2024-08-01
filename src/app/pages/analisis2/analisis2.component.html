@@ -10,6 +10,10 @@
 <div class="info-analisis">
   <form [formGroup]="analisis2Form" (ngSubmit)="submitForm()">
 
+    <div *ngIf="analisis2Form.disabled" class="locked-message">
+      Esta sentencia está bloqueada y no puede ser editada.
+  </div>
+
     <div class="analisis" *ngFor="let section of [
       {id: 'narracion_hechos', title: '1. Narración de los hechos'},
       {id: 'problema_juridico', title: '2. Problema jurídico'},

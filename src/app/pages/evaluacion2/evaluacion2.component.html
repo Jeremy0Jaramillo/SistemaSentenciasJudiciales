@@ -8,6 +8,11 @@
 </div>
 
 <form [formGroup]="evaluacion2Form" (ngSubmit)="submitForm()">
+    
+    <div *ngIf="evaluacion2Form.disabled" class="locked-message">
+        Esta sentencia está bloqueada y no puede ser editada.
+    </div>
+
     <div>
         <div class="checkbox-class">
             <h2 class="titulo">MOTIVACIÓN CORRECTA</h2>
@@ -884,7 +889,7 @@
 
 <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToEvaluacion()">Evaluación</button>
-    <button  *ngIf="isDocente" class="bttn-stnd" (click)="lockForm()">Bloquear Sentencia</button>
+    <button *ngIf="isDocente" class="bttn-stnd" (click)="lockForm()">Bloquear Sentencia</button>
     <button class="custom-button" type="button" *ngIf="cargando">
         <div class="spinner"></div>
         <span class="button-text">Cargando...</span>

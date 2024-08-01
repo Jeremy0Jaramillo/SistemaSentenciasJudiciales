@@ -20,6 +20,7 @@ interface User {
   styleUrls: ['./evaluacion2.component.css']
 })
 export class Evaluacion2Component implements OnInit {
+  isFormLocked: boolean = false;
   evaluacion2Form: FormGroup;
   cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
   numero_proceso: string = '';
@@ -103,15 +104,17 @@ export class Evaluacion2Component implements OnInit {
   checkLockStatus() {
     this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
       if (data && data.locked) {
-        this.disableFormControls(this.evaluacion2Form); // Disable the form if it's locked
+        this.evaluacion2Form.disable();
+        this.isFormLocked = true;
       }
     });
   }
-
   lockForm() {
     this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
       .then(() => {
-        this.disableFormControls(this.evaluacion2Form); // Disable the form controls
+        this.evaluacion2Form.disable();
+        this.isFormLocked = true;
+        console.log('Formulario bloqueado');
       })
       .catch(error => {
         console.error("Error locking form: ", error);
@@ -122,7 +125,7 @@ export class Evaluacion2Component implements OnInit {
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup || control instanceof FormArray) {
-        this.disableFormControls(control); // Recursively disable nested controls
+        this.disableFormControls(control);
       } else {
         control?.disable();
       }
@@ -248,6 +251,9 @@ export class Evaluacion2Component implements OnInit {
     const formArray: FormArray = this.evaluacion2Form.get(controlName) as FormArray;
     
     if (event.target.checked) {
+      if (this.evaluacion2Form.disabled) {
+        return; // No permitir cambios si el formulario está bloqueado
+      }
       formArray.push(this.fb.control(event.target.value));
     } else {
       const index = formArray.controls.findIndex(x => x.value === event.target.value);
@@ -261,6 +267,9 @@ export class Evaluacion2Component implements OnInit {
   }
 
   onStudentCheckboxChange(event: any, controlName: string) {
+    if (this.evaluacion2Form.disabled) {
+      return; // No permitir cambios si el formulario está bloqueado
+    }
     this.onCheckboxChange(event, controlName);
     const value = event.target.value;
     this.studentSelections[value] = event.target.checked;
@@ -268,6 +277,9 @@ export class Evaluacion2Component implements OnInit {
   }
 
   onDocenteCheckboxChange(event: any, controlName: string) {
+    if (this.evaluacion2Form.disabled) {
+      return; // No permitir cambios si el formulario está bloqueado
+    }
     const value = event.target.value;
     this.docenteSelections[value] = event.target.checked;
 
@@ -370,6 +382,7 @@ export class Evaluacion2Component implements OnInit {
     });
   }
 
+  
   getCalificacionValue(controlName: string): string {
     const control = this.evaluacion2Form.get(controlName);
     const value = control?.value;

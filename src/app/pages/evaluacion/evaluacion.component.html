@@ -9,6 +9,11 @@
 
 <div class="eva">
   <form [formGroup]="evaluacionForm" (ngSubmit)="submitForm()">
+
+    <div *ngIf="evaluacionForm.disabled" class="locked-message">
+      Esta sentencia está bloqueada y no puede ser editada.
+  </div>
+  
     <div>
       <h3 class="titulo" for="motivationType">Tipo de Motivación</h3>
       <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
