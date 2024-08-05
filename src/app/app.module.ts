@@ -18,6 +18,16 @@ import { Analisis2Component } from './pages/analisis2/analisis2.component';
 import { RouterModule } from '@angular/router';
 import { CajaTextoComponent } from './components/caja-texto/caja-texto.component';
 import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component';
+import { msalConfig } from '../app/auth-config';
+import { MsalModule, MsalService, MsalGuard, MsalInterceptor, MSAL_INSTANCE, MsalBroadcastService, MsalRedirectComponent } from '@azure/msal-angular';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+
+export function MSALInstanceFactory(): PublicClientApplication {
+  const pca = new PublicClientApplication(msalConfig);
+  pca.initialize();
+  return pca;
+}
 
 @NgModule({
   declarations: [
@@ -40,9 +50,22 @@ import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component'
     ReactiveFormsModule,
     FormsModule,
     AngularFirestoreModule,
-    RouterModule
+    RouterModule,
+    MsalModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory
+    },
+    MsalService,
+    MsalBroadcastService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true
+    }
+  ],
+  bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule { }
