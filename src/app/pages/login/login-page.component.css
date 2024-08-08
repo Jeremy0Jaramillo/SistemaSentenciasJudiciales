@@ -20,6 +20,10 @@
     margin-left: 80px;
 }
 
+.bttn-stnd{
+    margin: 10px 0px 10px;
+}
+
 .flex-login {
     height: 80%;
     display: flex;
@@ -83,6 +87,16 @@
 }
 
 .termycon {
+    color: rgba(0, 0, 0, 0.54);
+    font-family: Poppins;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration: none;
+}
+
+.change-form{
     color: rgba(0, 0, 0, 0.54);
     font-family: Poppins;
     font-size: 16px;
