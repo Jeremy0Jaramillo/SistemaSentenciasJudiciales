@@ -11,6 +11,9 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class LoginPageComponent {
 
   alerta: boolean = false;
+  isLogin = true;
+  alertaMessage = '';
+
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -54,5 +57,11 @@ export class LoginPageComponent {
         // Handle registration error
         console.error('Registration error:', error);
       });
+  }
+
+  toggleForm(event: Event) {
+    event.preventDefault();
+    this.isLogin = !this.isLogin;
+    this.alerta = false; // Resetea la alerta al cambiar de formulario
   }
 }
