@@ -23,14 +23,15 @@
 }
 
 .logout {
-    background: none;
+    background: #f44336;
     border: none;
-    text-align: center;
+    border-radius: 5px;
+    text-align: start;
     font-family: Poppins;
     font-size: 15px;
     font-style: normal;
     color: #ffffff;
-    margin: 0px 15px 0px 15px;
+    margin: 10px 0px 10px;
 }
 
 .bttn-nav:active {
@@ -57,12 +58,4 @@
 
 .user-info{
     display: flex;
-}
-
-.user-info .profile-pic{
-    margin-right: 5px;
-}
-
-.logout-menu{
-    margin-left: 100px;
 }

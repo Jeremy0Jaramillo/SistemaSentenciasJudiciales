@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
       if (user) {
         this.firestore.collection('users').doc(user.uid).valueChanges().subscribe(userData => {
           this.user = userData;
+
         });
       }
     });
