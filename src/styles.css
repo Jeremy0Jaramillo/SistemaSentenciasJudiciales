@@ -260,6 +260,17 @@ h2 {
   .button-text {
     font-weight: bold;
   }
+
+  .titulo-analisis {
+    text-align: center;
+    color: #000;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
   
   @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -301,3 +312,8 @@ h2 {
     margin-top: 10px;
   }
   
+.alerta{
+    font-family: Poppins;
+    font-size: 15px;
+    color: #C40C0C;
+}

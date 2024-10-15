@@ -40,6 +40,7 @@ export class CajaTextoComponent implements ControlValueAccessor {
 
   writeValue(value: any): void {
     this.value = value;
+    this.formControl.setValue(value); 
   }
 
   registerOnChange(fn: any): void {

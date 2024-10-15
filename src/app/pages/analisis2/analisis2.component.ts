@@ -59,10 +59,8 @@ export class Analisis2Component implements OnInit {
   mensajeExito: string = '';
   mostrarMensaje: boolean = false;
   mensajeError: string = '';
-  mostrarRetroalimentacion: {[key: string]: boolean} = {};
-
-
-
+  mostrarRetroalimentacion: { [key: string]: boolean } = {};
+  private isSubmitting = false
 
   constructor(
     private fb: FormBuilder,
@@ -132,7 +130,7 @@ export class Analisis2Component implements OnInit {
         console.error("Error locking form: ", error);
       });
   }
-  
+
   disableFormControls(formGroup: FormGroup) {
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
@@ -142,7 +140,7 @@ export class Analisis2Component implements OnInit {
       }
     });
   }
-  
+
   toggleRetroalimentacion(sectionId: string) {
     this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];
   }
@@ -184,10 +182,10 @@ export class Analisis2Component implements OnInit {
 
   updateSelectedButtons(data: Analisis2) {
     const sections = [
-      'narracion_hechos', 'problema_juridico', 'cuestiones_subcuestiones', 
+      'narracion_hechos', 'problema_juridico', 'cuestiones_subcuestiones',
       'respuesta_cuestiones', 'ratio_obiter', 'solucion_problema', 'decision'
     ];
-    
+
     sections.forEach(section => {
       const calificacion = data[`${section}_calificacion` as keyof Analisis2];
       if (calificacion === 'Correcto' || calificacion === 'Incorrecto') {
@@ -197,6 +195,7 @@ export class Analisis2Component implements OnInit {
   }
 
   submitForm() {
+    this.isSubmitting = true;
     this.cargando = true;
     this.analisis2Form.patchValue({ saved: true });
     if (this.isDocente) {
@@ -213,13 +212,14 @@ export class Analisis2Component implements OnInit {
     this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
-        this.cargando = false; // Desactivar el estado de carga
+        this.cargando = false;
         window.location.reload();
       })
       .catch(error => {
         console.error("Error saving document: ", error);
-        this.cargando = false; // Desactivar el estado de carga
-
+        this.cargando = false;
+        this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+        this.isSubmitting = false;
       });
   }
 
@@ -229,14 +229,14 @@ export class Analisis2Component implements OnInit {
     this.mensajeExito = mensaje;
     this.mostrarMensaje = true;
   }
-  
+
   // Método para mostrar mensaje de error
   mostrarMensajeError(mensaje: string) {
     // Similar al método de éxito, pero para errores
     this.mensajeError = mensaje;
     this.mostrarMensaje = true;
   }
-  
+
   redirectToAnalisis() {
     this.router.navigate(['/analisis'], {
       queryParams: {
@@ -248,40 +248,55 @@ export class Analisis2Component implements OnInit {
     });
   }
 
-  redirectToEvaluacion() {
-    if (this.docenteSaved) {
-      this.router.navigate(['/evaluacion'], {
-        queryParams: {
-          numero_proceso: this.numero_proceso,
-          asunto: this.asunto,
-          estudiante: this.estudiante,
-          docente: this.docente
-        }
-      });
+  redirectToEvaluacion(event: Event) {
+    event.preventDefault();
+    console.log('Estado de docenteSaved:', this.docenteSaved); // Log para depuración
+    if (this.analisis2Form.valid) {
+      // Verificar si hay cambios no guardados
+      if (this.analisis2Form.dirty) {
+        this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
+        return;
+      }
+      // Verificar si docenteSaved es true
+      if (this.docenteSaved) {
+        this.router.navigate(['/evaluacion'], {
+          queryParams: {
+            numero_proceso: this.numero_proceso,
+            asunto: this.asunto,
+            estudiante: this.estudiante,
+            docente: this.docente
+          }
+        });
+      } else {
+        console.log('Datos no guardados, mostrando alerta');
+        this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
+      }
+    } else {
+      this.mostrarMensajeError('Por favor, complete todos los campos obligatorios.');
     }
   }
-  
-  checkDocenteSaved() {
-    this.firestore.collection('analisis2').doc(this.numero_proceso).valueChanges()
-      .subscribe((data: any) => {
-        if (data && data.saved) {
-          this.docenteSaved = data.docenteSaved || false;
-        }
-      });
-  }
 
-  toggleCalificar(section: string) {
-    this.calificarState[section] = !this.calificarState[section];
-  }
+checkDocenteSaved() {
+  this.firestore.collection('analisis2').doc(this.numero_proceso).valueChanges()
+    .subscribe((data: any) => {
+      if (data && data.saved) {
+        this.docenteSaved = data.docenteSaved || false;
+      }
+    });
+}
 
-  setCalificacion(sectionId: string, calificacion: string) {
-    this.analisis2Form.get(sectionId + '_calificacion')?.setValue(calificacion);
-    this.selectedButtons[sectionId] = calificacion;
-  }
+toggleCalificar(section: string) {
+  this.calificarState[section] = !this.calificarState[section];
+}
 
-  getCalificacionValue(controlName: string): string {
-    const control = this.analisis2Form.get(controlName);
-    return control && control.value ? control.value : 'No Calificado';
-  }
+setCalificacion(sectionId: string, calificacion: string) {
+  this.analisis2Form.get(sectionId + '_calificacion')?.setValue(calificacion);
+  this.selectedButtons[sectionId] = calificacion;
+}
+
+getCalificacionValue(controlName: string): string {
+  const control = this.analisis2Form.get(controlName);
+  return control && control.value ? control.value : 'No Calificado';
+}
 
 }

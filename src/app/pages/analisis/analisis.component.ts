@@ -24,7 +24,7 @@ export class AnalisisComponent implements OnInit {
   estudiante: string = '';
   docente: string = '';
   saved = false;
-  docenteSaved = false;
+  // docenteSaved = false;
   dataLoaded = false;
   isDocente = false;
   currentUser: Observable<User | null | undefined> = of(null); // Allow null and undefined
@@ -34,20 +34,28 @@ export class AnalisisComponent implements OnInit {
   mostrarMensaje: boolean = false;
   mensajeError: string = '';
   mostrarRetroalimentacion: boolean[] = [];
+  private isSubmitting = false
+  problem_question: any;
 
   constructor(
     private fb: FormBuilder,
     private firestore: AngularFirestore,
     private router: Router,
     private route: ActivatedRoute,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
   ) {
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
-      normativas: this.fb.array([]),
-      facticas: this.fb.array([]),
+      normativas: this.fb.array([], Validators.required),
+      facticas: this.fb.array([], Validators.required),
       saved: [false],
-      docenteSaved: [false]
+      docenteSaved: [false],
+      problem_question: this.fb.group({
+        pregunta: ['', Validators.required],
+        calificacion: [''],
+        retroalimentacion: [''],
+        showCalificar: [false]
+      })
     });
     this.mostrarRetroalimentacion = [];
   }
@@ -58,7 +66,24 @@ export class AnalisisComponent implements OnInit {
     this.mostrarRetroalimentacion[index] = !this.mostrarRetroalimentacion[index];
   }
 
+  toggleRetroalimentacion2(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const showCalificarControl = this.analisisForm.get('problem_question.showCalificar');
+  
+    if (showCalificarControl) {
+      const currentValue = showCalificarControl.value;
+      showCalificarControl.setValue(!currentValue);  // Alterna el valor true/false
+    }
+  }
+
   ngOnInit() {
+    this.analisisForm.valueChanges.subscribe(() => {
+      if (this.dataLoaded && !this.isSubmitting) {
+        this.saved = false;
+        this.analisisForm.patchValue({ saved: false }, { emitEvent: false });
+      }
+    });
     this.route.queryParamMap.subscribe(params => {
       this.numero_proceso = params.get('numero_proceso') || '';
       this.asunto = params.get('asunto') || '';
@@ -68,9 +93,8 @@ export class AnalisisComponent implements OnInit {
         numero_proceso: this.numero_proceso
       });
       this.inicializarMostrarRetroalimentacion();
-
       this.loadUserData();
-      this.checkDocenteSaved();
+      //this.checkDocenteSaved();
       setTimeout(() => {
         this.checkLockStatus();
       }, 1000);
@@ -99,16 +123,16 @@ export class AnalisisComponent implements OnInit {
         console.error("Error locking form: ", error);
       });
   }
-  
+
   disableFormControls(formGroup: FormGroup | FormArray) {
-  Object.keys(formGroup.controls).forEach(key => {
-    const control = formGroup.get(key);
-    control?.disable(); // Disable the control
-    if (control instanceof FormGroup || control instanceof FormArray) {
-      this.disableFormControls(control); // Recursively disable nested controls
-    }
-  });
-}
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.disable(); // Disable the control
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.disableFormControls(control); // Recursively disable nested controls
+      }
+    });
+  }
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -117,12 +141,19 @@ export class AnalisisComponent implements OnInit {
         this.currentUser.subscribe(userData => {
           if (userData && userData.role === 'docente') {
             this.isDocente = true;
-            this.checkDocenteSaved();
+            //this.checkDocenteSaved();
           }
         });
         this.loadAnalisisData();
       }
     });
+  }
+
+  onFormChange() {
+    if (!this.isSubmitting && this.saved) {
+      console.log('Formulario modificado, reseteando saved');
+      this.saved = true;
+    }
   }
 
   get normativas() {
@@ -143,11 +174,14 @@ export class AnalisisComponent implements OnInit {
       showCalificar: [false]
     }));
     this.mostrarRetroalimentacion.push(false);
+    this.onFormChange();
   }
 
   removeNormativa(index: number) {
     this.normativas.removeAt(index);
     this.mostrarRetroalimentacion.splice(index, 1);
+    this.normativas.removeAt(index);
+    this.onFormChange()
   }
 
   addFactica() {
@@ -159,27 +193,40 @@ export class AnalisisComponent implements OnInit {
       retroalimentacion: [''],
       showCalificar: [false]
     }));
+    this.onFormChange();
+    this.mostrarRetroalimentacion.push(false);
   }
 
   removeFactica(index: number) {
     this.facticas.removeAt(index);
+    this.normativas.removeAt(index);
+    this.mostrarRetroalimentacion.splice(index, 1);
+    this.onFormChange()
   }
 
   loadAnalisisData() {
     this.firestore.collection('analisis').doc(this.numero_proceso).valueChanges()
-      .subscribe((analisis: any) => {
-        if (analisis) {
-          this.analisisForm.patchValue({
-            numero_proceso: analisis.numero_proceso,
-            saved: analisis.saved || false,
-            docenteSaved: analisis.docenteSaved || false
-
-          });
+    .subscribe((analisis: any) => {
+      if (analisis) {
+        this.analisisForm.patchValue({
+          numero_proceso: analisis.numero_proceso,
+          saved: analisis.saved || false,
+          docenteSaved: analisis.docenteSaved || false,
+          problem_question: {
+            pregunta: analisis.problem_question?.pregunta || '',
+            calificacion: analisis.problem_question?.calificacion || '',
+            retroalimentacion: analisis.problem_question?.retroalimentacion || '',
+            showCalificar: analisis.problem_question?.showCalificar || false
+          }
+        }, { emitEvent: false });
           while (this.normativas.length !== 0) {
             this.normativas.removeAt(0);
           }
           while (this.facticas.length !== 0) {
             this.facticas.removeAt(0);
+          }
+          if (analisis.problem_question) {
+            this.analisisForm.get('problem_question')?.patchValue(analisis.problem_question);
           }
           analisis.normativas.forEach((normativa: any) => {
             this.normativas.push(this.fb.group({
@@ -191,7 +238,7 @@ export class AnalisisComponent implements OnInit {
               showCalificar: [false]
             }));
           });
-  
+
           analisis.facticas.forEach((factica: any) => {
             this.facticas.push(this.fb.group({
               pregunta: factica.pregunta,
@@ -202,8 +249,8 @@ export class AnalisisComponent implements OnInit {
               showCalificar: [false]
             }));
           });
-  
           this.dataLoaded = true;
+          this.saved = analisis.saved || false;
         } else {
           if (this.normativas.length === 0) {
             this.addNormativa();
@@ -215,76 +262,100 @@ export class AnalisisComponent implements OnInit {
         }
       });
   }
-  
+
+  onRetroalimentacionChange() {
+    if (!this.isSubmitting) {
+      this.saved = false;
+      this.analisisForm.patchValue({ saved: false }, { emitEvent: false });
+    }
+  }
 
   submitForm() {
-    this.cargando = true; // Activar el estado de carga
+    this.isSubmitting = true;
+    this.cargando = true;
 
-    // Set the saved flag to true before submitting
-    this.analisisForm.patchValue({ saved: true });
-    if (this.isDocente) {
-      this.analisisForm.patchValue({ docenteSaved: true });
-    }
-    
-    const analisisData = this.analisisForm.value;
+    const analisisData = {
+      ...this.analisisForm.value,
+      problem_question: {
+        pregunta: this.analisisForm.get('problem_question.pregunta')?.value || '',
+        calificacion: this.analisisForm.get('problem_question.calificacion')?.value || '',
+        retroalimentacion: this.analisisForm.get('problem_question.retroalimentacion')?.value || '',
+        showCalificar: this.analisisForm.get('problem_question.showCalificar')?.value || false
+      },
+      saved: true
+    };
+    // Guardar los datos en Firestore
     this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
-        this.cargando = false; // Desactivar el estado de carga
+        this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
+        this.cargando = false;
         this.mostrarMensajeExito('Guardado con éxito');
-        window.location.reload();
+        setTimeout(() => {
+          this.isSubmitting = false;
+        }, 100);
       })
       .catch(error => {
         console.error("Error saving document: ", error);
-        this.cargando = false; // Desactivar el estado de carga en caso de error
+        this.cargando = false;
         this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+        this.isSubmitting = false;
       });
   }
   
-  // Método para mostrar mensaje de éxito
-mostrarMensajeExito(mensaje: string) {
-  // Aquí puedes implementar la lógica para mostrar el mensaje
-  // Por ejemplo, podrías usar un servicio de notificaciones o actualizar una variable en el componente
-  this.mensajeExito = mensaje;
-  this.mostrarMensaje = true;
-}
 
-// Método para mostrar mensaje de error
-mostrarMensajeError(mensaje: string) {
-  // Similar al método de éxito, pero para errores
-  this.mensajeError = mensaje;
-  this.mostrarMensaje = true;
-}
+  // Método para mostrar mensaje de éxito
+  mostrarMensajeExito(mensaje: string) {
+    // Aquí puedes implementar la lógica para mostrar el mensaje
+    // Por ejemplo, podrías usar un servicio de notificaciones o actualizar una variable en el componente
+    this.mensajeExito = mensaje;
+    this.mostrarMensaje = true;
+  }
+
+  // Método para mostrar mensaje de error
+  mostrarMensajeError(mensaje: string) {
+    this.mensajeError = mensaje;
+    this.mostrarMensaje = true;
+
+    // Opcionalmente, puedes agregar un temporizador para ocultar el mensaje después de un tiempo
+    setTimeout(() => {
+      this.mostrarMensaje = false;
+      this.mensajeError = '';
+    }, 5000); // El mensaje se ocultará después de 5 segundos
+  }
 
   getCalificacionValue(controlName: string): string {
     const control = this.analisisForm.get(controlName);
     return control && control.value ? control.value : 'No Calificado';
   }
-  
 
-  redirectToAnalisis2() {
-    if (this.docenteSaved) {
-      this.router.navigate(['/analisis2'], {
-        queryParams: {
-          numero_proceso: this.numero_proceso,
-          asunto: this.asunto,
-          estudiante: this.estudiante,
-          docente: this.docente
+
+  redirectToAnalisis2(event: Event) {
+    event.preventDefault();
+  
+    if (this.analisisForm.valid) {
+      const problemQuestionValid = this.analisisForm.get('problem_question.pregunta')?.value;
+  
+      if (problemQuestionValid) {
+        if (this.saved) {
+          this.router.navigate(['/analisis2'], {
+            queryParams: {
+              numero_proceso: this.numero_proceso,
+              asunto: this.asunto,
+              estudiante: this.estudiante,
+              docente: this.docente
+            }
+          });
+        } else {
+          this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
         }
-      });
+      } else {
+        this.mostrarMensajeError('Por favor, complete la pregunta del problema antes de continuar.');
+      }
+    } else {
+      this.mostrarMensajeError('Por favor, complete todos los campos obligatorios antes de continuar.');
     }
   }
-
-  checkDocenteSaved() {
-    this.firestore.collection('analisis').doc(this.numero_proceso).valueChanges()
-      .subscribe((data: any) => {
-        if (data && data.saved) {
-          this.docenteSaved = data.docenteSaved || false;
-        }
-      });
-  }
-
-
   toggleCalificar(index: number, type: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     const newShowCalificar = !control.value.showCalificar;
@@ -294,10 +365,23 @@ mostrarMensajeError(mensaje: string) {
     }
   }
 
+  calificarPregunta(type: string) {
+    if (type === 'problem_question') {
+      const control = this.analisisForm.get('problem_question');
+      if (control) {
+        const newShowCalificar = !control.get('showCalificar')?.value;
+        control.patchValue({ showCalificar: newShowCalificar });
+
+        if (!newShowCalificar) {
+          delete this.selectedButtons['problem_question'];
+        }
+      }
+    }
+  }
+
   setCalificacion(index: number, type: string, calificacion: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     control.patchValue({ calificacion });
-  
     // Actualizar en la base de datos
     const updatedData = { [`${type}s`]: this.analisisForm.get(`${type}s`)?.value };
     this.firestore.collection('analisis').doc(this.numero_proceso).update(updatedData)
@@ -307,7 +391,7 @@ mostrarMensajeError(mensaje: string) {
       .catch(error => {
         console.error('Error al actualizar la calificación:', error);
       });
-  
+
     this.selectedButtons[`${type}_${index}`] = calificacion;
   }
 
@@ -315,9 +399,29 @@ mostrarMensajeError(mensaje: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     return control.get('calificacion')?.value === 'Correcto';
   }
-  
+
   isCalificacionIncorrecta(type: string, index: number): boolean {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     return control.get('calificacion')?.value === 'Incorrecto';
   }
+
+  isCalificacionCorrecta2(type: string): boolean {
+    if (type === 'problem_question') {
+      return this.analisisForm.get('problem_question.calificacion')?.value === 'Correcto';
+    }
+    return false;
+  }
+
+  isCalificacionIncorrecta2(type: string): boolean {
+    return !this.isCalificacionCorrecta2(type);
+  }
+
+  setCalificacion2(type: string, calificacion: string) {
+  if (type === 'problem_question') {
+    this.analisisForm.get('problem_question')?.patchValue({ calificacion: calificacion });
+    this.submitForm(); // Automatically save when setting the calificacion
+  }
 }
+}
+
+

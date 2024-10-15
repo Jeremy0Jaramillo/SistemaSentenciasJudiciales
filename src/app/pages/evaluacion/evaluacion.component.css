@@ -53,12 +53,16 @@
   }
 
   .options{
+    display: flex;
     text-align: center;
     font-family: Poppins;
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px 400px 0px;
   }
 
   .bttn-stnd-g {
@@ -82,4 +86,3 @@
   .bttn-stnd-g:hover {
     background: #000000;
   }
-  

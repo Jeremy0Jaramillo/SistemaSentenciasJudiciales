@@ -10,6 +10,8 @@
 <div class="eva">
   <form [formGroup]="evaluacionForm" (ngSubmit)="submitForm()">
 
+  <h3 class="titulo-analisis">Cuestionarios de estándar de suficiencia de la motivación </h3>
+
     <div *ngIf="evaluacionForm.disabled" class="locked-message">
       Esta sentencia está bloqueada y no puede ser editada.
   </div>
@@ -19,22 +21,24 @@
       <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
         los siguientes tipos</h5>
 
-      <div *ngIf="isDocente">
-        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType">
-          <option class="op" value="nonexistinence">Inexistencia</option>
-          <option class="op" value="insufficiency">Insuficiencia</option>
-          <option class="op" value="appearance">Apariencia</option>
-        </select>
-      </div>
-
-      <div *ngIf="!isDocente">
-        <select #motivationTypeSelect class="motivaciones" id="motivationType" formControlName="motivationType"
-          [disabled]="saved">
-          <option class="op" value="nonexistinence">Inexistencia</option>
-          <option class="op" value="insufficiency">Insuficiencia</option>
-          <option class="op" value="appearance">Apariencia</option>
-        </select>
-      </div>
+        <div>
+          <h3 class="titulo">Tipo de motivación</h3>
+          <h5 class="titulo">Por favor, seleccione una opción</h5>
+          <div class="options">
+            <div>
+              <input type="radio" id="nonexistinence" name="motivationType" value="nonexistinence" formControlName="motivationType">
+              <label for="nonexistinence">Inexistencia</label>
+            </div>
+            <div>
+              <input type="radio" id="insufficiency" name="motivationType" value="insufficiency" formControlName="motivationType">
+              <label for="insufficiency">Insuficiencia</label>
+            </div>
+            <div>
+              <input type="radio" id="appearance" name="motivationType" value="appearance" formControlName="motivationType">
+              <label for="appearance">Apariencia</label>
+            </div>
+          </div>
+        </div>
 
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('motivationType')">Calificar</button>
@@ -87,7 +91,7 @@
           <button class="correct-button"
             [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Correcto')"
             type="button"
-            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correct</button>
+            (click)="selectButton('nonexistinence', 'normative_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button"
             [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'normative_calificacion', 'Incorrecto')"
             type="button"
@@ -129,10 +133,10 @@
         <div class="bttns-rate">
           <button class="correct-button"
             [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Correcto')"
-            type="button" (click)="selectButton('nonexistinence', 'factual_calificacion', 'Correcto')">Correct</button>
+            type="button" (click)="selectButton('nonexistinence', 'factual_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
             [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'factual_calificacion', 'Incorrecto')"
-            (click)="selectButton('nonexistinence', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
+            (click)="selectButton('nonexistinence', 'factual_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
@@ -163,10 +167,10 @@
         <div class="bttns-rate">
           <button class="correct-button" type="button"
             [class.calificacion-correcta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Correcto')"
-            (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Correcto')">Correct</button>
+            (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
             [class.calificacion-incorrecta]="isButtonSelected('nonexistinence', 'motivation_calificacion', 'Incorrecto')"
-            (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
+            (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <app-caja-texto formControlName="motivation_retroalimentacion" [titulo]="'Retroalimentación'">
@@ -262,10 +266,10 @@
         <div class="bttns-rate">
           <button class="correct-button" type="button"
             [class.calificacion-correcta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Correcto')"
-            (click)="selectButton('insufficiency', 'factual_calificacion', 'Correcto')">Correct</button>
+            (click)="selectButton('insufficiency', 'factual_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
             [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'factual_calificacion', 'Incorrecto')"
-            (click)="selectButton('insufficiency', 'factual_calificacion', 'Incorrecto')">Incorrect</button>
+            (click)="selectButton('insufficiency', 'factual_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <div>
@@ -310,10 +314,10 @@
         <div class="bttns-rate">
           <button class="correct-button" type="button"
             [class.calificacion-correcta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Correcto')"
-            (click)="selectButton('insufficiency', 'motivation_calificacion', 'Correcto')">Correct</button>
+            (click)="selectButton('insufficiency', 'motivation_calificacion', 'Correcto')">Correcto</button>
           <button class="incorrect-button" type="button"
             [class.calificacion-incorrecta]="isButtonSelected('insufficiency', 'motivation_calificacion', 'Incorrecto')"
-            (click)="selectButton('insufficiency', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
+            (click)="selectButton('insufficiency', 'motivation_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
           <app-caja-texto formControlName="motivation_retroalimentacion"
@@ -347,7 +351,7 @@
           <input type="radio" name="motivationalHabit" value="inatinence" formControlName="motivationalHabit">
           Inatinencia
           <input type="radio" name="motivationalHabit" value="incomprehensibility" formControlName="motivationalHabit">
-          Imcomprensibilidad
+          Incomprensibilidad
           <input type="radio" name="motivationalHabit" value="incongruity" formControlName="motivationalHabit">
           Incongruencia
         </div>
@@ -358,11 +362,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Correcto')"
               type="button" (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Correcto')">
-              Correct</button>
+              Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance', 'motivationalHabit_calificacion', 'Incorrecto')"
               type="button" (click)="selectButton('appearance', 'motivationalHabit_calificacion', 'Incorrecto')">
-              Incorrect</button>
+              Incorrecto</button>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -407,11 +411,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incoherence', 'logicaNormative_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="logicaNormative_retroalimentacion"
@@ -457,11 +461,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incoherence', 'decisionalNormative_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="decisionalNormative_retroalimentacion"
@@ -506,11 +510,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incoherence', 'logicalFactual_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="logicalFactual_retroalimentacion"
@@ -554,11 +558,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incoherence', 'decisionalFactual_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="decisionalFactual_retroalimentacion"
@@ -603,11 +607,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incoherence', 'motivation_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="motivation_retroalimentacion"
@@ -775,11 +779,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityJuridical_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="incomprehensibilityJuridical_retroalimentacion"
@@ -830,11 +834,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incomprehensibility', 'incomprehensibilityFactual_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="incomprehensibilityFactual_retroalimentacion"
@@ -886,11 +890,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incongruity', 'normativeParticipants_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="normativeParticipants_retroalimentacion"
@@ -936,11 +940,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incongruity', 'normativeLaw_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="normativeLaw_retroalimentacion"
@@ -989,11 +993,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incongruity', 'factualParticipants_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="factualParticipants_retroalimentacion"
@@ -1041,11 +1045,11 @@
             <button class="correct-button"
               [class.calificacion-correcta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')">Correct</button>
+              (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Correcto')">Correcto</button>
             <button class="incorrect-button"
               [class.calificacion-incorrecta]="isButtonSelected('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')"
               type="button"
-              (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')">Incorrect</button>
+              (click)="selectButton('appearance.incongruity', 'factualLaw_calificacion', 'Incorrecto')">Incorrecto</button>
           </div>
           <div>
             <app-caja-texto formControlName="factualLaw_retroalimentacion"

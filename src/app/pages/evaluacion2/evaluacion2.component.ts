@@ -14,14 +14,65 @@ interface User {
   [key: string]: any;
 }
 
+interface Section {
+  title: string;
+  questions: string[];
+}
+
 @Component({
   selector: 'app-evaluacion2',
   templateUrl: './evaluacion2.component.html',
   styleUrls: ['./evaluacion2.component.css']
 })
 export class Evaluacion2Component implements OnInit {
+  evaluacion2Form!: FormGroup;
+  sections: Section[] = [
+    //SECCION 1: "Argumentacion juridica y motivacion correcta"
+    {
+      title: 'Argumentación jurídica y motivación correcta',
+      questions: [
+        'Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.',
+        'Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible conforme al Derecho.',
+        'Conclusión de la decisión final frente a los hechos presentados en base al análisis realizado.',
+        'Adecuado uso y aplicación de medidas cautelares/protección dentro del proceso.'
+      ]
+    },
+    //SECCION 2: "Principios constitucionales"
+    {
+      title: 'Principios constitucionales',
+      questions: [
+        'Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.',
+        'Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba. Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los hechos.'
+      ]
+    },
+    //SECCION 3: "Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada."
+    {
+      title: 'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada.',
+      questions: [
+        'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
+        'Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
+      ]
+    },
+     //SECCION 4: "Aplicación de procedimientos directos y abreviados."
+     {
+      title: 'Aplicación de procedimientos directos y abreviados.',
+      questions: [
+        'Adecuado análisis y calificación del delito',
+        'Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de acuerdo al art. 640 del COIP y abreviado.',
+        'Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
+      ]
+    },
+    //SECCION 5: "Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o términos previstos en la ley."
+    {
+      title: 'Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o  términos previstos en la ley.',
+      questions: [
+        'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
+        'Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
+        'Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
+      ]
+    },
+  ];
   isFormLocked: boolean = false;
-  evaluacion2Form: FormGroup;
   cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
   numero_proceso: string = '';
   asunto: string = '';
@@ -58,20 +109,14 @@ export class Evaluacion2Component implements OnInit {
         otherSubject: ['']
       }),
       sentenceSubject_calificacion: [''],
-      sentenceOptions1: this.fb.array([]),
-      sentenceOptions1_calificacion: [''],
-      sentenceOptions2: this.fb.array([]),
-      sentenceOptions2_calificacion: [''],
-      sentenceOptions3: this.fb.array([]),
-      sentenceOptions3_calificacion: [''],
-      sentenceOptions4: this.fb.array([]),
-      sentenceOptions4_calificacion: [''],
-      sentenceOptions5: this.fb.array([]),
-      sentenceOptions5_calificacion: [''],
+      sentenceSubject_retroalimentacion: [''],
       judgeAnalysis: [''],
       reasonsNormative: [''],
       reasonsNormative_calificacion: [''],
-      reasonsNormative_retroalimentacion: ['']
+      reasonsNormative_retroalimentacion: [''],
+      finalConclusion: [''],
+      finalConclusion_calificacion: [''],
+      finalConclusion_retroalimentacion: [''],
     });
   }
   
@@ -81,14 +126,27 @@ export class Evaluacion2Component implements OnInit {
       this.router.navigate(['/principal']);
     }
   }
+
+  
+  initForm() {
+    const formGroup: {[key: string]: any} = {};
+    this.sections.forEach((section, sIndex) => {
+      section.questions.forEach((_, qIndex) => {
+        formGroup[`section${sIndex}_question${qIndex}`] = [''];  // Preguntas
+      });
+      formGroup[`section${sIndex}_calificacion`] = [''];  // Calificación
+      formGroup[`section${sIndex}_retroalimentacion`] = [''];  // Retroalimentación
+    });
+    this.evaluacion2Form = this.fb.group(formGroup);
+  }
   
   ngOnInit() {
+    this.initForm();
     this.route.queryParamMap.subscribe(params => {
       this.numero_proceso = params.get('numero_proceso') || '';
       this.asunto = params.get('asunto') || '';
       this.estudiante = params.get('estudiante') || '';
       this.docente = params.get('docente') || '';
-
       this.evaluacion2Form.patchValue({
         numero_proceso: this.numero_proceso
       });
@@ -197,41 +255,24 @@ export class Evaluacion2Component implements OnInit {
           const evaluation2Data = data as any;
           this.evaluacion2Form.patchValue(evaluation2Data);
           this.loadCalificaciones(data);
-
-          // Cargar las selecciones del docente
           if (evaluation2Data.docenteSelections) {
             this.docenteSelections = evaluation2Data.docenteSelections;
           }
-
-          // Actualizar los estados de los botones
           Object.keys(evaluation2Data).forEach(key => {
             if (key.endsWith('_calificacion')) {
               this.buttonStates[key] = evaluation2Data[key];
             }
           });
-
           if (evaluation2Data.docenteSelections) {
             this.docenteSelections = evaluation2Data.docenteSelections;
           }
-
-          // Actualizar FormArrays
-          this.updateFormArray('sentenceSubject', evaluation2Data.sentenceSubject);
-          this.updateFormArray('multicomponent.multiOption', evaluation2Data.multicomponent?.multiOption);
-          this.updateFormArray('sentenceOptions1', evaluation2Data.sentenceOptions1);
-          this.updateFormArray('sentenceOptions2', evaluation2Data.sentenceOptions2);
-          this.updateFormArray('sentenceOptions3', evaluation2Data.sentenceOptions3);
-          this.updateFormArray('sentenceOptions4', evaluation2Data.sentenceOptions4);
-          this.updateFormArray('sentenceOptions5', evaluation2Data.sentenceOptions5);
           this.checkLockStatus();
-
-          ['sentenceSubject', 'sentenceOptions1', 'sentenceOptions2', 'sentenceOptions3', 'sentenceOptions4', 'sentenceOptions5', 'reasonsNormative'].forEach(field => {
+          ['sentenceSubject', 'reasonsNormative', 'finalConclusion'].forEach(field => {
             const retroKey = `${field}_retroalimentacion`;
             if (evaluation2Data[retroKey]) {
               this.evaluacion2Form.get(retroKey)?.setValue(evaluation2Data[retroKey]);
-            }
-            
+            }  
           });
-          // Forzar la detección de cambios
           this.changeDetectorRef.detectChanges();
         }
       });
@@ -245,57 +286,6 @@ export class Evaluacion2Component implements OnInit {
         formArray.push(this.fb.control(value));
       });
     }
-  }
-
-  onCheckboxChange(event: any, controlName: string) {
-    const formArray: FormArray = this.evaluacion2Form.get(controlName) as FormArray;
-    
-    if (event.target.checked) {
-      if (this.evaluacion2Form.disabled) {
-        return; // No permitir cambios si el formulario está bloqueado
-      }
-      formArray.push(this.fb.control(event.target.value));
-    } else {
-      const index = formArray.controls.findIndex(x => x.value === event.target.value);
-      if (index >= 0) {
-        formArray.removeAt(index);
-      }
-    }
-    
-    // Guarda los cambios cada vez que se modifica un checkbox
-    this.saveFormChanges();
-  }
-
-  onStudentCheckboxChange(event: any, controlName: string) {
-    if (this.evaluacion2Form.disabled) {
-      return; // No permitir cambios si el formulario está bloqueado
-    }
-    this.onCheckboxChange(event, controlName);
-    const value = event.target.value;
-    this.studentSelections[value] = event.target.checked;
-    console.log(this.studentSelections)
-  }
-
-  onDocenteCheckboxChange(event: any, controlName: string) {
-    if (this.evaluacion2Form.disabled) {
-      return; // No permitir cambios si el formulario está bloqueado
-    }
-    const value = event.target.value;
-    this.docenteSelections[value] = event.target.checked;
-
-    // Actualizar el FormArray
-    const formArray: FormArray = this.evaluacion2Form.get(controlName) as FormArray;
-    if (event.target.checked) {
-      formArray.push(this.fb.control(value));
-    } else {
-      const index = formArray.controls.findIndex(x => x.value === value);
-      if (index >= 0) {
-        formArray.removeAt(index);
-      }
-    }
-
-    // Guardar los cambios
-    this.saveDocenteSelections();
   }
 
   saveDocenteSelections() {
@@ -357,6 +347,18 @@ export class Evaluacion2Component implements OnInit {
 
   toggleCalificar(section: string) {
     this.calificarState[section] = !this.calificarState[section];
+  }
+
+  toggleCalificar2(key: string) {
+    this.calificarState[key] = !this.calificarState[key];
+  }
+
+  setCalificacion2(controlName: string, value: string) {
+    this.evaluacion2Form.get(controlName)?.setValue(value);
+  }
+
+  isButtonSelected2(controlName: string, value: string): boolean {
+    return this.evaluacion2Form.get(controlName)?.value === value;
   }
 
   setCalificacion(controlPath: string, calificacion: string): void {

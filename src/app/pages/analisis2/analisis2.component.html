@@ -14,6 +14,8 @@
       Esta sentencia está bloqueada y no puede ser editada.
   </div>
 
+  <h3 class="titulo-analisis">Análisis de las argumentaciones de la sentencia</h3>
+
     <div class="analisis" *ngFor="let section of [
       {id: 'narracion_hechos', title: '1. Narración de los hechos'},
       {id: 'problema_juridico', title: '2. Problema jurídico'},
@@ -52,7 +54,6 @@
       {{ getCalificacionValue(section.id + '_calificacion') }}
         </div>
       </div>
-
       <div *ngIf="!isDocente && getRetroalimentacionValue(section.id + '_retroalimentacion')">
         <button type="button" (click)="toggleRetroalimentacion(section.id)" class="bttn-toggle">
           {{ mostrarRetroalimentacion[section.id] ? 'Ocultar' : 'Ver' }} retroalimentación
@@ -65,16 +66,19 @@
       </div>
 
     </div>
-
+    <br>
     <button class="bttn-stnd" type="submit">Guardar</button>
   </form>
 
   <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToAnalisis()">Anterior</button>
+    <div *ngIf="mostrarMensaje" class="alerta">
+      <p>{{ mensajeError }}</p>
+    </div>
         <button class="custom-button" type="button" *ngIf="cargando">
       <div class="spinner"></div>
       <span class="button-text">Cargando...</span>
     </button>
-    <button class="bttn-stnd" (click)="redirectToEvaluacion()" [disabled]="!docenteSaved">Evaluación</button>
+    <button class="bttn-stnd" (click)="redirectToEvaluacion($event)" [disabled]="!docenteSaved">Evaluación</button>
   </div>
 </div>
