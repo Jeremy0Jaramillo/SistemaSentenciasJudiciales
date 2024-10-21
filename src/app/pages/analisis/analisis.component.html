@@ -34,8 +34,8 @@
     </div>
     <ng-container *ngIf="isDocente">
       <button class="rate" *ngIf="analisisForm.get('saved')?.value" type="button"
-        (click)="calificarPregunta('problem_question')">Calificar</button>
-      <div *ngIf="analisisForm.get('problem_question.showCalificar')?.value">
+        (click)="toggleCalificar2('problem_question')">Calificar</button>
+      <div *ngIf="calificarState['problem_question']">
         <div class="bttns-rate">
           <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta2('problem_question')"
             type="button" (click)="setCalificacion2('problem_question', 'Correcto')">
@@ -47,12 +47,14 @@
             Incorrecto
           </button>
         </div>
-
-        <label class="label-for-text" for="retroalimentacion-problem_question">Retroalimentación</label>
-        <app-caja-texto id="retroalimentacion-problem_question" formControlName="retroalimentacion"></app-caja-texto>
-
+        <div>
+          <h5 class="pregunta">Retroalimentación</h5>
+          <app-caja-texto 
+            formControlName="retroalimentacion"
+            (valueChange)="setRetroalimentacion('problem_question', $event)">
+          </app-caja-texto>
+        </div>
       </div>
-
     </ng-container>
     <hr>
     <!-- Aqui empieza el formulario de normativas -->

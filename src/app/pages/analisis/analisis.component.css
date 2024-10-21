@@ -28,16 +28,6 @@
     margin: 0px 60px 0px 60px;
   }
 
-.si-no{
-  color: var(--Greyscale-Content, #1A1A1A);
-  font-family: Roboto;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  justify-content: space-between;
-  margin: -10px 0px 0px 0px;
-}
-
 .bttn-stnd-delete{
   margin: 20px 0px 20px 0px;
   background: #EE4E4E;

@@ -23,9 +23,10 @@ interface Section {
 })
 export class Evaluacion2Component implements OnInit {
   evaluacion2Form: FormGroup;
-  sections: Section[] = [
+  sections = [
     //SECCION 1: "Argumentacion juridica y motivacion correcta"
     {
+      id: 'section1',
       title: 'Argumentación jurídica y motivación correcta',
       questions: [
         'Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.',
@@ -36,6 +37,7 @@ export class Evaluacion2Component implements OnInit {
     },
     //SECCION 2: "Principios constitucionales"
     {
+      id: 'section2',
       title: 'Principios constitucionales',
       questions: [
         'Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.',
@@ -44,6 +46,7 @@ export class Evaluacion2Component implements OnInit {
     },
     //SECCION 3: "Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada."
     {
+      id: 'section3',
       title: 'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada.',
       questions: [
         'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
@@ -52,6 +55,7 @@ export class Evaluacion2Component implements OnInit {
     },
      //SECCION 4: "Aplicación de procedimientos directos y abreviados."
      {
+      id: 'section4',
       title: 'Aplicación de procedimientos directos y abreviados.',
       questions: [
         'Adecuado análisis y calificación del delito',
@@ -61,6 +65,7 @@ export class Evaluacion2Component implements OnInit {
     },
     //SECCION 5: "Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o términos previstos en la ley."
     {
+      id: 'section5',
       title: 'Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o  términos previstos en la ley.',
       questions: [
         'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
@@ -125,14 +130,30 @@ export class Evaluacion2Component implements OnInit {
   }
 
   initForm() {
-    const formGroup: {[key: string]: any} = {};
+    const formGroup: {[key: string]: any} = {
+      numero_proceso: [''],
+      saved: [false],
+      docenteSaved: [false],
+      sentenceSubject: [''],
+      judgeAnalysis: [''],
+      reasonsNormative: [''],
+      finalConclusion: [''],
+      sentenceSubject_calificacion: [''],
+      sentenceSubject_retroalimentacion: [''],
+      reasonsNormative_calificacion: [''],
+      reasonsNormative_retroalimentacion: [''],
+      finalConclusion_calificacion: [''],
+      finalConclusion_retroalimentacion: [''],
+    };
+  
     this.sections.forEach((section, sIndex) => {
       section.questions.forEach((_, qIndex) => {
-        formGroup[`section${sIndex}_question${qIndex}`] = [''];  // Preguntas
+        formGroup[`section${sIndex}_question${qIndex}`] = [''];
       });
-      formGroup[`section${sIndex}_calificacion`] = [''];  // Calificación
-      formGroup[`section${sIndex}_retroalimentacion`] = [''];  // Retroalimentación
+      formGroup[`section${sIndex}_calificacion`] = [''];
+      formGroup[`section${sIndex}_retroalimentacion`] = [''];
     });
+  
     this.evaluacion2Form = this.fb.group(formGroup);
   }
   
@@ -215,7 +236,8 @@ export class Evaluacion2Component implements OnInit {
 
   submitForm() {
     this.cargando = true;
-    const analisisData = { ...this.evaluacion2Form.value, saved: true };
+    const analisisData = this.evaluacion2Form.value;
+    analisisData.saved = true;
   
     this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
@@ -225,7 +247,7 @@ export class Evaluacion2Component implements OnInit {
         this.cargando = false;
         this.saved = true;
         this.evaluacion2Form.patchValue({ saved: true });
-        console.log('Form submitted and saved:', analisisData); // Para depuración
+        console.log('Form submitted and saved:', analisisData);
       })
       .catch(error => {
         console.error("Error saving document: ", error);
@@ -247,7 +269,7 @@ export class Evaluacion2Component implements OnInit {
     });
   }
 
- loadEvaluacion2Data(numero_proceso: string) {
+  loadEvaluacion2Data(numero_proceso: string) {
     this.firestore.collection('evaluacion2').doc(numero_proceso).get().subscribe(
       (doc) => {
         if (doc.exists) {
@@ -312,6 +334,13 @@ export class Evaluacion2Component implements OnInit {
     this.calificarState[key] = !this.calificarState[key];
   }
 
+  setCalificacion(controlName: string, value: string) {
+    this.evaluacion2Form.get(controlName)?.setValue(value);
+    this.buttonStates[controlName] = value;
+    this.saveFormChanges();
+    this.changeDetectorRef.detectChanges();
+  }
+  
   setCalificacion2(controlName: string, value: string) {
     this.evaluacion2Form.get(controlName)?.setValue(value);
     this.buttonStates[controlName] = value;
@@ -323,16 +352,6 @@ export class Evaluacion2Component implements OnInit {
     return this.evaluacion2Form.get(controlName)?.value === value;
   }
 
-  setCalificacion(controlPath: string, calificacion: string): void {
-    const control = this.evaluacion2Form.get(controlPath);
-    console.log(control)
-    if (control) {
-      control.setValue(calificacion);
-      this.buttonStates[controlPath] = calificacion;
-      console.log(`Control ${controlPath} set to: ${calificacion}`);
-      this.saveFormChanges();
-    }
-  }
 
   isButtonSelected(controlPath: string, calificacion: string): boolean {
     return this.buttonStates[controlPath] === calificacion;
@@ -360,18 +379,19 @@ export class Evaluacion2Component implements OnInit {
     });
   }
 
-saveFormChanges() {
-  const formData = { ...this.evaluacion2Form.value, saved: true };
-  console.log('Saving form data:', formData);
-  this.firestore.collection('evaluacion2').doc(this.numero_proceso).update(formData)
-    .then(() => {
-      console.log('Cambios guardados correctamente');
-      this.evaluacion2Form.patchValue({ saved: true });
-    })
-    .catch(error => {
-      console.error('Error al guardar los cambios:', error);
-    });
-}
+  saveFormChanges() {
+    const formData = this.evaluacion2Form.value;
+    formData.saved = true;
+    console.log('Saving form data:', formData);
+    this.firestore.collection('evaluacion2').doc(this.numero_proceso).update(formData)
+      .then(() => {
+        console.log('Cambios guardados correctamente');
+        this.evaluacion2Form.patchValue({ saved: true });
+      })
+      .catch(error => {
+        console.error('Error al guardar los cambios:', error);
+      });
+  }
 
   toggleRetroalimentacion(sectionId: string) {
     this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];

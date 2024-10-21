@@ -25,10 +25,17 @@
       {id: 'solucion_problema', title: '6. Solución al problema'},
       {id: 'decision', title: '7. Decisión'}
     ]; let i = index">
-
+    <div *ngIf="!isDocente && analisis2Form.get('saved')?.value" class="calificaciones">
+      <div class="calificacion-display" [ngClass]="{
+        'calificacion-correcta': getCalificacionValue(section.id + '_calificacion') === 'Correcto',
+        'calificacion-incorrecta': getCalificacionValue(section.id + '_calificacion') === 'Incorrecto',
+        'calificacion-no-calificado': getCalificacionValue(section.id + '_calificacion') === 'No Calificado'
+      }">
+    {{ getCalificacionValue(section.id + '_calificacion') }}
+      </div>
+    </div>
       <app-caja-texto [id]="section.id" [formControlName]="section.id" [titulo]="section.title">
       </app-caja-texto>
-
       <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(section.id)">Calificar</button>
       <div *ngIf="calificarState[section.id]">
         <div class="bttns-rate">
@@ -44,16 +51,7 @@
             [titulo]="'Retroalimentación'"></app-caja-texto>
         </div>
       </div>
-      
-      <div *ngIf="!isDocente && analisis2Form.get('saved')?.value" class="calificaciones">
-        <div class="calificacion-display" [ngClass]="{
-          'calificacion-correcta': getCalificacionValue(section.id + '_calificacion') === 'Correcto',
-          'calificacion-incorrecta': getCalificacionValue(section.id + '_calificacion') === 'Incorrecto',
-          'calificacion-no-calificado': getCalificacionValue(section.id + '_calificacion') === 'No Calificado'
-        }">
-      {{ getCalificacionValue(section.id + '_calificacion') }}
-        </div>
-      </div>
+
       <div *ngIf="!isDocente && getRetroalimentacionValue(section.id + '_retroalimentacion')">
         <button type="button" (click)="toggleRetroalimentacion(section.id)" class="bttn-toggle">
           {{ mostrarRetroalimentacion[section.id] ? 'Ocultar' : 'Ver' }} retroalimentación
@@ -64,7 +62,7 @@
           </div>
         </div>
       </div>
-
+      <hr>
     </div>
     <br>
     <button class="bttn-stnd" type="submit">Guardar</button>

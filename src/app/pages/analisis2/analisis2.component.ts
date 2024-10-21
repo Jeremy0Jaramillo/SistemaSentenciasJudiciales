@@ -224,15 +224,11 @@ export class Analisis2Component implements OnInit {
   }
 
   mostrarMensajeExito(mensaje: string) {
-    // Aquí puedes implementar la lógica para mostrar el mensaje
-    // Por ejemplo, podrías usar un servicio de notificaciones o actualizar una variable en el componente
     this.mensajeExito = mensaje;
     this.mostrarMensaje = true;
   }
 
-  // Método para mostrar mensaje de error
   mostrarMensajeError(mensaje: string) {
-    // Similar al método de éxito, pero para errores
     this.mensajeError = mensaje;
     this.mostrarMensaje = true;
   }
@@ -252,12 +248,10 @@ export class Analisis2Component implements OnInit {
     event.preventDefault();
     console.log('Estado de docenteSaved:', this.docenteSaved); // Log para depuración
     if (this.analisis2Form.valid) {
-      // Verificar si hay cambios no guardados
       if (this.analisis2Form.dirty) {
         this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
         return;
       }
-      // Verificar si docenteSaved es true
       if (this.docenteSaved) {
         this.router.navigate(['/evaluacion'], {
           queryParams: {

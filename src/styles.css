@@ -277,6 +277,16 @@ h2 {
     100% { transform: rotate(360deg); }
   }
 
+  .si-no{
+    color: var(--Greyscale-Content, #1A1A1A);
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    justify-content: space-between;
+    margin: -10px 0px 0px 0px;
+  }
+
   .bttn-toggle{
     background: none; 
     color: #004274;
@@ -316,4 +326,10 @@ h2 {
     font-family: Poppins;
     font-size: 15px;
     color: #C40C0C;
+}
+
+.retroalimentacion-contenido {
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
 }
