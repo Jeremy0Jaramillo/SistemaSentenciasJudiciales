@@ -39,7 +39,6 @@
             </div>
           </div>
         </div>
-
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('motivationType')">Calificar</button>
       <div *ngIf="calificarState['motivationType']">
@@ -70,9 +69,11 @@
         </div>
       </div>
     </div>
-
+    <hr>
+    <!-- Formulario de inexistencia -->
     <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'nonexistinence'" formGroupName="nonexistinence">
       <h2 class="titulo">Inexistencia</h2>
+    <!-- Fundamentacion normativa en formulario de inexistencia -->
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
@@ -83,6 +84,16 @@
         <app-caja-texto name="reasonsNormative" [disabled]="evaluacionForm.disabled" formControlName="reasonsNormative"
           [titulo]="'¿Por qué?'">
         </app-caja-texto>
+      </div>
+      <div *ngIf="!isDocente && getRetroalimentacionValue('nonexistinence.normative_retroalimentacion')">
+        <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+          {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+        </button>
+        <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+          <div class="retroalimentacion-texto">
+            {{ getRetroalimentacionValue('nonexistinence.normative_retroalimentacion') }}
+          </div>
+        </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
@@ -113,9 +124,8 @@
           {{ getCalificacionValue('nonexistinence.normative_calificacion') }}
         </div>
       </div>
-
-
-
+      <hr>
+      <!-- Fundamentacion fatica en formulario de inexistencia -->
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
@@ -126,6 +136,16 @@
         <app-caja-texto name="reasonsFactual" [disabled]="evaluacionForm.disabled" formControlName="reasonsFactual"
           [titulo]="'¿Por qué?'">
         </app-caja-texto>
+      </div>
+      <div *ngIf="!isDocente && getRetroalimentacionValue('nonexistinence.factual_retroalimentacion')">
+        <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+          {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+        </button>
+        <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+          <div class="retroalimentacion-texto">
+            {{ getRetroalimentacionValue('nonexistinence.factual_retroalimentacion') }}
+          </div>
+        </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
@@ -151,7 +171,8 @@
           {{ getCalificacionValue('nonexistinence.factual_calificacion') }}
         </div>
       </div>
-
+      <hr>
+      <!-- Señalar si la sentencia deberia ser analizada en formulario de inexistencia -->
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
         <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
@@ -177,6 +198,16 @@
           </app-caja-texto>
         </div>
       </div>
+      <div *ngIf="!isDocente && getRetroalimentacionValue('nonexistinence.motivation_retroalimentacion')">
+        <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
+          {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
+        </button>
+        <div *ngIf="mostrarRetroalimentacion['sentenceSubject']" class="retroalimentacion-contenido">
+          <div class="retroalimentacion-texto">
+            {{ getRetroalimentacionValue('nonexistinence.motivation_retroalimentacion') }}
+          </div>
+        </div>
+      </div>
       <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
         <div class="calificacion-display" *ngIf="saved" [ngClass]="{
           'calificacion-correcta': getCalificacionValue('nonexistinence.motivation_calificacion') === 'Correcto',
@@ -187,9 +218,10 @@
         </div>
       </div>
     </div>
-
+    <!-- Aqui empieza el formulario para la insuficiencia -->
     <div [hidden]="evaluacionForm.get('motivationType')?.value !== 'insufficiency'" formGroupName="insufficiency">
       <h2 class="titulo">Insuficiencia</h2>
+      <!-- Fundamentacion normatica en insuficiencia -->
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
@@ -238,7 +270,8 @@
           {{ getCalificacionValue('insufficiency.normative_calificacion') }}
         </div>
       </div>
-
+      <hr>
+      <!-- Fundamentacion fatica en inuficiencia -->
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
@@ -277,7 +310,6 @@
           </div>
         </div>
       </div>
-
       <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
         <div class="calificacion-display" [ngClass]="{
             'calificacion-correcta': getCalificacionValue('insufficiency.factual_calificacion') === 'Correcto',
@@ -287,7 +319,8 @@
           {{ getCalificacionValue('insufficiency.factual_calificacion') }}
         </div>
       </div>
-
+      <hr>
+      <!-- Deficit de motivacion en insuficiencia -->
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
         <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si

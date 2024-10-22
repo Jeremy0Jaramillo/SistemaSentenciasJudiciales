@@ -172,20 +172,27 @@ export class EvaluacionComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  
+
   loadFormData() {
     this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
       .subscribe((data: any) => {
         if (data) {
-          this.evaluacionForm.patchValue(data);
+          // Cargar todos los datos en el formulario sin importar el tipo de motivación
+          this.evaluacionForm.patchValue(data, { emitEvent: false });
           this.saved = data.saved || false;
           this.loadCalificaciones(data);
-
-          // Asegúrate de que todas las secciones del formulario se actualicen
+          
+          // No resetear ningún campo
           this.evaluacionForm.markAsPristine();
           this.evaluacionForm.markAsUntouched();
+          
+          // Forzar actualización de la vista
+          this.changeDetectorRef.detectChanges();
         }
       });
   }
+  
 
   isButtonSelected(section: string, controlName: string, value: string): boolean {
     this.calificaciones[section] = value;
@@ -293,31 +300,32 @@ export class EvaluacionComponent implements OnInit {
   }
 
   handleMotivationTypeChange(value: string): void {
-    // No resetear ni deshabilitar los FormGroups
-    // Solo actualizar la visibilidad en el HTML
-    this.evaluacionForm.patchValue({ motivationType: value });
+    // Solo actualizar el valor sin resetear otros campos
+    this.evaluacionForm.patchValue({ motivationType: value }, { emitEvent: false });
+    // No hacer ningún reset de campos
+    this.changeDetectorRef.detectChanges();
   }
 
-  resetOtherAppearanceFields(selectedField: string): void {
-    const appearance = this.evaluacionForm.get('appearance') as FormGroup;
+  // resetOtherAppearanceFields(selectedField: string): void {
+  //   const appearance = this.evaluacionForm.get('appearance') as FormGroup;
 
-    if (!appearance) return;
+  //   if (!appearance) return;
 
-    const fields = ['incoherence', 'inatinence', 'incomprehensibility', 'incongruity'];
+  //   const fields = ['incoherence', 'inatinence', 'incomprehensibility', 'incongruity'];
 
-    fields.forEach(field => {
-      if (field !== selectedField) {
-        const control = appearance.get(field);
-        if (control) {
-          control.reset();
-        }
-      }
-    });
-  }
+  //   fields.forEach(field => {
+  //     if (field !== selectedField) {
+  //       const control = appearance.get(field);
+  //       if (control) {
+  //         control.reset();
+  //       }
+  //     }
+  //   });
+  // }
 
-  handleAppearanceFieldChange(selectedField: string): void {
-    this.resetOtherAppearanceFields(selectedField);
-  }
+  // handleAppearanceFieldChange(selectedField: string): void {
+  //   this.resetOtherAppearanceFields(selectedField);
+  // }
 
   checkDocenteSaved() {
     this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
@@ -347,14 +355,16 @@ export class EvaluacionComponent implements OnInit {
 
 
   submitForm() {
-    this.cargando = true; // Activar el estado de carga
+    this.cargando = true;
     this.evaluacionForm.patchValue({ saved: true });
     if (this.isDocente) {
       this.evaluacionForm.patchValue({ docenteSaved: true });
     }
 
+    // Obtener todos los valores del formulario sin filtrar
     const analisisData = this.evaluacionForm.value;
 
+    // Actualizar las calificaciones
     for (const [key, value] of Object.entries(this.buttonStates)) {
       const parts = key.split('.');
       let current: any = analisisData;
@@ -365,16 +375,16 @@ export class EvaluacionComponent implements OnInit {
       current[parts[parts.length - 1]] = value;
     }
 
+    // Guardar todos los datos
     this.firestore.collection('evaluacion').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
         window.location.reload();
-        this.cargando = false; // Desactivar el estado de carga
-
+        this.cargando = false;
       })
       .catch(error => {
         console.error("Error saving document: ", error);
-        this.cargando = false; // Desactivar el estado de carga
+        this.cargando = false;
       });
   }
 
@@ -402,6 +412,7 @@ export class EvaluacionComponent implements OnInit {
     }
   }
 
+
   toggleCalificar(section: string) {
     this.calificarState[section] = !this.calificarState[section];
   }
@@ -410,17 +421,18 @@ export class EvaluacionComponent implements OnInit {
     this.calificaciones[section] = value;
     let controlPath = "";
     if (section === "motivationType") {
-      controlPath = controlName
+      controlPath = controlName;
     } else {
-      controlPath = `${section}.${controlName}`
+      controlPath = `${section}.${controlName}`;
     }
     let control = this.evaluacionForm.get(controlPath);
     if (control) {
-      control.setValue(value);
+      control.setValue(value, { emitEvent: false });
       this.buttonStates[controlPath] = value;
     }
     this.changeDetectorRef.detectChanges();
   }
+
 
   isCalificacionCorrecta(field: string): boolean {
     return this.calificaciones[field] === 'Correcto';
