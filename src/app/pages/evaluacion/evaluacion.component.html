@@ -77,9 +77,20 @@
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
-        <input type="radio" name="lackFoundationNormative" value="Si" formControlName="lackFoundationNormative"> Si
-        <input type="radio" name="lackFoundationNormative" value="No" formControlName="lackFoundationNormative"> No
-      </div>
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('nonexistinence.lackFoundationNormative', 'Si')"
+                 (change)="setRadioValue('nonexistinence.lackFoundationNormative', 'Si')"
+                 formControlName="lackFoundationNormative"> Si
+        </label>
+        <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('nonexistinence.lackFoundationNormative', 'No')"
+                 (change)="setRadioValue('nonexistinence.lackFoundationNormative', 'No')"
+                 formControlName="lackFoundationNormative"> No
+        </label>      </div>
       <div>
         <app-caja-texto name="reasonsNormative" [disabled]="evaluacionForm.disabled" formControlName="reasonsNormative"
           [titulo]="'¿Por qué?'">
@@ -129,9 +140,21 @@
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
-        <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
-        <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
-      </div>
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('lackFoundationFactual', 'Si')" 
+                 (change)="setRadioValue('lackFoundationFactual', 'Si')" 
+                 formControlName="lackFoundationFactual"> Si
+      </label>
+      <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('lackFoundationFactual', 'No')" 
+                 (change)="setRadioValue('lackFoundationFactual', 'No')" 
+                 formControlName="lackFoundationFactual"> No
+      </label>
+            </div>
       <div>
         <app-caja-texto name="reasonsFactual" [disabled]="evaluacionForm.disabled" formControlName="reasonsFactual"
           [titulo]="'¿Por qué?'">
@@ -175,8 +198,21 @@
       <!-- Señalar si la sentencia deberia ser analizada en formulario de inexistencia -->
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
-        <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
-        <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('lackMotivation', 'Si')" 
+                 (change)="setRadioValue('lackMotivation', 'Si')" 
+                 formControlName="lackMotivation"> Si
+      </label>
+      <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('lackMotivation', 'No')" 
+                 (change)="setRadioValue('lackMotivation', 'No')" 
+                 formControlName="lackMotivation"> No
+      </label>
+      
       </div>
       <div>
         <app-caja-texto formControlName="reasonsMotivation" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -225,8 +261,20 @@
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
-        <input type="radio" name="lackFoundationNormative" value="Si" formControlName="lackFoundationNormative"> Si
-        <input type="radio" name="lackFoundationNormative" value="No" formControlName="lackFoundationNormative"> No
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('lackFoundationNormative', 'Si')" 
+                 (change)="setRadioValue('lackFoundationNormative', 'Si')" 
+                 formControlName="lackFoundationNormative"> Si
+      </label>
+      <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('lackFoundationNormative', 'No')" 
+                 (change)="setRadioValue('lackFoundationNormative', 'No')" 
+                 formControlName="lackFoundationNormative"> No
+      </label>      
       </div>
       <div>
         <app-caja-texto name="reasonsNormative" formControlName="reasonsNormative" [disabled]="evaluacionForm.disabled"
@@ -275,8 +323,20 @@
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
         <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
-        <input type="radio" name="lackFoundationFactual" value="Si" formControlName="lackFoundationFactual"> Si
-        <input type="radio" name="lackFoundationFactual" value="No" formControlName="lackFoundationFactual"> No
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('lackFoundationFactual', 'Si')" 
+                 (change)="setRadioValue('lackFoundationFactual', 'Si')" 
+                 formControlName="lackFoundationFactual"> Si
+      </label>
+      <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('lackFoundationFactual', 'No')" 
+                 (change)="setRadioValue('lackFoundationFactual', 'No')" 
+                 formControlName="lackFoundationFactual"> No
+      </label>      
       </div>
       <div>
         <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [disabled]="evaluacionForm.disabled"
@@ -323,9 +383,21 @@
       <!-- Deficit de motivacion en insuficiencia -->
       <div>
         <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
-        <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
-        <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
-      </div>
+        <label>
+          <input type="radio" 
+                 [value]="'Si'" 
+                 [checked]="isRadioSelected('lackMotivation', 'Si')" 
+                 (change)="setRadioValue('lackMotivation', 'Si')" 
+                 formControlName="lackMotivation"> Si
+      </label>
+      <label>
+          <input type="radio" 
+                 [value]="'No'" 
+                 [checked]="isRadioSelected('lackMotivation', 'No')" 
+                 (change)="setRadioValue('lackMotivation', 'No')" 
+                 formControlName="lackMotivation"> No
+      </label>
+            </div>
       <div>
         <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
           [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -374,7 +446,11 @@
       <h5 class="titulo">En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de
         los vicios
         motivacionales de la apariencia que constan a continuación.</h5>
-
+        <!-- Razón de la apariencia -->
+        <app-caja-texto name="appearanceReason" formControlName="appearanceReason"
+        [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+      </app-caja-texto>
+         <!-- Opciones de la apariencia -->
       <div class="appearance-options">
         <h3 class="titulo">Vicios motivacionales</h3>
         <h5 class="titulo ">En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</h5>
@@ -419,9 +495,21 @@
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Existe incoherencia lógica normativa?</h4>
-          <input type="radio" name="existsLogicalNormative" value="Si" formControlName="existsLogicalNormative"> Si
-          <input type="radio" name="existsLogicalNormative" value="No" formControlName="existsLogicalNormative"> No
-        </div>
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsLogicalNormative', 'Si')" 
+                   (change)="setRadioValue('existsLogicalNormative', 'Si')" 
+                   formControlName="existsLogicalNormative"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsLogicalNormative', 'No')" 
+                   (change)="setRadioValue('existsLogicalNormative', 'No')" 
+                   formControlName="existsLogicalNormative"> No
+        </label>
+                </div>
         <div>
           <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -518,9 +606,21 @@
         <h3 class="titulo">Fundamentación Fáctica</h3>
         <div>
           <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica?</h4>
-          <input type="radio" name="existsLogicalFactual" value="Si" formControlName="existsLogicalFactual"> Si
-          <input type="radio" name="existsLogicalFactual" value="No" formControlName="existsLogicalFactual"> No
-        </div>
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsLogicalFactual', 'Si')" 
+                   (change)="setRadioValue('existsLogicalFactual', 'Si')" 
+                   formControlName="existsLogicalFactual"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsLogicalFactual', 'No')" 
+                   (change)="setRadioValue('existsLogicalFactual', 'No')" 
+                   formControlName="existsLogicalFactual"> No
+        </label>
+                </div>
         <div>
           <app-caja-texto name="reasonsLogicalFactual" formControlName="reasonsLogicalFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -566,9 +666,21 @@
 
         <div>
           <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica?</h4>
-          <input type="radio" name="existsDecisionalFactual" value="Si" formControlName="existsDecisionalFactual"> Si
-          <input type="radio" name="existsDecisionalFactual" value="No" formControlName="existsDecisionalFactual"> No
-        </div>
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsDecisionalFactual', 'Si')" 
+                   (change)="setRadioValue('existsDecisionalFactual', 'Si')" 
+                   formControlName="existsDecisionalFactual"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsDecisionalFactual', 'No')" 
+                   (change)="setRadioValue('existsDecisionalFactual', 'No')" 
+                   formControlName="existsDecisionalFactual"> No
+        </label>
+                </div>
         <div>
           <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -615,9 +727,21 @@
 
         <div>
           <h4 class="titulo-eva">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h4>
-          <input type="radio" name="lackMotivation" value="Si" formControlName="lackMotivation"> Si
-          <input type="radio" name="lackMotivation" value="No" formControlName="lackMotivation"> No
-        </div>
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('lackMotivation', 'Si')" 
+                   (change)="setRadioValue('lackMotivation', 'Si')" 
+                   formControlName="lackMotivation"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('lackMotivation', 'No')" 
+                   (change)="setRadioValue('lackMotivation', 'No')" 
+                   formControlName="lackMotivation"> No
+        </label>
+                </div>
         <div>
           <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -668,10 +792,21 @@
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido?</h4>
-          <input type="radio" name="existsInatinenceJuridical" value="Si" formControlName="existsInatinenceJuridical">
-          Si
-          <input type="radio" name="existsInatinenceJuridical" value="No" formControlName="existsInatinenceJuridical">
-          No
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsInatinenceJuridical', 'Si')" 
+                   (change)="setRadioValue('existsInatinenceJuridical', 'Si')" 
+                   formControlName="existsInatinenceJuridical"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsInatinenceJuridical', 'No')" 
+                   (change)="setRadioValue('existsInatinenceJuridical', 'No')" 
+                   formControlName="existsInatinenceJuridical"> No
+        </label>
+        
         </div>
         <div>
           <app-caja-texto name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical"
@@ -725,9 +860,21 @@
         <h3 class="titulo">Fundamentación fáctica</h3>
         <div>
           <h4 class="titulo-eva">¿Se esgrimen razones fácticas que no “tienen que ver” con el punto controvertido?</h4>
-          <input type="radio" name="existsInatinenceFactual" value="Si" formControlName="existsInatinenceFactual"> Si
-          <input type="radio" name="existsInatinenceFactual" value="No" formControlName="existsInatinenceFactual"> No
-        </div>
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsInatinenceFactual', 'Si')" 
+                   (change)="setRadioValue('existsInatinenceFactual', 'Si')" 
+                   formControlName="existsInatinenceFactual"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsInatinenceFactual', 'No')" 
+                   (change)="setRadioValue('existsInatinenceFactual', 'No')" 
+                   formControlName="existsInatinenceFactual"> No
+        </label>
+                </div>
         <div>
           <app-caja-texto name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual"
             [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
@@ -838,12 +985,21 @@
         <div>
           <h4 class="titulo-eva">¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
             para un profesional del derecho ciudadano?</h4>
-          <input type="radio" name="existsIncomprehensibilityFactual" value="Si"
-            formControlName="existsIncomprehensibilityFactual">
-          Si
-          <input type="radio" name="existsIncomprehensibilityFactual" value="No"
-            formControlName="existsIncomprehensibilityFactual">
-          No
+            <label>
+              <input type="radio" 
+                     [value]="'Si'" 
+                     [checked]="isRadioSelected('existsIncomprehensibilityFactual', 'Si')" 
+                     (change)="setRadioValue('existsIncomprehensibilityFactual', 'Si')" 
+                     formControlName="existsIncomprehensibilityFactual"> Si
+          </label>
+          <label>
+              <input type="radio" 
+                     [value]="'No'" 
+                     [checked]="isRadioSelected('existsIncomprehensibilityFactual', 'No')" 
+                     (change)="setRadioValue('existsIncomprehensibilityFactual', 'No')" 
+                     formControlName="existsIncomprehensibilityFactual"> No
+          </label>
+          
         </div>
         <div>
           <app-caja-texto name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual"
@@ -896,10 +1052,21 @@
         <h3 class="titulo ">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Existe incongruencia normativa frente a las partes?</h4>
-          <input type="radio" name="existsIncongruityNormativeParticipants" value="Si"
-            formControlName="existsIncongruityNormativeParticipants"> Si
-          <input type="radio" name="existsIncongruityNormativeParticipants" value="No"
-            formControlName="existsIncongruityNormativeParticipants"> No
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsIncongruityNormativeParticipants', 'Si')" 
+                   (change)="setRadioValue('existsIncongruityNormativeParticipants', 'Si')" 
+                   formControlName="existsIncongruityNormativeParticipants"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsIncongruityNormativeParticipants', 'No')" 
+                   (change)="setRadioValue('existsIncongruityNormativeParticipants', 'No')" 
+                   formControlName="existsIncongruityNormativeParticipants"> No
+        </label>
+        
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityNormativeParticipants" [disabled]="evaluacionForm.disabled"
@@ -946,10 +1113,21 @@
 
         <div>
           <h4 class="titulo-eva">¿Existe incongruencia normativa frente al derecho?</h4>
-          <input type="radio" name="existsIncongruityNormativeLaw" value="Si"
-            formControlName="existsIncongruityNormativeLaw"> Si
-          <input type="radio" name="existsIncongruityNormativeLaw" value="No"
-            formControlName="existsIncongruityNormativeLaw"> No
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsIncongruityNormativeLaw', 'Si')" 
+                   (change)="setRadioValue('existsIncongruityNormativeLaw', 'Si')" 
+                   formControlName="existsIncongruityNormativeLaw"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsIncongruityNormativeLaw', 'No')" 
+                   (change)="setRadioValue('existsIncongruityNormativeLaw', 'No')" 
+                   formControlName="existsIncongruityNormativeLaw"> No
+        </label>
+        
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw"
@@ -997,12 +1175,21 @@
         <h3 class="titulo">Fundamentación fáctica</h3>
         <div>
           <h4 class="titulo-eva">¿Existe incongruencia fáctica frente a las partes?</h4>
-          <input type="radio" name="existsIncongruityFactualParticipants" value="Si"
-            formControlName="existsIncongruityFactualParticipants">
-          Si
-          <input type="radio" name="existsIncongruityFactualParticipants" value="No"
-            formControlName="existsIncongruityFactualParticipants">
-          No
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsIncongruityFactualParticipants', 'Si')" 
+                   (change)="setRadioValue('existsIncongruityFactualParticipants', 'Si')" 
+                   formControlName="existsIncongruityFactualParticipants"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsIncongruityFactualParticipants', 'No')" 
+                   (change)="setRadioValue('existsIncongruityFactualParticipants', 'No')" 
+                   formControlName="existsIncongruityFactualParticipants"> No
+        </label>
+        
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityFactualParticipants" [disabled]="evaluacionForm.disabled"
@@ -1049,12 +1236,21 @@
 
         <div>
           <h4 class="titulo-eva ">¿Existe incongruencia fáctica frente al derecho?</h4>
-          <input type="radio" name="existsIncongruityFactualLaw" value="Si"
-            formControlName="existsIncongruityFactualLaw">
-          Si
-          <input type="radio" name="existsIncongruityFactualLaw" value="No"
-            formControlName="existsIncongruityFactualLaw">
-          No
+          <label>
+            <input type="radio" 
+                   [value]="'Si'" 
+                   [checked]="isRadioSelected('existsIncongruityFactualLaw', 'Si')" 
+                   (change)="setRadioValue('existsIncongruityFactualLaw', 'Si')" 
+                   formControlName="existsIncongruityFactualLaw"> Si
+        </label>
+        <label>
+            <input type="radio" 
+                   [value]="'No'" 
+                   [checked]="isRadioSelected('existsIncongruityFactualLaw', 'No')" 
+                   (change)="setRadioValue('existsIncongruityFactualLaw', 'No')" 
+                   formControlName="existsIncongruityFactualLaw"> No
+        </label>
+        
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw"
@@ -1102,6 +1298,9 @@
     </div>
     <button class="bttn-stnd-g" type="submit">Guardar</button>
   </form>
+  <div *ngIf="mostrarMensaje" class="alerta">
+    <p>{{ mensajeError }}</p>
+  </div>
 </div>
 
 <div class="bttn">
@@ -1110,5 +1309,5 @@
     <div class="spinner"></div>
     <span class="button-text">Cargando...</span>
   </button>
-  <button class="bttn-stnd" [disabled]="!docenteSaved" (click)="redirectToEvaluacion2()">Siguiente</button>
+  <button class="bttn-stnd"  (click)="redirectToEvaluacion2($event)">Siguiente</button>
 </div>

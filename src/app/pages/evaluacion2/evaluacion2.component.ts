@@ -23,6 +23,8 @@ interface Section {
 })
 export class Evaluacion2Component implements OnInit {
   evaluacion2Form: FormGroup;
+  mensajeError: string = '';
+  mostrarMensaje: boolean = false;
   sections = [
     //SECCION 1: "Argumentacion juridica y motivacion correcta"
     {
@@ -53,8 +55,8 @@ export class Evaluacion2Component implements OnInit {
         'Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
       ]
     },
-     //SECCION 4: "Aplicación de procedimientos directos y abreviados."
-     {
+    //SECCION 4: "Aplicación de procedimientos directos y abreviados."
+    {
       id: 'section4',
       title: 'Aplicación de procedimientos directos y abreviados.',
       questions: [
@@ -91,6 +93,8 @@ export class Evaluacion2Component implements OnInit {
   docenteSelections: { [key: string]: boolean } = {};
   studentSelections: { [key: string]: boolean } = {};
   mostrarRetroalimentacion: { [key: string]: boolean } = {};
+  private isSubmitting = false
+
   cdRef: any;
   constructor(
     private fb: FormBuilder,
@@ -105,8 +109,8 @@ export class Evaluacion2Component implements OnInit {
       saved: [false],
       docenteSaved: [false],
       sentenceSubject: this.fb.array([]),
-      multicomponent: this.fb.group({
-        multiOption: this.fb.array([])
+      multicomponent: this.fb.group({ // Grupo anidado
+        multiOption: [''] // Cambiado de FormArray a control simple
       }),
       other: this.fb.group({
         otherSubject: ['']
@@ -122,15 +126,20 @@ export class Evaluacion2Component implements OnInit {
       finalConclusion_retroalimentacion: [''],
     });
   }
-  
+
   finalizarEvaluacion() {
     if (this.docenteSaved) {
       this.router.navigate(['/principal']);
     }
   }
 
+  isMultiOption(value: string | null): boolean {
+    return value === 'MultiComponent' ||
+      value === 'MultiCivil' ||
+      value === 'MultiPenal';
+  }
   initForm() {
-    const formGroup: {[key: string]: any} = {
+    const formGroup: { [key: string]: any } = {
       numero_proceso: [''],
       saved: [false],
       docenteSaved: [false],
@@ -145,7 +154,7 @@ export class Evaluacion2Component implements OnInit {
       finalConclusion_calificacion: [''],
       finalConclusion_retroalimentacion: [''],
     };
-  
+
     this.sections.forEach((section, sIndex) => {
       section.questions.forEach((_, qIndex) => {
         formGroup[`section${sIndex}_question${qIndex}`] = [''];
@@ -153,10 +162,10 @@ export class Evaluacion2Component implements OnInit {
       formGroup[`section${sIndex}_calificacion`] = [''];
       formGroup[`section${sIndex}_retroalimentacion`] = [''];
     });
-  
+
     this.evaluacion2Form = this.fb.group(formGroup);
   }
-  
+
   ngOnInit() {
     this.initForm();
     this.route.queryParamMap.subscribe(params => {
@@ -219,42 +228,40 @@ export class Evaluacion2Component implements OnInit {
         });
       }
     });
-    // this.afAuth.user.subscribe(user => {
-    //   if (user) {
-    //     this.currentUser = this.firestore.collection('users').doc<User>(user.uid).valueChanges();
-    //     this.currentUser.subscribe(userData => {
-    //       if (userData && userData.role === 'docente') {
-    //         this.isDocente = true;
-    //       }
-    //       this.loadEvaluacion2Data();
-    //     });
-    //   } else {
-    //     this.loadEvaluacion2Data();
-    //   }
-    // });
   }
 
   submitForm() {
-    this.cargando = true;
-    const analisisData = this.evaluacion2Form.value;
-    analisisData.saved = true;
-  
-    this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
-      .then(() => {
-        if (this.isDocente) {
-          this.docenteSaved = true;
-        }
-        this.cargando = false;
-        this.saved = true;
-        this.evaluacion2Form.patchValue({ saved: true });
-        console.log('Form submitted and saved:', analisisData);
-      })
-      .catch(error => {
-        console.error("Error saving document: ", error);
-        this.cargando = false;
-      });
+    if (this.evaluacion2Form.valid) {
+      this.isSubmitting =true;
+      this.cargando = true;
+      const analisisData = this.evaluacion2Form.value;
+      analisisData.saved = true;
+      this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
+        .then(() => {
+          if (this.isDocente) {
+            this.docenteSaved = true;
+          }
+          this.cargando = false;
+          this.saved = true;
+          this.evaluacion2Form.patchValue({ saved: true });
+          console.log('Form submitted and saved:', analisisData);
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error("Error saving document: ", error);
+          this.cargando = false;
+        });
+    } else {
+      this.isSubmitting = false;
+      this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar.');
+    }
   }
-  
+
+  mostrarMensajeError(mensaje: string) {
+    this.mensajeError = mensaje;
+    this.mostrarMensaje = true;
+  }
+
   loadCalificaciones(data: any) {
     this.buttonStates = {}; // Reinicia buttonStates
     this.updateButtonStates(data);
@@ -340,7 +347,7 @@ export class Evaluacion2Component implements OnInit {
     this.saveFormChanges();
     this.changeDetectorRef.detectChanges();
   }
-  
+
   setCalificacion2(controlName: string, value: string) {
     this.evaluacion2Form.get(controlName)?.setValue(value);
     this.buttonStates[controlName] = value;

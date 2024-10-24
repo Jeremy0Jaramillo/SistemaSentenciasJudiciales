@@ -195,21 +195,22 @@ export class Analisis2Component implements OnInit {
   }
 
   submitForm() {
-    this.isSubmitting = true;
-    this.cargando = true;
     this.analisis2Form.patchValue({ saved: true });
     if (this.isDocente) {
       this.analisis2Form.patchValue({ docenteSaved: true });
     }
     const analisisData = this.analisis2Form.value;
-
     const dataToSave: any = {};
     Object.keys(analisisData).forEach(key => {
       if (!key.endsWith('_showCalificar')) {
         dataToSave[key] = analisisData[key];
       }
     });
-    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
+
+    if(this.analisis2Form.valid){
+      this.isSubmitting = true;
+      this.cargando = true;
+      this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
       .then(() => {
         this.saved = true;
         this.cargando = false;
@@ -221,11 +222,19 @@ export class Analisis2Component implements OnInit {
         this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
         this.isSubmitting = false;
       });
+    } else {
+      this.isSubmitting = false;  
+      this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar');
+    }
   }
 
   mostrarMensajeExito(mensaje: string) {
     this.mensajeExito = mensaje;
     this.mostrarMensaje = true;
+    setTimeout(() => {
+      this.mostrarMensaje = false;
+      this.mensajeError = '';
+    }, 5000); 
   }
 
   mostrarMensajeError(mensaje: string) {

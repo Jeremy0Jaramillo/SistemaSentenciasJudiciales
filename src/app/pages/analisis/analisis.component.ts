@@ -12,14 +12,6 @@ interface User {
   [key: string]: any; // To handle any additional properties
 }
 
-interface Question {
-  pregunta: [''],
-  calificacion: [''],
-  retroalimentacion: [''],
-  showCalificar: boolean;
-}
-
-
 @Component({
   selector: 'app-analisis',
   templateUrl: './analisis.component.html',
@@ -45,6 +37,7 @@ export class AnalisisComponent implements OnInit {
   private isSubmitting = false
   problem_question: any;
   calificarState: { [key: string]: boolean } = {};
+  mostrarRetroalimentacionPregunta: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -53,17 +46,18 @@ export class AnalisisComponent implements OnInit {
     private route: ActivatedRoute,
     private afAuth: AngularFireAuth,
   ) {
+    // Modificación en la creación del FormGroup
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
       normativas: this.fb.array([], Validators.required),
       facticas: this.fb.array([], Validators.required),
       saved: [false],
       docenteSaved: [false],
-      problem_question: this.fb.group<Question>({
+      problem_question: this.fb.group({
         pregunta: [''],
-        calificacion: [''],
+        calificacion: ['No Calificado'],  
         retroalimentacion: [''],
-        showCalificar: false
+        showCalificar: [false]
       })
     });
 
@@ -217,15 +211,33 @@ export class AnalisisComponent implements OnInit {
     this.onFormChange()
   }
 
+  toggleRetroalimentacionPregunta(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mostrarRetroalimentacionPregunta = !this.mostrarRetroalimentacionPregunta;
+  }
+
+  getRetroalimentacionValue(controlPath: string): string {
+    const control = this.analisisForm.get(controlPath);
+    return control && control.value ? control.value : '';
+  }
+
+  hasRetroalimentacion(controlPath: string): boolean {
+    const retroalimentacion = this.getRetroalimentacionValue(controlPath);
+    return retroalimentacion !== '' && retroalimentacion !== null && retroalimentacion !== undefined;
+  }
+
   loadAnalisisData() {
     this.firestore.collection('analisis').doc(this.numero_proceso).valueChanges()
       .subscribe((analisis: any) => {
         if (analisis) {
+          // Actualizar valores básicos del formulario
           this.analisisForm.patchValue({
             numero_proceso: analisis.numero_proceso,
             saved: analisis.saved || false,
             docenteSaved: analisis.docenteSaved || false,
           }, { emitEvent: false });
+          // Limpiar arrays existentes
           while (this.normativas.length !== 0) {
             this.normativas.removeAt(0);
           }
@@ -233,40 +245,70 @@ export class AnalisisComponent implements OnInit {
             this.facticas.removeAt(0);
           }
           if (analisis.problem_question) {
-            this.analisisForm.get('problem_question')?.patchValue(analisis.problem_question);
+            const problemQuestion = {
+              pregunta: analisis.problem_question.pregunta || '',
+              calificacion: analisis.problem_question.calificacion || 'No Calificado',
+              retroalimentacion: analisis.problem_question.retroalimentacion || '',
+              showCalificar: analisis.problem_question.showCalificar || false
+            };
+            this.analisisForm.get('problem_question')?.patchValue(problemQuestion);
+            this.mostrarRetroalimentacionPregunta = false;
           }
-          analisis.normativas.forEach((normativa: any) => {
-            this.normativas.push(this.fb.group({
-              pregunta: normativa.pregunta,
-              respuesta: normativa.respuesta,
-              valida: normativa.valida,
-              calificacion: normativa.calificacion || '',
-              retroalimentacion: normativa.retroalimentacion || '',
-              showCalificar: [false]
-            }));
-          });
-
-          analisis.facticas.forEach((factica: any) => {
-            this.facticas.push(this.fb.group({
-              pregunta: factica.pregunta,
-              respuesta: factica.respuesta,
-              valida: factica.valida,
-              calificacion: factica.calificacion || '',
-              retroalimentacion: factica.retroalimentacion || '',
-              showCalificar: [false]
-            }));
-          });
+          // Cargar preguntas normativas
+          if (analisis.normativas && Array.isArray(analisis.normativas)) {
+            analisis.normativas.forEach((normativa: any) => {
+              this.normativas.push(this.fb.group({
+                pregunta: [normativa.pregunta || ''],
+                respuesta: [normativa.respuesta || ''],
+                valida: [normativa.valida || ''],
+                calificacion: [normativa.calificacion || 'No Calificado'],
+                retroalimentacion: [normativa.retroalimentacion || ''],
+                showCalificar: [false]
+              }));
+            });
+          }
+          // Cargar preguntas fácticas
+          if (analisis.facticas && Array.isArray(analisis.facticas)) {
+            analisis.facticas.forEach((factica: any) => {
+              this.facticas.push(this.fb.group({
+                pregunta: [factica.pregunta || ''],
+                respuesta: [factica.respuesta || ''],
+                valida: [factica.valida || ''],
+                calificacion: [factica.calificacion || 'No Calificado'],
+                retroalimentacion: [factica.retroalimentacion || ''],
+                showCalificar: [false]
+              }));
+            });
+          }
+          // Inicializar arrays de control de retroalimentación
+        this.inicializarMostrarRetroalimentacion();       
+        // Marcar como cargado y actualizar estado
           this.dataLoaded = true;
           this.saved = analisis.saved || false;
+
+          // Verificar el estado de bloqueo después de cargar
+          this.checkLockStatus();
         } else {
+          // Si no hay datos, inicializar con valores por defecto
           if (this.normativas.length === 0) {
             this.addNormativa();
           }
           if (this.facticas.length === 0) {
             this.addFactica();
           }
+          // Inicializar pregunta del problema
+          this.analisisForm.get('problem_question')?.patchValue({
+            pregunta: '',
+            calificacion: 'No Calificado',
+            retroalimentacion: '',
+            showCalificar: false
+          });
           this.dataLoaded = true;
+          this.mostrarRetroalimentacionPregunta = false;
         }
+      }, error => {
+        console.error('Error al cargar los datos:', error);
+        this.mostrarMensajeError('Error al cargar los datos. Por favor, intente de nuevo.');
       });
   }
 
@@ -278,21 +320,25 @@ export class AnalisisComponent implements OnInit {
   }
 
   submitForm() {
-    this.isSubmitting = true;
+
+    if (this.analisisForm.valid){
+      this.isSubmitting = true;
     this.cargando = true;
-    const problemQuestion: Question = {
-      pregunta: this.analisisForm.get('problem_question.pregunta')?.value || '',
-      calificacion: this.analisisForm.get('problem_question.calificacion')?.value || '',
-      retroalimentacion: this.analisisForm.get('problem_question.retroalimentacion')?.value || '',
-      showCalificar: this.analisisForm.get('problem_question.showCalificar')?.value || false
-    };
-    console.log('Retroalimentación antes de enviar:', problemQuestion.retroalimentacion);
+    const problemQuestionValue = this.analisisForm.get('problem_question')?.value;
     const analisisData = {
       ...this.analisisForm.value,
-      problem_question: problemQuestion,
-      saved: true
+      problem_question: {
+        pregunta: problemQuestionValue.pregunta || '',
+        calificacion: problemQuestionValue.calificacion || 'No Calificado',
+        retroalimentacion: problemQuestionValue.retroalimentacion || '',
+        showCalificar: problemQuestionValue.showCalificar || false
+      },
+      saved: true,
+      timestamp: new Date() // Agregamos timestamp para asegurar que se detecte el cambio
     };
+
     console.log('Datos enviados:', analisisData);
+    
     // Guardar los datos en Firestore
     this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
       .then(() => {
@@ -300,10 +346,13 @@ export class AnalisisComponent implements OnInit {
         this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
         this.cargando = false;
         this.mostrarMensajeExito('Guardado con éxito');
-        // window.location.reload();
+        
+        // Esperamos un momento para asegurar que los datos se guardaron
         setTimeout(() => {
           this.isSubmitting = false;
-        }, 100);
+          // Forzamos la recarga de la página
+          window.location.reload();
+        }, 1000); // Esperamos 1 segundo antes de recargar
       })
       .catch(error => {
         console.error("Error saving document: ", error);
@@ -311,8 +360,11 @@ export class AnalisisComponent implements OnInit {
         this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
         this.isSubmitting = false;
       });
-  }
-
+    } else {
+      this.isSubmitting = false;
+      this.mostrarMensajeError('Complete todos los campos antes de guardar.');
+    }
+}
 
   // Método para mostrar mensaje de éxito
   mostrarMensajeExito(mensaje: string) {
@@ -326,8 +378,6 @@ export class AnalisisComponent implements OnInit {
   mostrarMensajeError(mensaje: string) {
     this.mensajeError = mensaje;
     this.mostrarMensaje = true;
-
-    // Opcionalmente, puedes agregar un temporizador para ocultar el mensaje después de un tiempo
     setTimeout(() => {
       this.mostrarMensaje = false;
       this.mensajeError = '';
@@ -366,7 +416,6 @@ export class AnalisisComponent implements OnInit {
       this.mostrarMensajeError('Por favor, complete todos los campos obligatorios antes de continuar.');
     }
   }
-
 
   toggleCalificar(index: number, type: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
@@ -417,21 +466,41 @@ export class AnalisisComponent implements OnInit {
   }
 
   isCalificacionIncorrecta2(type: string): boolean {
-    return !this.isCalificacionCorrecta2(type);
+    if (type === 'problem_question') {
+      return this.analisisForm.get('problem_question.calificacion')?.value === 'Incorrecto';
+    }
+    return false;
   }
 
   setCalificacion2(type: string, calificacion: string) {
     if (type === 'problem_question') {
       this.analisisForm.get('problem_question')?.patchValue({ calificacion: calificacion });
-      this.submitForm(); // Automatically save when setting the calificacion
     }
   }
 
-  setRetroalimentacion(section: string, event: Event) {
+  setRetroalimentacion(section: string, event: any) {
+    console.log('setRetroalimentacion called with:', section, event);
+    
     if (section === 'problem_question') {
-      const retroalimentacion = this.analisisForm.get(`problem_question.retroalimentacion`)?.value || '';
-      this.analisisForm.get(`problem_question.retroalimentacion`)?.patchValue(retroalimentacion);
-      this.submitForm();
+      // Maneja tanto el caso de un evento como el de un valor directo
+      const retroalimentacion = (event && event.target) ? event.target.value : event;
+      
+      console.log('Setting retroalimentacion to:', retroalimentacion);
+      
+      const problemQuestionGroup = this.analisisForm.get('problem_question');
+      if (problemQuestionGroup) {
+        problemQuestionGroup.patchValue({
+          retroalimentacion: retroalimentacion
+        });
+        
+        // Verifica que se actualizó correctamente
+        console.log('Updated form value:', this.analisisForm.get('problem_question')?.value);
+        
+        // Solo guarda si los datos ya están cargados
+        if (this.dataLoaded) {
+          this.submitForm();
+        }
+      }
     }
   }
 }

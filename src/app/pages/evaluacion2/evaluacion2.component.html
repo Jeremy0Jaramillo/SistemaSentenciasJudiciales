@@ -89,6 +89,7 @@
 
                 <!-- Columna 3 -->
                 <div class="column">
+                    <!-- Opción Familia -->
                     <div class="option">
                         <input type="radio" formControlName="sentenceSubject" value="Familia"
                             [disabled]="evaluacion2Form.disabled || (!isDocente && docenteSelections['Familia'])"
@@ -97,23 +98,26 @@
                         <label class="description">Familia, mujer, niñez y adolescencia</label>
                     </div>
 
+                    <!-- Opción MultiComponent -->
                     <div class="option">
                         <input type="radio" formControlName="sentenceSubject" value="MultiComponent"
+                            [checked]="isMultiOption(evaluacion2Form.get('sentenceSubject')?.value)"
                             [disabled]="evaluacion2Form.disabled || (!isDocente && docenteSelections['MultiComponent'])"
-                            [class.student-selected]="!isDocente && evaluacion2Form.get('sentenceSubject')?.value === 'MultiComponent' && !docenteSelections['MultiComponent']"
+                            [class.student-selected]="!isDocente && isMultiOption(evaluacion2Form.get('sentenceSubject')?.value) && !docenteSelections['MultiComponent']"
                             [class.docente-selected]="docenteSelections['MultiComponent']">
                         <label class="description">Multicomponente</label>
-                        <div *ngIf="evaluacion2Form.get('sentenceSubject')?.value === 'MultiComponent'"
-                            formGroupName="multicomponent">
-                            <input type="radio" formControlName="multiOption" value="MultiCivil"
+
+                        <!-- Subopciones que se muestran cuando MultiComponent está seleccionado o cuando ya hay un multi seleccionado -->
+                        <div *ngIf="isMultiOption(evaluacion2Form.get('sentenceSubject')?.value)" class="sub-options">
+                            <input type="radio" formControlName="sentenceSubject" value="MultiCivil"
                                 [disabled]="evaluacion2Form.disabled || (!isDocente && docenteSelections['MultiCivil'])"
-                                [class.student-selected]="!isDocente && evaluacion2Form.get('multicomponent.multiOption')?.value === 'MultiCivil' && !docenteSelections['MultiCivil']"
+                                [class.student-selected]="!isDocente && evaluacion2Form.get('sentenceSubject')?.value === 'MultiCivil' && !docenteSelections['MultiCivil']"
                                 [class.docente-selected]="docenteSelections['MultiCivil']">
                             <label class="description">Mult. civil</label>
 
-                            <input type="radio" formControlName="multiOption" value="MultiPenal"
+                            <input type="radio" formControlName="sentenceSubject" value="MultiPenal"
                                 [disabled]="evaluacion2Form.disabled || (!isDocente && docenteSelections['MultiPenal'])"
-                                [class.student-selected]="!isDocente && evaluacion2Form.get('multicomponent.multiOption')?.value === 'MultiPenal' && !docenteSelections['MultiPenal']"
+                                [class.student-selected]="!isDocente && evaluacion2Form.get('sentenceSubject')?.value === 'MultiPenal' && !docenteSelections['MultiPenal']"
                                 [class.docente-selected]="docenteSelections['MultiPenal']">
                             <label class="description">Mult. penal</label>
                         </div>
@@ -275,7 +279,7 @@
                         [titulo]="'Justifique su respuesta (500 palabras)'">
                     </app-caja-texto>
                     <!-- Vista de la retroalimentacion del estudiante -->
-                    <!-- <div *ngIf="!isDocente && getRetroalimentacionValue('reasonsNormative_retroalimentacion')">
+                    <div *ngIf="!isDocente && getRetroalimentacionValue('reasonsNormative_retroalimentacion')">
                         <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
                             {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
                         </button>
@@ -284,7 +288,7 @@
                                 {{ getRetroalimentacionValue('reasonsNormative_retroalimentacion') }}
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
                 <!-- Opcion de calificar y retroalimentacion que da el docente -->
                 <button class="rate" *ngIf="isDocente" type="button"
@@ -322,7 +326,7 @@
                     <app-caja-texto name="finalConclusion" formControlName="finalConclusion"
                         [titulo]="'Conclusión final'">
                     </app-caja-texto>
-                    <!-- <div *ngIf="!isDocente && getRetroalimentacionValue('finalConclusion_retroalimentacion')">
+                    <div *ngIf="!isDocente && getRetroalimentacionValue('finalConclusion_retroalimentacion')">
                         <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
                             {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
                         </button>
@@ -331,7 +335,7 @@
                                 {{ getRetroalimentacionValue('finalConclusion_retroalimentacion') }}
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
                 <button class="rate" *ngIf="isDocente" type="button"
                     (click)="toggleCalificar('finalConclusion')">Calificar</button>
@@ -365,7 +369,9 @@
     </div>
     <button class="bttn-stnd-g" type="submit">Guardar</button>
 </form>
-
+<div *ngIf="mostrarMensaje" class="alerta">
+    <p>{{ mensajeError }}</p>
+</div>
 <div class="bttn">
     <button class="bttn-stnd" (click)="redirectToEvaluacion()">Evaluación</button>
     <button *ngIf="isDocente" class="bttn-stnd" (click)="lockForm()">Bloquear Sentencia</button>

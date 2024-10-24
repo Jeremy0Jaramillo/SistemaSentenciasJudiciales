@@ -26,12 +26,15 @@ export class EvaluacionComponent implements OnInit {
   saved: boolean = false;
   docenteSaved = false;
   isDocente = false;
+  mostrarMensaje: boolean = false;
   calificaciones: { [key: string]: string } = {};
   currentUser: Observable<User | null | undefined> = of(null);
   selectedButtons: { [key: string]: string } = {};
   calificarState: { [key: string]: boolean } = {};
   cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
   mostrarRetroalimentacion: { [key: string]: boolean } = {};
+  mensajeError: string = '';
+  private isSubmitting = false
 
   constructor(
     private fb: FormBuilder,
@@ -149,6 +152,13 @@ export class EvaluacionComponent implements OnInit {
     });
   }
 
+  sectionErrors: { [key: string]: string[] } = {
+    motivationType: [],
+    nonexistence: [],
+    insufficiency: [],
+    appearance: []
+  };
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.numero_proceso = params['numero_proceso'] || '';
@@ -170,29 +180,114 @@ export class EvaluacionComponent implements OnInit {
       console.log('Calificación changed to:', value);
     });
     this.changeDetectorRef.detectChanges();
+    setTimeout(() => {
+      console.log('Estado de los radio buttons después de 2 segundos:');
+      this.debugRadioButtons();
+    }, 2000);
   }
-
-  
 
   loadFormData() {
     this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
       .subscribe((data: any) => {
         if (data) {
-          // Cargar todos los datos en el formulario sin importar el tipo de motivación
+          // Aplicamos los valores al formulario
           this.evaluacionForm.patchValue(data, { emitEvent: false });
-          this.saved = data.saved || false;
-          this.loadCalificaciones(data);
-          
-          // No resetear ningún campo
-          this.evaluacionForm.markAsPristine();
-          this.evaluacionForm.markAsUntouched();
-          
-          // Forzar actualización de la vista
-          this.changeDetectorRef.detectChanges();
+
+          // Forzamos la detección de cambios
+          setTimeout(() => {
+            this.changeDetectorRef.detectChanges();
+          }, 100);
+
+          // Si es necesario, forzamos otra actualización después de un momento
+          setTimeout(() => {
+            this.changeDetectorRef.detectChanges();
+          }, 500);
         }
       });
   }
-  
+
+  handleRadioButtonValues(data: any) {
+    // Función recursiva para manejar los valores de radio buttons
+    const setRadioValues = (obj: any, parentPath: string = '') => {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const currentPath = parentPath ? `${parentPath}.${key}` : key;
+
+          if (typeof obj[key] === 'object' && obj[key] !== null) {
+            setRadioValues(obj[key], currentPath);
+          } else if (key.startsWith('lack') || key.includes('exists')) {
+            const control = this.evaluacionForm.get(currentPath);
+            if (control) {
+              control.setValue(obj[key], { emitEvent: false });
+            }
+          }
+        }
+      }
+    };
+
+    setRadioValues(data);
+  }
+
+  submitForm() {
+    if (!this.validateAllSections()) {
+      return;
+    }
+    this.isSubmitting = true;
+    this.cargando = true;
+    this.evaluacionForm.patchValue({ saved: true });
+    if (this.isDocente) {
+      this.evaluacionForm.patchValue({ docenteSaved: true });
+    }
+    const analisisData = this.evaluacionForm.getRawValue();
+    // Actualizar las calificaciones
+    for (const [key, value] of Object.entries(this.buttonStates)) {
+      const parts = key.split('.');
+      let current: any = analisisData;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!current[parts[i]]) current[parts[i]] = {};
+        current = current[parts[i]];
+      }
+      current[parts[parts.length - 1]] = value;
+    }
+    const processRadioValues = (obj: any) => {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (typeof obj[key] === 'object' && obj[key] !== null) {
+            processRadioValues(obj[key]);
+          } else if (key.startsWith('lack') || key.includes('exists')) {
+            // Asegurarnos de que los valores sean exactamente "Si" o "No"
+            if (obj[key] === true) obj[key] = "Si";
+            if (obj[key] === false) obj[key] = "No";
+          }
+        }
+      }
+    };
+
+    processRadioValues(analisisData);
+    this.firestore.collection('evaluacion').doc(this.numero_proceso).set(analisisData)
+      .then(() => {
+        this.saved = true;
+        window.location.reload();
+        this.cargando = false;
+        setTimeout(() => {
+          this.isSubmitting = false;
+        }, 100);
+      })
+      .catch(error => {
+        console.error("Error saving document: ", error);
+        this.cargando = false;
+        this.mostrarMensajeError('Error al guardar');
+      });
+  }
+
+  mostrarMensajeError(mensaje: string) {
+    this.mensajeError = mensaje;
+    this.mostrarMensaje = true;
+    setTimeout(() => {
+      this.mostrarMensaje = false;
+      this.mensajeError = '';
+    }, 10000);
+  }
 
   isButtonSelected(section: string, controlName: string, value: string): boolean {
     this.calificaciones[section] = value;
@@ -251,6 +346,20 @@ export class EvaluacionComponent implements OnInit {
     });
   }
 
+  // Modificamos el método para marcar/desmarcar radio buttons
+  setRadioValue(controlPath: string, value: string) {
+    const control = this.evaluacionForm.get(controlPath);
+    if (control) {
+      control.setValue(value, { emitEvent: true });
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  // Método para verificar el valor de un radio button
+  isRadioSelected(controlPath: string, value: string): boolean {
+    const control = this.evaluacionForm.get(controlPath);
+    return control ? control.value === value : false;
+  }
 
   lockForm() {
     this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
@@ -271,7 +380,6 @@ export class EvaluacionComponent implements OnInit {
       }
     });
   }
-
 
   loadUserData() {
     this.afAuth.user.subscribe(user => {
@@ -306,27 +414,6 @@ export class EvaluacionComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  // resetOtherAppearanceFields(selectedField: string): void {
-  //   const appearance = this.evaluacionForm.get('appearance') as FormGroup;
-
-  //   if (!appearance) return;
-
-  //   const fields = ['incoherence', 'inatinence', 'incomprehensibility', 'incongruity'];
-
-  //   fields.forEach(field => {
-  //     if (field !== selectedField) {
-  //       const control = appearance.get(field);
-  //       if (control) {
-  //         control.reset();
-  //       }
-  //     }
-  //   });
-  // }
-
-  // handleAppearanceFieldChange(selectedField: string): void {
-  //   this.resetOtherAppearanceFields(selectedField);
-  // }
-
   checkDocenteSaved() {
     this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
       .subscribe((data: any) => {
@@ -353,41 +440,6 @@ export class EvaluacionComponent implements OnInit {
     }
   }
 
-
-  submitForm() {
-    this.cargando = true;
-    this.evaluacionForm.patchValue({ saved: true });
-    if (this.isDocente) {
-      this.evaluacionForm.patchValue({ docenteSaved: true });
-    }
-
-    // Obtener todos los valores del formulario sin filtrar
-    const analisisData = this.evaluacionForm.value;
-
-    // Actualizar las calificaciones
-    for (const [key, value] of Object.entries(this.buttonStates)) {
-      const parts = key.split('.');
-      let current: any = analisisData;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) current[parts[i]] = {};
-        current = current[parts[i]];
-      }
-      current[parts[parts.length - 1]] = value;
-    }
-
-    // Guardar todos los datos
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).set(analisisData)
-      .then(() => {
-        this.saved = true;
-        window.location.reload();
-        this.cargando = false;
-      })
-      .catch(error => {
-        console.error("Error saving document: ", error);
-        this.cargando = false;
-      });
-  }
-
   redirectToAnalisis2() {
     this.router.navigate(['/analisis2'], {
       queryParams: {
@@ -399,17 +451,23 @@ export class EvaluacionComponent implements OnInit {
     });
   }
 
-  redirectToEvaluacion2() {
-    if (this.docenteSaved) {
-      this.router.navigate(['/evaluacion2'], {
-        queryParams: {
-          numero_proceso: this.numero_proceso,
-          asunto: this.asunto,
-          estudiante: this.estudiante,
-          docente: this.docente
-        }
-      });
+  redirectToEvaluacion2(event: Event) {
+    event.preventDefault();
+    if (!this.validateAllSections()) {
+      return;
     }
+    if (!this.saved) {
+      this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
+      return;
+    }
+    this.router.navigate(['/evaluacion2'], {
+      queryParams: {
+        numero_proceso: this.numero_proceso,
+        asunto: this.asunto,
+        estudiante: this.estudiante,
+        docente: this.docente
+      }
+    });
   }
 
 
@@ -448,6 +506,158 @@ export class EvaluacionComponent implements OnInit {
   toggleRetroalimentacion(sectionId: string) {
     this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];
   }
+  debugRadioButtons() {
+    const searchRadioControls = (group: any, path = '') => {
+      for (const key in group.controls) {
+        const control = group.controls[key];
+        const currentPath = path ? `${path}.${key}` : key;
+
+        if (control instanceof FormGroup) {
+          searchRadioControls(control, currentPath);
+        } else if (key.startsWith('lack') || key.includes('exists')) {
+          console.log(`Radio button ${currentPath}:`, {
+            value: control.value,
+            dirty: control.dirty,
+            touched: control.touched,
+            disabled: control.disabled
+          });
+        }
+      }
+    };
+
+    console.log('=== Debug Radio Buttons ===');
+    searchRadioControls(this.evaluacionForm);
+  }
+
+  validateSection(sectionName: string): string[] {
+    const errors: string[] = [];
+    const section = this.evaluacionForm.get(sectionName);
+
+    if (!section) return errors;
+
+    switch (sectionName) {
+      case 'motivationType':
+        if (!section.value) {
+          errors.push('Seleccione un tipo de motivación | ');
+        }
+        break;
+
+      case 'nonexistinence':
+        const nonexistence = section.value;
+        if (!nonexistence.lackFoundationNormative) {
+          errors.push('Complete el campo de fundamentación normativa | ');
+        }
+        if (nonexistence.lackFoundationNormative === 'Si' && !nonexistence.reasonsNormative) {
+          errors.push('Ingrese las razones de la fundamentación normativa | ');
+        }
+        if (!nonexistence.normative_calificacion) {
+          errors.push('Califique la fundamentación normativa | ');
+        }
+        // Similar validations for factual and motivation fields
+        if (!nonexistence.lackFoundationFactual) {
+          errors.push('Complete el campo de fundamentación fáctica | ');
+        }
+        if (!nonexistence.lackMotivation) {
+          errors.push('Complete el campo de motivación | ');
+        }
+        break;
+
+      case 'insufficiency':
+        const insufficiency = section.value;
+        if (!insufficiency.lackFoundationNormative) {
+          errors.push('Complete el campo de fundamentación normativa | ');
+        }
+        if (insufficiency.lackFoundationNormative === 'Si' && !insufficiency.reasonsNormative) {
+          errors.push('Ingrese las razones de la fundamentación normativa | ');
+        }
+        if (!insufficiency.normative_calificacion) {
+          errors.push('Califique la fundamentación normativa | ');
+        }
+        // Similar validations for factual and motivation fields
+        break;
+
+      case 'appearance':
+        const appearance = section.value;
+        if (!appearance.appearanceReason) {
+          errors.push('Complete el motivo de apariencia | ');
+        }
+        if (!appearance.motivationalHabit) {
+          errors.push('Complete el hábito motivacional | ');
+        }
+
+        // Validate incoherence subsection
+        const incoherence = appearance.incoherence;
+        if (incoherence) {
+          if (!incoherence.existsLogicalNormative) {
+            errors.push('Complete el campo de incoherencia lógica normativa | ');
+          }
+          // Add more specific validations for incoherence fields
+        }
+
+        // Validate inatinence subsection
+        const inatinence = appearance.inatinence;
+        if (inatinence) {
+          if (!inatinence.existsInatinenceJuridical) {
+            errors.push('Complete el campo de inatinencia jurídica | ');
+          }
+          // Add more specific validations for inatinence fields
+        }
+        break;
+    }
+
+    return errors;
+  }
+
+  validateAllSections(): boolean {
+    let isValid = true;
+    this.sectionErrors = {
+      motivationType: [],
+      nonexistence: [],
+      insufficiency: [],
+      appearance: []
+    };
+
+    // Validate each section
+    Object.keys(this.sectionErrors).forEach(sectionName => {
+      const errors = this.validateSection(sectionName);
+      if (errors.length > 0) {
+        this.sectionErrors[sectionName] = errors;
+        isValid = false;
+      }
+    });
+
+    // Show error messages if there are any
+    if (!isValid) {
+      let errorMessage = '';
+      Object.entries(this.sectionErrors).forEach(([section, errors]) => {
+        if (errors.length > 0) {
+          errorMessage += `\n${this.getSectionTitle(section)}:\n`;
+          errors.forEach(error => {
+            errorMessage += `- ${error}\n`;
+          });
+        }
+      });
+      this.mostrarMensajeError(errorMessage.trim());
+    }
+
+    return isValid;
+  }
+
+  getSectionTitle(section: string): string {
+    switch (section) {
+      case 'motivationType':
+        return 'Tipo de Motivación';
+      case 'nonexistence':
+        return 'Inexistencia';
+      case 'insufficiency':
+        return 'Insuficiencia';
+      case 'appearance':
+        return 'Apariencia';
+      default:
+        return section;
+    }
+  }
+
 }
 
 
@@ -498,6 +708,4 @@ interface evaluacionData {
       motivoDeficitMotivacion: string;
     };
   };
-
-
 }

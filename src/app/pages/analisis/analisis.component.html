@@ -32,30 +32,48 @@
         </div>
       </div>
     </div>
-    <ng-container *ngIf="isDocente">
-      <button class="rate" *ngIf="analisisForm.get('saved')?.value" type="button"
-        (click)="toggleCalificar2('problem_question')">Calificar</button>
+    <div *ngIf="isDocente">
+      <button class="rate" *ngIf="isDocente" type="button"
+      (click)="toggleCalificar2('problem_question')">
+      Calificar
+    </button>
       <div *ngIf="calificarState['problem_question']">
         <div class="bttns-rate">
-          <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta2('problem_question')"
-            type="button" (click)="setCalificacion2('problem_question', 'Correcto')">
+          <button class="correct-button" 
+            [class.calificacion-correcta]="isCalificacionCorrecta2('problem_question')"
+            type="button" 
+            (click)="setCalificacion2('problem_question', 'Correcto')">
             Correcto
           </button>
           <button class="incorrect-button"
-            [class.calificacion-incorrecta]="!isCalificacionCorrecta2('problem_question')" type="button"
+            [class.calificacion-incorrecta]="!isCalificacionCorrecta2('problem_question')"
+            type="button"
             (click)="setCalificacion2('problem_question', 'Incorrecto')">
             Incorrecto
           </button>
         </div>
         <div>
           <h5 class="pregunta">Retroalimentación</h5>
-          <app-caja-texto 
-            formControlName="retroalimentacion"
-            (valueChange)="setRetroalimentacion('problem_question', $event)">
-          </app-caja-texto>
+          <div [formGroupName]="'problem_question'">
+            <app-caja-texto 
+              formControlName="retroalimentacion"
+              (valueChange)="setRetroalimentacion('problem_question', $event)">
+            </app-caja-texto>
+          </div>
         </div>
       </div>
-    </ng-container>
+    </div>
+    <div *ngIf="hasRetroalimentacion('problem_question.retroalimentacion') && !isDocente" class="retroalimentacion-section">
+      <button type="button" (click)="toggleRetroalimentacionPregunta($event)" class="bttn-toggle">
+        {{ mostrarRetroalimentacionPregunta ? 'Ocultar' : 'Ver' }} retroalimentación
+      </button>
+      <div *ngIf="mostrarRetroalimentacionPregunta" class="retroalimentacion-contenido">
+        <div class="retroalimentacion-texto">
+          {{ getRetroalimentacionValue('problem_question.retroalimentacion') }}
+        </div>
+      </div>
+    </div>
+    
     <hr>
     <!-- Aqui empieza el formulario de normativas -->
     <div formArrayName="normativas">
@@ -108,13 +126,16 @@
             <div *ngIf="normativa.get('showCalificar')?.value">
 
               <div class="bttns-rate">
-                <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('normativa', i)"
-                  type="button" (click)="setCalificacion(i, 'normativa', 'Correcto')">
+                <button class="correct-button" 
+                  [class.calificacion-correcta]="isCalificacionCorrecta('normativas', i)"
+                  type="button" 
+                  (click)="setCalificacion(i, 'normativas', 'Correcto')">
                   Correcto
                 </button>
                 <button class="incorrect-button"
-                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('normativa', i)" type="button"
-                  (click)="setCalificacion(i, 'normativa', 'Incorrecto')">
+                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('normativas', i)" 
+                  type="button"
+                  (click)="setCalificacion(i, 'normativas', 'Incorrecto')">
                   Incorrecto
                 </button>
               </div>
