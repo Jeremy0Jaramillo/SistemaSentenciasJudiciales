@@ -570,9 +570,6 @@ export class EvaluacionComponent implements OnInit {
         if (insufficiency.lackFoundationNormative === 'Si' && !insufficiency.reasonsNormative) {
           errors.push('Ingrese las razones de la fundamentación normativa | ');
         }
-        if (!insufficiency.normative_calificacion) {
-          errors.push('Califique la fundamentación normativa | ');
-        }
         // Similar validations for factual and motivation fields
         break;
 

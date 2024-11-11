@@ -7,8 +7,7 @@
 
 <div class="search-bar">
   <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"
-  *ngIf="userRole == 'docente'"
-  placeholder="Buscar por nombre de estudiante">
+    *ngIf="userRole == 'docente'" placeholder="Buscar por nombre de estudiante">
 </div>
 
 <div class="sentencias">
@@ -35,9 +34,36 @@
 
     <div class="more">
       <button class="bttn-stnd" (click)="redirectToAnalisis(sentencia)">Ver más</button>
-      <a *ngIf="userRole === 'docente' && sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank" class="bttn-download">
+      <a *ngIf="userRole === 'docente' && sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank"
+        class="bttn-download">
         Descargar PDF
       </a>
+    </div>
+    <div class="bttn-acetp" *ngIf="userRole === 'docente' && !sentencia.estado">
+      <button (click)="abrirRazon(sentencia, 'aceptar')" class="bttn-accept">Aceptar</button>
+      <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
+    </div>
+
+    <!-- Vista del estudiante -->
+    <div class="estado-sentencia" *ngIf="userRole !== 'docente' && sentencia.estado">
+      <div class="estado-badge" [ngClass]="sentencia.estado">
+        Sentencia {{ sentencia.estado }}
+      </div>
+      <div class="razon-text" *ngIf="sentencia.razon">
+        <strong>Razón:</strong> {{ sentencia.razon }}
+      </div>
+    </div>
+
+    <!-- Overlay para razón -->
+    <div class="overlay" *ngIf="showRazonOverlay">
+      <div class="overlay-content">
+        <h3>Razón para {{ accionPendiente }} la sentencia</h3>
+        <textarea [(ngModel)]="razonTexto" placeholder="Ingrese la razón..."></textarea>
+        <div class="overlay-buttons">
+          <button (click)="guardarDecision()">Guardar</button>
+          <button (click)="cancelarDecision()">Cancelar</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

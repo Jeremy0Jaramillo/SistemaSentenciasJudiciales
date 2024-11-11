@@ -19,17 +19,11 @@
 }
 
 .sent {
-    width: 310px;
-    height: 330px;
-    flex-shrink: 0;
-    background-size: 230px;
-    background-position: center;
-    background-repeat: no-repeat;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    padding-top: 20px;
-    margin-top: 20px;
-    margin-right: 30px;
+    display: flex;
+    flex-direction: column ;
+    padding: 0px 0px 10px;
 }
 
 .sent .more{
@@ -57,7 +51,7 @@
     font-style: normal;
     font-weight: 600;
     line-height: normal;
-    margin: 40px 10px 0px 20px;
+    margin: 0px 10px 0px 20px;
 }
 
 .text-dat {
@@ -112,3 +106,114 @@
 .wating{
     color: #f44336;
 }
+
+.overlay {
+    font-family: Poppins;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(1px); /* Esto crea el efecto de difuminado */
+    background-color: rgba(240, 240, 240, 0.01); /* Fondo semi-transparente más sutil */
+  }
+  
+  .overlay-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  }
+  
+  .overlay-content h3 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .overlay-content textarea {
+    width: 90%;
+    min-height: 100px;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: Poppins;
+  }
+  
+  .overlay-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .overlay-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .overlay-buttons button:first-child {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .overlay-buttons button:last-child {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .overlay-buttons button:hover {
+    opacity: 0.9;
+  }
+  
+  .estado-badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
+  .estado-badge.aceptada {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .estado-badge.negada {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .bttn-accept {
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+  }
+  
+  .bttn-reject {
+    background-color: #f44336;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+  }
+
+  .bttn-acetp{
+    display: flex;
+    margin: 10px 90px 10px;
+    justify-content: space-between;
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: bold;
+    font-weight: 400;
+    line-height: normal;
+  }

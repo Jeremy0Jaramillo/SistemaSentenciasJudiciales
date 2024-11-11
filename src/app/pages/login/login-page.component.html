@@ -9,7 +9,7 @@
       <div class="imputs-login">
         <p class="titulo-login">{{ isLogin ? 'Inicia sesión con tu correo institucional' : 'Regístrate con tu correo institucional' }}</p>
         <div *ngIf="alerta" class="alerta">
-          <p>Contraseña o correo incorrectos</p>
+          <p>{{ alertaMessage || 'Contraseña o correo incorrectos' }}</p>
         </div>
         
         <!-- Formulario de inicio de sesión -->
@@ -19,14 +19,29 @@
           <label class="label-login" for="password">Contraseña:</label> <br>
           <input class="input-login" type="password" #password required> <br><br>
           <button class="bttn-stnd" type="submit">Iniciar sesión</button>
+          
+          <!-- Botón de Azure -->
+          <div class="separator">
+            <span>o</span>
+          </div>
+          <button type="button" class="bttn-azure" (click)="loginWithAzure()">
+            <img src="../../../assets/images/microsoft-logo.png" alt="Microsoft Logo" class="azure-icon">
+            Iniciar sesión con Microsoft
+          </button>
         </form>
         
         <!-- Formulario de registro -->
-        <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regEmail.value, regPassword.value)">
+        <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)">
+          <!-- Resgistro de nombre y apellido -->
+          <label class="label-login" for="regName">Nombre y Apellido:</label> <br>
+          <input class="input-login" type="text" #regName required> <br><br>
+          <!-- Registrar correo -->
           <label class="label-login" for="regEmail">Email:</label> <br>
           <input class="input-login" type="email" #regEmail required> <br><br>
+          <!-- Registrar Contraseña -->
           <label class="label-login" for="regPassword">Contraseña:</label> <br>
           <input class="input-login" type="password" #regPassword required> <br><br>
+          <!-- Boton registro -->
           <button class="bttn-stnd" type="submit">Registrarse</button>
         </form>
         

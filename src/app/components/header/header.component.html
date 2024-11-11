@@ -4,10 +4,8 @@
     <button class="bttn-nav">E-SATJE</button>
     <button class="bttn-nav" >UTPL</button>
   </div>
-  
   <div class="nav-right" *ngIf="user">
     <div class="user-info" (click)="toggleLogoutMenu()">
-      <!-- <img [src]="user.photoURL || defaultProfilePic" alt="Profile Picture" class="profile-pic"> -->
       <div>
         <span>{{ user.name }}</span>
         <br>

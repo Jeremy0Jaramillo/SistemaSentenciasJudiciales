@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { MsalService } from '@azure/msal-angular';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private msalService: MsalService
   ) {
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -34,11 +36,17 @@ export class AppComponent implements OnInit, OnDestroy {
         sessionStorage.removeItem('sessionToken');
       }
     });
-
     // Verificar si hay una sesión activa al cargar la página
     if (!sessionStorage.getItem('sessionToken')) {
       this.logout();
     }
+
+    this.msalService.instance.initialize().then(() => {
+      // MSAL inicializado correctamente
+      console.log('MSAL inicializado');
+    }).catch(error => {
+      console.error('Error inicializando MSAL:', error);
+    });
   }
 
   ngOnDestroy() {

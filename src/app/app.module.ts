@@ -21,13 +21,62 @@ import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component'
 import { msalConfig } from '../app/auth-config';
 import { MsalModule, MsalService, MsalGuard, MsalInterceptor, MSAL_INSTANCE, MsalBroadcastService, MsalRedirectComponent } from '@azure/msal-angular';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { IPublicClientApplication, InteractionType, PublicClientApplication, BrowserCacheLocation, LogLevel  } from '@azure/msal-browser';
+import { AuthService } from './services/auth.service';
 
-export function MSALInstanceFactory(): PublicClientApplication {
-  const pca = new PublicClientApplication(msalConfig);
-  pca.initialize();
-  return pca;
+// export function MSALInstanceFactory(): PublicClientApplication {
+//   const pca = new PublicClientApplication(msalConfig);
+//   pca.initialize();
+//   return pca;
+// }
+const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25', // Reemplaza con tu Client ID de Azure
+      authority: 'https://login.microsoftonline.com/common',
+      redirectUri: window.location.origin,
+      postLogoutRedirectUri: window.location.origin,
+      navigateToLoginRequestUrl: true
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage,
+      storeAuthStateInCookie: isIE
+    },
+    system: {
+      loggerOptions: {
+        loggerCallback: (level, message, containsPii) => {
+          if (containsPii) {
+            return;
+          }
+          switch (level) {
+            case LogLevel.Error:
+              console.error(message);
+              return;
+            case LogLevel.Info:
+              console.info(message);
+              return;
+            case LogLevel.Verbose:
+              console.debug(message);
+              return;
+            case LogLevel.Warning:
+              console.warn(message);
+              return;
+          }
+        }
+      }
+    }
+  });
 }
+
+const msalGuardConfig = {
+  interactionType: InteractionType.Popup,
+  authRequest: {
+    scopes: ['user.read']
+  }
+};
+
 
 @NgModule({
   declarations: [
@@ -58,13 +107,14 @@ export function MSALInstanceFactory(): PublicClientApplication {
       provide: MSAL_INSTANCE,
       useFactory: MSALInstanceFactory
     },
-    MsalService,
-    MsalBroadcastService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
       multi: true
-    }
+    },
+    MsalService,
+    MsalGuard,
+    AuthService
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })

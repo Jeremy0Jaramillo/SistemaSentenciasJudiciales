@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -17,6 +18,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private afAuth: AngularFireAuth,
+    private authService: AuthService,
     private router: Router,
     private firestore: AngularFirestore
   ) {}
@@ -38,6 +40,14 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       this.router.navigate(['/principal']);
     }
   }
+  
+  // ngOnInit() {
+  //   this.authStateSubscription = this.authService.getCurrentUser().subscribe(user => {
+  //     if (user && this.authService.isAuthenticated()) {
+  //       this.router.navigate(['/principal']);
+  //     }
+  //   });
+  // }
 
   ngOnDestroy() {
     if (this.authStateSubscription) {
@@ -57,15 +67,36 @@ export class LoginPageComponent implements OnInit, OnDestroy {
         this.alerta = true;
       });
   }
+  // async login(email: string, password: string) {
+  //   try {
+  //     await this.authService.loginWithFirebase(email, password);
+  //     this.router.navigate(['/principal']);
+  //   } catch (error: any) {
+  //     console.error('Login error:', error);
+  //     this.alerta = true;
+  //     // this.alertaMessage = this.getErrorMessage(error.code);
+  //   }
+  // }
 
-  register(email: string, password: string) {
+  async loginWithAzure() {
+    try {
+      await this.authService.loginWithAzure().toPromise();
+      this.router.navigate(['/principal']);
+    } catch (error: any) {
+      console.error('Azure login error:', error);
+      this.alerta = true;
+      this.alertaMessage = 'Error al iniciar sesión con Azure';
+    }
+  }
+
+  register(name: string, email: string, password: string) {
     this.afAuth.createUserWithEmailAndPassword(email, password)
       .then(userCredential => {
         if (userCredential.user) {
-          // Registration successful, write user data to Firestore
           this.firestore.collection('users').doc(userCredential.user.uid).set({
-            email: userCredential.user.email
-            // Add additional user data as needed
+            name: name, 
+            email: userCredential.user.email,
+            role: 'estudiante'
           });
           sessionStorage.setItem('sessionToken', 'active');
         }

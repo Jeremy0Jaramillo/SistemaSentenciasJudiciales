@@ -105,3 +105,47 @@
     line-height: normal;
     text-decoration: none;
 }
+
+/* Añade estos estilos a tu archivo CSS */
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .separator::before,
+  .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .separator span {
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .bttn-azure {
+    width: 100%;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #8c8c8c;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .bttn-azure:hover {
+    background-color: #f3f3f3;
+  }
+  
+  .azure-icon {
+    width: 20px;
+    height: 20px;
+  }

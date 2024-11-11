@@ -157,6 +157,10 @@ body {
     margin-top: 10px;
     border-radius: 5px;
     text-align: center;
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
   }
 
   .custom-button {

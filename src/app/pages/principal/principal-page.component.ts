@@ -11,13 +11,15 @@ interface Sentencia {
   nombre_estudiante: string;
   nombre_docente: string;
   archivoURL?: string;
+  estado?: 'aceptar' | 'negar' | null;
+  razon?: string;
 }
 
 
 @Component({
   selector: 'app-principal-page',
   templateUrl: './principal-page.component.html',
-  styleUrls: ['./principal-page.component.css']
+  styleUrls: ['./principal-page.component.css'],
 })
 export class PrincipalPageComponent implements OnInit {
   user: any = null;
@@ -26,6 +28,10 @@ export class PrincipalPageComponent implements OnInit {
   filteredSentencias$: Observable<Sentencia[]>;
   searchText: string = '';
   private searchSubject = new BehaviorSubject<string>('');
+  showRazonOverlay = false;
+  razonTexto = '';
+  accionPendiente: 'aceptar' | 'negar' = 'aceptar';
+  sentenciaPendiente: Sentencia | null = null;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -44,6 +50,41 @@ export class PrincipalPageComponent implements OnInit {
         )
       )
     );
+  }
+
+  abrirRazon(sentencia: Sentencia, accion: 'aceptar' | 'negar') {
+    this.sentenciaPendiente = sentencia;
+    this.accionPendiente = accion;
+    this.razonTexto = '';
+    this.showRazonOverlay = true;
+  }
+
+  guardarDecision() {
+    if (!this.sentenciaPendiente || !this.razonTexto.trim()) {
+      console.error('Falta información necesaria para actualizar la sentencia');
+      return;
+    }
+    this.firestore.collection('sentencias')
+      .doc(this.sentenciaPendiente.numero_proceso) // Usamos numero_proceso como ID
+      .update({
+        estado: this.accionPendiente,
+        razon: this.razonTexto.trim(),
+      })
+      .then(() => {
+        this.showRazonOverlay = false;
+        this.sentenciaPendiente = null;
+        this.razonTexto = '';
+        console.log('Sentencia actualizada exitosamente');
+      })
+      .catch(error => {
+        console.error('Error al guardar la decisión:', error);
+      });
+  }
+
+  cancelarDecision() {
+    this.showRazonOverlay = false;
+    this.sentenciaPendiente = null;
+    this.razonTexto = '';
   }
 
   ngOnInit() {
@@ -91,6 +132,7 @@ export class PrincipalPageComponent implements OnInit {
       })
     );
   }
+
 
   redirectToNuevaSentencia() {
     this.router.navigate(['/nueva-sentencia']);
