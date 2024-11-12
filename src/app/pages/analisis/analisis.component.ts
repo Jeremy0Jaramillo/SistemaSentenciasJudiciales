@@ -36,8 +36,10 @@ export class AnalisisComponent implements OnInit {
   mostrarRetroalimentacion: boolean[] = [];
   private isSubmitting = false
   problem_question: any;
+  problem_decision: any;
   calificarState: { [key: string]: boolean } = {};
   mostrarRetroalimentacionPregunta: boolean = false;
+  mostrarRetroalimentacionDecision: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -58,10 +60,17 @@ export class AnalisisComponent implements OnInit {
         calificacion: ['No Calificado'],  
         retroalimentacion: [''],
         showCalificar: [false]
+      }),
+      problem_decision: this.fb.group({
+        decision: [''],
+        calificacion: ['No Calificado'],  
+        retroalimentacion: [''],
+        showCalificar: [false]
       })
     });
+    
 
-    this.mostrarRetroalimentacion = [];
+  this.mostrarRetroalimentacion = [];
   }
 
   toggleRetroalimentacion(event: Event, index: number) {
@@ -83,7 +92,8 @@ export class AnalisisComponent implements OnInit {
 
   ngOnInit() {
     this.calificarState = {
-      'problem_question': false
+      'problem_question': false,
+      'problem_decision': false
     };
     this.analisisForm.valueChanges.subscribe(() => {
       if (this.dataLoaded && !this.isSubmitting) {
@@ -217,6 +227,12 @@ export class AnalisisComponent implements OnInit {
     this.mostrarRetroalimentacionPregunta = !this.mostrarRetroalimentacionPregunta;
   }
 
+  toggleRetroalimentacionDecision(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mostrarRetroalimentacionDecision = !this.mostrarRetroalimentacionDecision;
+  }
+
   getRetroalimentacionValue(controlPath: string): string {
     const control = this.analisisForm.get(controlPath);
     return control && control.value ? control.value : '';
@@ -244,6 +260,7 @@ export class AnalisisComponent implements OnInit {
           while (this.facticas.length !== 0) {
             this.facticas.removeAt(0);
           }
+          // Cargar problema
           if (analisis.problem_question) {
             const problemQuestion = {
               pregunta: analisis.problem_question.pregunta || '',
@@ -253,6 +270,17 @@ export class AnalisisComponent implements OnInit {
             };
             this.analisisForm.get('problem_question')?.patchValue(problemQuestion);
             this.mostrarRetroalimentacionPregunta = false;
+          }
+          // Cargar decision
+          if (analisis.problem_decision) {
+            const problemDecision = {
+              decision: analisis.problem_decision.decision || '',
+              calificacion: analisis.problem_decision.calificacion || 'No Calificado',
+              retroalimentacion: analisis.problem_decision.retroalimentacion || '',
+              showCalificar: analisis.problem_decision.showCalificar || false
+            };
+            this.analisisForm.get('problem_decision')?.patchValue(problemDecision);
+            this.mostrarRetroalimentacionDecision = false;
           }
           // Cargar preguntas normativas
           if (analisis.normativas && Array.isArray(analisis.normativas)) {
@@ -296,15 +324,24 @@ export class AnalisisComponent implements OnInit {
           if (this.facticas.length === 0) {
             this.addFactica();
           }
+          // Inicializar decision del problema
+          this.analisisForm.get('problem_decision')?.patchValue({
+            decision: '',
+            calificacion: 'No calificado',
+            retroalimentacion: '',
+            showCalificar: false
+          })
           // Inicializar pregunta del problema
           this.analisisForm.get('problem_question')?.patchValue({
             pregunta: '',
             calificacion: 'No Calificado',
             retroalimentacion: '',
             showCalificar: false
-          });
+          },
+        );
           this.dataLoaded = true;
           this.mostrarRetroalimentacionPregunta = false;
+          this.mostrarRetroalimentacionDecision = false;
         }
       }, error => {
         console.error('Error al cargar los datos:', error);
@@ -320,11 +357,11 @@ export class AnalisisComponent implements OnInit {
   }
 
   submitForm() {
-
     if (this.analisisForm.valid){
       this.isSubmitting = true;
     this.cargando = true;
     const problemQuestionValue = this.analisisForm.get('problem_question')?.value;
+    const problemDecisionValue = this.analisisForm.get('problem_decision')?.value;
     const analisisData = {
       ...this.analisisForm.value,
       problem_question: {
@@ -332,6 +369,12 @@ export class AnalisisComponent implements OnInit {
         calificacion: problemQuestionValue.calificacion || 'No Calificado',
         retroalimentacion: problemQuestionValue.retroalimentacion || '',
         showCalificar: problemQuestionValue.showCalificar || false
+      },
+      problem_decision: {
+        decision: problemDecisionValue.decision || '',
+        calificacion: problemDecisionValue.calificacion || 'No Calificado',
+        retroalimentacion: problemDecisionValue.retroalimentacion || '',
+        showCalificar: problemDecisionValue.showCalificar || false
       },
       saved: true,
       timestamp: new Date() // Agregamos timestamp para asegurar que se detecte el cambio
@@ -461,6 +504,8 @@ export class AnalisisComponent implements OnInit {
   isCalificacionCorrecta2(type: string): boolean {
     if (type === 'problem_question') {
       return this.analisisForm.get('problem_question.calificacion')?.value === 'Correcto';
+    } else {
+      return this.analisisForm.get('problem_decision.calificacion')?.value === 'Correcto';
     }
     return false;
   }
@@ -468,6 +513,8 @@ export class AnalisisComponent implements OnInit {
   isCalificacionIncorrecta2(type: string): boolean {
     if (type === 'problem_question') {
       return this.analisisForm.get('problem_question.calificacion')?.value === 'Incorrecto';
+    } else {
+      return this.analisisForm.get('problem_decision.calificacion')?.value === 'Incorrecto';
     }
     return false;
   }
@@ -476,27 +523,43 @@ export class AnalisisComponent implements OnInit {
     if (type === 'problem_question') {
       this.analisisForm.get('problem_question')?.patchValue({ calificacion: calificacion });
     }
+    if (type === 'problem_decision') {
+      this.analisisForm.get('problem_decision')?.patchValue({ calificacion: calificacion });
+    }
   }
 
   setRetroalimentacion(section: string, event: any) {
     console.log('setRetroalimentacion called with:', section, event);
-    
     if (section === 'problem_question') {
-      // Maneja tanto el caso de un evento como el de un valor directo
       const retroalimentacion = (event && event.target) ? event.target.value : event;
-      
       console.log('Setting retroalimentacion to:', retroalimentacion);
-      
       const problemQuestionGroup = this.analisisForm.get('problem_question');
       if (problemQuestionGroup) {
         problemQuestionGroup.patchValue({
           retroalimentacion: retroalimentacion
         });
-        
         // Verifica que se actualizó correctamente
         console.log('Updated form value:', this.analisisForm.get('problem_question')?.value);
-        
         // Solo guarda si los datos ya están cargados
+        if (this.dataLoaded) {
+          this.submitForm();
+        }
+      }
+    }
+
+
+
+    if (section === 'problem_decision') {
+      const retroalimentacion = (event && event.target) ? event.target.value : event;
+      
+      console.log('Setting retroalimentacion to:', retroalimentacion);
+      
+      const decisionQuestionGroup = this.analisisForm.get('problem_decision');
+      if (decisionQuestionGroup) {
+        decisionQuestionGroup.patchValue({
+          retroalimentacion: retroalimentacion
+        });
+        console.log('Updated form value:', this.analisisForm.get('problem_decisions')?.value);
         if (this.dataLoaded) {
           this.submitForm();
         }

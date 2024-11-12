@@ -97,13 +97,6 @@
             <app-caja-texto formControlName="respuesta"></app-caja-texto>
           </div>
 
-          <div class="validar">
-            <h5 class="pregunta">Es válida la cuestión:</h5>
-            <div class="si-no">
-              <input type="radio" formControlName="valida" value="Si" class="valida"> Si
-              <input type="radio" formControlName="valida" value="No" class="valida"> No
-            </div>
-          </div>
           <div class="retro">
             <div *ngIf="!isDocente && normativa.get('retroalimentacion')?.value">
               <button type="button" (click)="toggleRetroalimentacion($event, i)" class="bttn-toggle">
@@ -169,14 +162,6 @@
             <app-caja-texto formControlName="respuesta"></app-caja-texto>
           </div>
 
-          <div class="validar">
-            <h5 class="pregunta">Es válida la cuestión:</h5>
-            <div class="si-no">
-              <input type="radio" formControlName="valida" value="Si" class="valida"> Si
-              <input type="radio" formControlName="valida" value="No" class="valida"> No
-            </div>
-          </div>
-
           <div class="retro">
             <div *ngIf="!isDocente && factica.get('retroalimentacion')?.value">
               <button type="button" (click)="toggleRetroalimentacion($event, i)" class="bttn-toggle">
@@ -212,6 +197,66 @@
               <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aqui empieza la decision final del problema -->
+    <div class="problem_decision">
+      <div *ngIf="!isDocente && analisisForm.get('saved')?.value" class="calificaciones">
+        <div class="calificacion-display" [ngClass]="{
+          'calificacion-correcta': getCalificacionValue('problem_decision.calificacion') === 'Correcto',
+          'calificacion-incorrecta': getCalificacionValue('problem_decision.calificacion') === 'Incorrecto',
+          'calificacion-no-calificado': getCalificacionValue('problem_decision.calificacion') === 'No Calificado'
+        }">
+          {{ getCalificacionValue('problem_decision.calificacion') }}
+        </div>
+      </div>
+      <div class="pregunta-container">
+        <h5 class="pregunta">Decisión del problema</h5>
+        <div [formGroupName]="'problem_decision'">
+          <app-caja-texto formControlName="decision"></app-caja-texto>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isDocente">
+      <button class="rate" *ngIf="isDocente" type="button"
+      (click)="toggleCalificar2('problem_decision')">
+      Calificar
+    </button>
+      <div *ngIf="calificarState['problem_decision']">
+        <div class="bttns-rate">
+          <button class="correct-button" 
+            [class.calificacion-correcta]="isCalificacionCorrecta2('problem_decision')"
+            type="button" 
+            (click)="setCalificacion2('problem_decision', 'Correcto')">
+            Correcto
+          </button>
+          <button class="incorrect-button"
+            [class.calificacion-incorrecta]="!isCalificacionCorrecta2('problem_decision')"
+            type="button"
+            (click)="setCalificacion2('problem_decision', 'Incorrecto')">
+            Incorrecto
+          </button>
+        </div>
+        <div>
+          <h5 class="pregunta">Retroalimentación</h5>
+          <div [formGroupName]="'problem_decision'">
+            <app-caja-texto 
+              formControlName="retroalimentacion"
+              (valueChange)="setRetroalimentacion('problem_decision', $event)">
+            </app-caja-texto>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="hasRetroalimentacion('problem_decision.retroalimentacion') && !isDocente" class="retroalimentacion-section">
+      <button type="button" (click)="toggleRetroalimentacionDecision($event)" class="bttn-toggle">
+        {{ mostrarRetroalimentacionDecision ? 'Ocultar' : 'Ver' }} retroalimentación
+      </button>
+      <div *ngIf="mostrarRetroalimentacionDecision" class="retroalimentacion-contenido">
+        <div class="retroalimentacion-texto">
+          {{ getRetroalimentacionValue('problem_decision.retroalimentacion') }}
         </div>
       </div>
     </div>

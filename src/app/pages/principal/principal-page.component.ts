@@ -59,26 +59,40 @@ export class PrincipalPageComponent implements OnInit {
     this.showRazonOverlay = true;
   }
 
-  guardarDecision() {
+  async guardarDecision() {
     if (!this.sentenciaPendiente || !this.razonTexto.trim()) {
       console.error('Falta información necesaria para actualizar la sentencia');
       return;
     }
-    this.firestore.collection('sentencias')
-      .doc(this.sentenciaPendiente.numero_proceso) // Usamos numero_proceso como ID
-      .update({
+  
+    try {
+      // Query for the document with matching numero_proceso
+      const querySnapshot = await this.firestore.collection('sentencias')
+        .ref.where('numero_proceso', '==', this.sentenciaPendiente.numero_proceso)
+        .limit(1)
+        .get();
+  
+      if (querySnapshot.empty) {
+        console.error('No se encontró la sentencia con el número de proceso especificado');
+        return;
+      }
+  
+      // Get the first (and should be only) matching document
+      const docSnapshot = querySnapshot.docs[0];
+  
+      // Update the document using its actual ID
+      await docSnapshot.ref.update({
         estado: this.accionPendiente,
         razon: this.razonTexto.trim(),
-      })
-      .then(() => {
-        this.showRazonOverlay = false;
-        this.sentenciaPendiente = null;
-        this.razonTexto = '';
-        console.log('Sentencia actualizada exitosamente');
-      })
-      .catch(error => {
-        console.error('Error al guardar la decisión:', error);
       });
+  
+      this.showRazonOverlay = false;
+      this.sentenciaPendiente = null;
+      this.razonTexto = '';
+      console.log('Sentencia actualizada exitosamente');
+    } catch (error) {
+      console.error('Error al guardar la decisión:', error);
+    }
   }
 
   cancelarDecision() {

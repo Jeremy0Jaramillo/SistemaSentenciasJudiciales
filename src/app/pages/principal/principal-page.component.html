@@ -39,7 +39,7 @@
         Descargar PDF
       </a>
     </div>
-    <div class="bttn-acetp" *ngIf="userRole === 'docente' && !sentencia.estado">
+    <div class="bttn-acetp" *ngIf="userRole === 'docente'">
       <button (click)="abrirRazon(sentencia, 'aceptar')" class="bttn-accept">Aceptar</button>
       <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
     </div>
