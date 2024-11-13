@@ -1,4 +1,4 @@
-.titulo {
+  .titulo {
     flex-direction: column;
     margin-top: -20px;
     text-align: center;
@@ -9,7 +9,13 @@
 .bttn-stnd{
     margin-top: 20px;
 }
-
+/* Estilos para el botón deshabilitado */
+.bttn-stnd:disabled {
+  background-color: #ebe3e3; /* Color blanco claro para el botón deshabilitado */
+  color: #a0a0a0; /* Color de texto gris claro */
+  cursor: not-allowed; /* Cambia el cursor para indicar que está deshabilitado */
+  opacity: 0.7; /* Le da una transparencia ligera */
+}
 .sentencias {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas automáticas con mínimo de 300px */
@@ -142,7 +148,6 @@
     margin: 10px 0;
     padding: 12px;
     border-radius: 4px;
-    resize: vertical;
     font-family: Poppins;
   }
   
@@ -217,3 +222,15 @@
     font-weight: 400;
     line-height: normal;
   }
+
+  .razon-est {
+    opacity: 0;
+    transform: translateY(20px); /* Desplazamiento inicial hacia abajo */
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  .overlay-content-text p.razon-est {
+    opacity: 1;
+    transform: translateY(0); /* Se desliza hacia su posición final */
+  }
+  

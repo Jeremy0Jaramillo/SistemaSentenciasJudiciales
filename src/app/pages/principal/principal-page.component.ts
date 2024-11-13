@@ -58,6 +58,40 @@ export class PrincipalPageComponent implements OnInit {
     this.razonTexto = '';
     this.showRazonOverlay = true;
   }
+  showOverlay = false;
+  selectedSentencia: Sentencia | null = null;
+
+  openOverlay(sentencia: Sentencia) {
+    this.selectedSentencia = sentencia;
+    this.showOverlay = true;
+  }
+
+  closeOverlay() {
+    this.showOverlay = false;
+    this.selectedSentencia = null;
+  }
+
+  getStatusText(estado: 'aceptar' | 'negar' | null): string {
+    switch (estado) {
+      case 'aceptar':
+        return 'Sentencia aceptada';
+      case 'negar':
+        return 'Sentencia negada';
+      default:
+        return 'Estado de sentencia desconocido';
+    }
+  }
+
+  getStatusClass(estado: 'aceptar' | 'negar' | null): string {
+    switch (estado) {
+      case 'aceptar':
+        return 'estado-aceptado';
+      case 'negar':
+        return 'estado-negado';
+      default:
+        return 'estado-desconocido';
+    }
+  }
 
   async guardarDecision() {
     if (!this.sentenciaPendiente || !this.razonTexto.trim()) {

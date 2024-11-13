@@ -41,6 +41,7 @@ export class AnalisisComponent implements OnInit {
   mostrarRetroalimentacionPregunta: boolean = false;
   mostrarRetroalimentacionDecision: boolean = false;
 
+
   constructor(
     private fb: FormBuilder,
     private firestore: AngularFirestore,
