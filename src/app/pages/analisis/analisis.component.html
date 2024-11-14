@@ -117,18 +117,17 @@
             <button class="rate" *ngIf="isDocente" type="button"
               (click)="toggleCalificar(i, 'normativa')">Calificar</button>
             <div *ngIf="normativa.get('showCalificar')?.value">
-
               <div class="bttns-rate">
                 <button class="correct-button" 
-                  [class.calificacion-correcta]="isCalificacionCorrecta('normativas', i)"
+                  [class.calificacion-correcta]="isCalificacionCorrecta('normativa', i)"
                   type="button" 
-                  (click)="setCalificacion(i, 'normativas', 'Correcto')">
+                  (click)="setCalificacion(i, 'normativa', 'Correcto')">
                   Correcto
                 </button>
                 <button class="incorrect-button"
-                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('normativas', i)" 
+                  [class.calificacion-incorrecta]="isCalificacionIncorrecta('normativa', i)" 
                   type="button"
-                  (click)="setCalificacion(i, 'normativas', 'Incorrecto')">
+                  (click)="setCalificacion(i, 'normativa', 'Incorrecto')">
                   Incorrecto
                 </button>
               </div>
@@ -184,12 +183,12 @@
               (click)="toggleCalificar(i, 'factica')">Calificar</button>
             <div *ngIf="factica.get('showCalificar')?.value">
               <div class="bttns-rate">
-                <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('fatica', i)"
-                  type="button" (click)="setCalificacion(i, 'fatica', 'Correcto')">
+                <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('factica', i)"
+                  type="button" (click)="setCalificacion(i, 'factica', 'Correcto')">
                   Correcto
                 </button>
-                <button class="incorrect-button" [class.calificacion-incorrecta]="isCalificacionIncorrecta('fatica', i)"
-                  type="button" (click)="setCalificacion(i, 'fatica', 'Incorrecto')">
+                <button class="incorrect-button" [class.calificacion-incorrecta]="isCalificacionIncorrecta('factica', i)"
+                  type="button" (click)="setCalificacion(i, 'factica', 'Incorrecto')">
                   Incorrecto
                 </button>
               </div>

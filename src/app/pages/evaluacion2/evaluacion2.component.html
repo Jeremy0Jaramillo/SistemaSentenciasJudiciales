@@ -199,10 +199,10 @@
             </h5>
             <!-- Formulario de las diferentes seccion con opcion de radio -->
             <div *ngFor="let section of sections; let sectionIndex = index" class="section">
-                <h3 class="titulo">{{ section.title }}</h3>
+                <h3 class="titulo"><strong>Variable {{section.id}} : </strong> {{ section.title }}</h3>
                 <div class="likert-table">
                     <div *ngFor="let question of section.questions; let questionIndex = index" class="likert-row">
-                        <label class="likert-label">{{ question }}</label>
+                        <label class="likert-label" [innerHTML]="formatQuestion(question)"></label>
                         <div class="likert-options">
                             <label *ngFor="let option of [1, 2, 3, 4]">
                                 <input type="radio"
@@ -217,12 +217,13 @@
                 <ng-container *ngIf="!isDocente && evaluacion2Form.get('saved')?.value">
                     <div
                         *ngIf="getCalificacionValue('section' + sectionIndex + '_calificacion') || getRetroalimentacionValue('section' + sectionIndex + '_retroalimentacion') !== 'Sin retroalimentación'">
-                        <div class="calificacion-display" [ngClass]="{
-                            'calificacion-correcta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Correcto',
-                            'calificacion-incorrecta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Incorrecto',
-                            'calificacion-no-calificado': !getCalificacionValue('section' + sectionIndex + '_calificacion')
-                        }">
-                            {{ getCalificacionValue('section' + sectionIndex + '_calificacion') || 'No Calificado' }}
+                        <div class="calificaciones">
+                            <div class="calificacion-display" [ngClass]="{
+                                'calificacion-correcta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Correcto',
+                                'calificacion-incorrecta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Incorrecto',
+                                'calificacion-no-calificado': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'No Calificado',                           }">
+                                {{ getCalificacionValue('section' + sectionIndex + '_calificacion') }}
+                            </div>
                         </div>
                         <button type="button" (click)="toggleRetroalimentacion(section.id)" class="bttn-toggle">
                             {{ mostrarRetroalimentacion[section.id] ? 'Ocultar' : 'Ver' }} retroalimentación

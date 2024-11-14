@@ -30,11 +30,17 @@
       <div class="text-dat">
         <p><strong>Docente:</strong> {{ sentencia.nombre_docente }}</p>
       </div>
+
+      <div class="text-dat">
+        <p *ngIf="sentencia.estado == 'aceptar'"> <strong>Estado:</strong> Aceptada</p>
+        <p *ngIf="sentencia.estado == 'negar'"> <strong>Estado:</strong> Negada</p>
+        <p *ngIf="!sentencia.estado"> <strong>Estado:</strong> Esperando validación</p>
+      </div>
     </div>
 
     <div class="more">
       <button class="bttn-stnd" (click)="redirectToAnalisis(sentencia)" [disabled]="sentencia?.estado !== 'aceptar'">
-        >Ver más</button>
+        Ver más</button>
       <a *ngIf="userRole === 'docente' && sentencia.archivoURL" [href]="sentencia.archivoURL" target="_blank"
         class="bttn-download">
         Descargar PDF
@@ -46,25 +52,29 @@
     </div>
 
     <!-- Vista del estudiante -->
-    <div *ngIf="userRole !== 'docente' && sentencia.estado">
-      <button (click)="openOverlay(sentencia)" class="btn btn-outline-primary">Ver más</button>
+    <div *ngIf="userRole !== 'docente' && sentencia.estado" class="bttn-status">
+      <button (click)="openOverlay(sentencia)" class="bttn-download">Ver estado</button>
     </div>
-<!-- Overlay del estudiante -->
-<div *ngIf="showOverlay" class="overlay">
-  <div class="overlay-content">
-    <div class="overlay-content-text">
-      <p *ngIf="selectedSentencia?.estado == 'aceptar'" class="bttn-accept">Sentencia aceptada</p>
-      <p *ngIf="selectedSentencia?.estado == 'negar'" class="bttn-reject">Sentencia negada</p>
-      <p class="razon-est" *ngIf="selectedSentencia?.razon">
-        <strong>Razón:</strong> {{ selectedSentencia?.razon }}
-      </p>      
-      <p *ngIf="!selectedSentencia?.razon">
-        No se proporcionó una razón para esta decisión.
-      </p>
+    <!-- Overlay del estudiante -->
+    <div *ngIf="showOverlay" class="overlay">
+      <div class="overlay-content">
+        <div class="overlay-content-text">
+          <p *ngIf="selectedSentencia?.estado == 'aceptar'" class="bttn-accept">Sentencia aceptada</p>
+          <p *ngIf="selectedSentencia?.estado == 'negar'" class="bttn-reject" >Sentencia negada</p>
+          <div class="reason-container">
+            <p class="razon-est" *ngIf="selectedSentencia?.razon">
+              <strong>Razón:</strong> {{ selectedSentencia?.razon }}
+            </p>
+            <p *ngIf="!selectedSentencia?.razon">
+              No se proporcionó una razón para esta decisión.
+            </p>
+          </div>
+        </div>
+        <div class="bttn-close">
+        <button (click)="closeOverlay()" class="bttn-stnd">Cerrar</button>
+        </div>
+      </div>
     </div>
-    <button (click)="closeOverlay()" class="btn btn-secondary">Cerrar</button>
-  </div>
-</div>
     <!-- Overlay para razón -->
     <div class="overlay" *ngIf="showRazonOverlay">
       <div class="overlay-content">

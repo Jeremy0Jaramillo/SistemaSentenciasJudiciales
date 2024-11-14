@@ -28,51 +28,51 @@ export class Evaluacion2Component implements OnInit {
   sections = [
     //SECCION 1: "Argumentacion juridica y motivacion correcta"
     {
-      id: 'section1',
+      id: '1',
       title: 'Argumentación jurídica y motivación correcta',
       questions: [
-        'Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.',
-        'Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible conforme al Derecho.',
-        'Conclusión de la decisión final frente a los hechos presentados en base al análisis realizado.',
-        'Adecuado uso y aplicación de medidas cautelares/protección dentro del proceso.'
+        'Parámetro 1:  Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.',
+        'Parámetro 2: Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible conforme al Derecho.',
+        'Parámetro 3: Conclusión de la decisión final frente a los hechos presentados en base al análisis realizado.',
+        'Parámetro 4: Adecuado uso y aplicación de medidas cautelares/protección dentro del proceso.'
       ]
     },
     //SECCION 2: "Principios constitucionales"
     {
-      id: 'section2',
+      id: '2',
       title: 'Principios constitucionales',
       questions: [
-        'Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.',
-        'Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba. Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los hechos.'
+        'Parámetro 1: Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.',
+        'Parámetro 2: Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba. Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los hechos.'
       ]
     },
     //SECCION 3: "Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada."
     {
-      id: 'section3',
+      id: '3',
       title: 'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada.',
       questions: [
-        'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
-        'Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
+        'Parámetro 1: Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
+        'Parámetro 2: Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
       ]
     },
     //SECCION 4: "Aplicación de procedimientos directos y abreviados."
     {
-      id: 'section4',
+      id: '4',
       title: 'Aplicación de procedimientos directos y abreviados.',
       questions: [
-        'Adecuado análisis y calificación del delito',
-        'Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de acuerdo al art. 640 del COIP y abreviado.',
-        'Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
+        'Parámetro 1: Adecuado análisis y calificación del delito',
+        'Parámetro 2: Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de acuerdo al art. 640 del COIP y abreviado.',
+        'Parámetro 3: Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
       ]
     },
     //SECCION 5: "Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o términos previstos en la ley."
     {
-      id: 'section5',
+      id: '5',
       title: 'Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o  términos previstos en la ley.',
       questions: [
-        'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
-        'Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
-        'Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
+        'Parámetro 1: Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
+        'Parámetro 2: Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
+        'Parámetro 3: Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
       ]
     },
   ];
@@ -131,6 +131,10 @@ export class Evaluacion2Component implements OnInit {
     if (this.docenteSaved) {
       this.router.navigate(['/principal']);
     }
+  }
+
+  formatQuestion(question: string): string {
+    return question.replace(/(Parámetro \d+:)/, '<strong>$1</strong>');
   }
 
   isMultiOption(value: string | null): boolean {

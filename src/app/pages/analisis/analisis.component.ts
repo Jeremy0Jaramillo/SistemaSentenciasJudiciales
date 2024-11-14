@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Observable, of } from 'rxjs';
+import { log } from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
 
 interface User {
   uid: string;
@@ -433,7 +434,6 @@ export class AnalisisComponent implements OnInit {
     return control && control.value ? control.value : 'No Calificado';
   }
 
-
   redirectToAnalisis2(event: Event) {
     event.preventDefault();
 
@@ -462,19 +462,22 @@ export class AnalisisComponent implements OnInit {
   }
 
   toggleCalificar(index: number, type: string) {
-    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
-    const newShowCalificar = !control.value.showCalificar;
-    control.patchValue({ showCalificar: newShowCalificar });
-    if (!newShowCalificar) {
-      delete this.selectedButtons[`${type}_${index}`];
+    const formArray = type === 'normativa' ? this.normativas : this.facticas;
+    const control = formArray.at(index);
+    if (control) {
+      const newShowCalificar = !control.value.showCalificar;
+      control.patchValue({ showCalificar: newShowCalificar }, { emitEvent: false });
+      
+      if (!newShowCalificar) {
+        const key = `${type}_${index}`;
+        delete this.selectedButtons[key];
+      }
     }
   }
-
   toggleCalificar2(section: string) {
     this.calificarState[section] = !this.calificarState[section];
     console.log(this.calificarState);
   }
-
 
   setCalificacion(index: number, type: string, calificacion: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
@@ -493,13 +496,15 @@ export class AnalisisComponent implements OnInit {
   }
 
   isCalificacionCorrecta(type: string, index: number): boolean {
-    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
-    return control.get('calificacion')?.value === 'Correcto';
+    const formArray = type === 'normativa' ? this.normativas : this.facticas;
+    const control = formArray.at(index);
+    return control?.get('calificacion')?.value === 'Correcto' || false;
   }
 
   isCalificacionIncorrecta(type: string, index: number): boolean {
-    const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
-    return control.get('calificacion')?.value === 'Incorrecto';
+    const formArray = type === 'normativa' ? this.normativas : this.facticas;
+    const control = formArray.at(index);
+    return control?.get('calificacion')?.value === 'Incorrecto' || false;
   }
 
   isCalificacionCorrecta2(type: string): boolean {
