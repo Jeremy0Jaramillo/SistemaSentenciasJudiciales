@@ -34,7 +34,7 @@
         <!-- Formulario de registro -->
         <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)">
           <!-- Resgistro de nombre y apellido -->
-          <label class="label-login" for="regName">Nombre y Apellido:</label> <br>
+          <label class="label-login" for="regName">Nombres y Apellidos:</label> <br>
           <input class="input-login" type="text" #regName required> <br><br>
           <!-- Registrar correo -->
           <label class="label-login" for="regEmail">Email:</label> <br>
