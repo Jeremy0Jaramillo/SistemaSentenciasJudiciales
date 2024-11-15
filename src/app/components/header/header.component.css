@@ -53,6 +53,15 @@
   margin-left: auto;
 }
 
+.exit{
+  margin: 0px 0px 0px 20px;
+}
+
+.exit button{
+  background: none;
+  border: none;
+}
+
 .user-info {
   display: flex;
   align-items: center;

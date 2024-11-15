@@ -147,13 +147,17 @@ export class PrincipalPageComponent implements OnInit {
     });
   }
 
+  userName: string = ""
+  userEmail: string = ""
+
   loadUserData(uid: string) {
     this.firestore.collection('users').doc(uid).valueChanges().pipe(
       switchMap((userData: any) => {
         if (userData && userData.name) {
-          const userName = userData.name;
+          this.userName = userData.name;
+          this.userEmail = userData.email;
           this.userRole = userData.role;
-          return this.loadSentencias(userName);
+          return this.loadSentencias(this.userName, this.userEmail);
         } else {
           return of([]);
         }
@@ -164,10 +168,10 @@ export class PrincipalPageComponent implements OnInit {
     });
   }
 
-  loadSentencias(userName: string): Observable<Sentencia[]> {
+  loadSentencias(userName: string, userEmail: string): Observable<Sentencia[]> {
     return combineLatest([
       this.firestore.collection<Sentencia>('sentencias', ref =>
-        ref.where('nombre_estudiante', '==', userName)
+        ref.where('nombre_estudiante', '==', userEmail)
       ).valueChanges(),
       this.firestore.collection<Sentencia>('sentencias', ref =>
         ref.where('nombre_docente', '==', userName)

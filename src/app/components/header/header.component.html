@@ -12,8 +12,10 @@
         <span>{{ user.role }}</span>
       </div>
     </div>
-    <div *ngIf="showLogoutMenu" class="logout-menu">
-      <button class="logout" (click)="logout()">Salir</button>
+    <div class="exit">
+      <button (click)="logout()">
+        <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 30px; color: white;"></i>
+      </button>
     </div>
   </div>
 </nav>
