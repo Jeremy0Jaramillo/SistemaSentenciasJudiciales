@@ -13,6 +13,7 @@ interface Sentencia {
   archivoURL?: string;
   estado?: 'aceptar' | 'negar' | null;
   razon?: string;
+  email?: string;
 }
 
 

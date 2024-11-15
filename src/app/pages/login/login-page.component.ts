@@ -21,7 +21,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private firestore: AngularFirestore
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.authStateSubscription = this.afAuth.authState.subscribe(user => {
@@ -33,21 +33,17 @@ export class LoginPageComponent implements OnInit, OnDestroy {
         // User is logged out
         sessionStorage.removeItem('sessionToken');
       }
+      if (user && this.authService.isAuthenticated()) {
+        this.router.navigate(['/principal']);
+      }
     });
 
     // Check for existing session on page load
     if (sessionStorage.getItem('sessionToken') === 'active') {
       this.router.navigate(['/principal']);
     }
+
   }
-  
-  // ngOnInit() {
-  //   this.authStateSubscription = this.authService.getCurrentUser().subscribe(user => {
-  //     if (user && this.authService.isAuthenticated()) {
-  //       this.router.navigate(['/principal']);
-  //     }
-  //   });
-  // }
 
   ngOnDestroy() {
     if (this.authStateSubscription) {
@@ -94,7 +90,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       .then(userCredential => {
         if (userCredential.user) {
           this.firestore.collection('users').doc(userCredential.user.uid).set({
-            name: name, 
+            name: name,
             email: userCredential.user.email,
             role: 'estudiante'
           });

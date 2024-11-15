@@ -26,53 +26,24 @@ export class Evaluacion2Component implements OnInit {
   mensajeError: string = '';
   mostrarMensaje: boolean = false;
   sections = [
-    //SECCION 1: "Argumentacion juridica y motivacion correcta"
+    //SECCION 1: "Fundamentacion normativa correcta"
     {
       id: '1',
-      title: 'Argumentación jurídica y motivación correcta',
+      title: 'Fundamentacion normativa correcta de la sentencia, analizaremos si el juez aplicó de manera adecuada las normas jurídicas y si esta aplicación representa la mejor argumentación posible conforme al derecho.',
       questions: [
-        'Parámetro 1:  Resumen de los hechos y fundamentos de Derecho encontrados como válidos para establecer la motivación correspondiente a la parte considerativa y expositiva de la resolución.',
-        'Parámetro 2: Conceptualización de los hechos descritos en el proceso de acuerdo a la materia y la norma legal vigente aplicable. Fundamentación normativa correcta, entendida como la mejor argumentación posible conforme al Derecho.',
-        'Parámetro 3: Conclusión de la decisión final frente a los hechos presentados en base al análisis realizado.',
-        'Parámetro 4: Adecuado uso y aplicación de medidas cautelares/protección dentro del proceso.'
+        'Parámetro 1: Selección de normas: ¿El juez utiliza disposiciones relevantes de la Constitución y de la ley específicamente?',
+        'Parámetro 2: Interpretación de normas: ¿La interpretación del juez es coherente con el contenido de cada norma?',
+        'Parámetro 3: Aplicación de las normas: ¿La aplicación de las normas a los hechos es lógica y directa?',
       ]
     },
-    //SECCION 2: "Principios constitucionales"
+    //SECCION 2: "Fundamentacion Factica"
     {
       id: '2',
-      title: 'Principios constitucionales',
+      title: 'Fundamentación fáctica correcta de la sentencia, se revisa si el juez ha realizado una valoración adecuada y exhaustiva de las pruebas y si la fundamentación representa la mejor argumentación posible conforme a los hechos.',
       questions: [
-        'Parámetro 1: Análisis del derecho de la tutela judicial efectiva y de los principios y reglas del debido proceso.',
-        'Parámetro 2: Evaluación normativa de los hechos presentados y ponderación para la valoración de la prueba. Fundamentación fática correcta, entendida como la mejor argumentación posible conforme a los hechos.'
-      ]
-    },
-    //SECCION 3: "Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada."
-    {
-      id: '3',
-      title: 'Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada.',
-      questions: [
-        'Parámetro 1: Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
-        'Parámetro 2: Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
-      ]
-    },
-    //SECCION 4: "Aplicación de procedimientos directos y abreviados."
-    {
-      id: '4',
-      title: 'Aplicación de procedimientos directos y abreviados.',
-      questions: [
-        'Parámetro 1: Adecuado análisis y calificación del delito',
-        'Parámetro 2: Apropiado análisis y consideración de la Pena para la calificación del procedimiento especial de acuerdo al art. 640 del COIP y abreviado.',
-        'Parámetro 3: Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
-      ]
-    },
-    //SECCION 5: "Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o términos previstos en la ley."
-    {
-      id: '5',
-      title: 'Reducir a escrito las sentencias o resoluciones judiciales, de acuerdo a la materia, en los plazos o  términos previstos en la ley.',
-      questions: [
-        'Parámetro 1: Aplicación de precedentes obligatorios, jurisprudencia y/o doctrina aplicada con la norma legal vigente y de acuerdo al caso.',
-        'Parámetro 2: Claridad en la expresión escrita y uso apropiado del lenguaje técnico jurídico.',
-        'Parámetro 3: Adecuado análisis de la procedencia de identificación del delito y/o monto en los delitos contra la propiedad.'
+        'Parámetro 1: Selección y Presentación de las Pruebas: ¿El juez examina y selecciona las pruebas pertinentes para resolver el problema?',
+        'Parámetro 2: Análisis y Valoración de las Pruebas: ¿El juez valora cada prueba en relación con su relevancia en el proceso?',
+        'Parámetro 3: Conexión de los Hechos con la Decisión: ¿El juez vincula los hechos probados con la decisión final?'
       ]
     },
   ];

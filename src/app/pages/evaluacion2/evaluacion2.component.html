@@ -195,7 +195,7 @@
             <h5 class="description">En este apartado encontrará una serie de parámetros, para seleccionar según su
                 conveniencia tenga en
                 cuenta que:
-                Totalmente en desacuerdo (1), Ni desacuerdo/Ni en desacuerdo (2), Muy de acuerdo (3), No aplica (4)
+                Totalmente en desacuerdo (1), Ni desacuerdo/Ni en desacuerdo (2), Muy de acuerdo (3)
             </h5>
             <!-- Formulario de las diferentes seccion con opcion de radio -->
             <div *ngFor="let section of sections; let sectionIndex = index" class="section">
@@ -204,7 +204,7 @@
                     <div *ngFor="let question of section.questions; let questionIndex = index" class="likert-row">
                         <label class="likert-label" [innerHTML]="formatQuestion(question)"></label>
                         <div class="likert-options">
-                            <label *ngFor="let option of [1, 2, 3, 4]">
+                            <label *ngFor="let option of [1, 2, 3]">
                                 <input type="radio"
                                     [formControlName]="'section' + sectionIndex + '_question' + questionIndex"
                                     [value]="option" [disabled]="evaluacion2Form.disabled">
