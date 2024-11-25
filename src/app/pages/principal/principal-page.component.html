@@ -11,6 +11,11 @@
 </div>
 
 <div class="sentencias">
+
+  <div *ngIf="(filteredSentencias$ | async)?.length === 0" class="no-sentencias">
+    No hay sentencias disponibles.
+  </div>
+
   <div *ngFor="let sentencia of filteredSentencias$ | async" class="sent">
 
     <div class="proceso">
@@ -24,7 +29,7 @@
       </div>
 
       <div class="text-dat">
-        <p><strong>Estudiante:</strong> {{ userName }}</p>
+        <p><strong>Estudiante:</strong> {{ sentencia.nombre_estudiante }}</p>
       </div>
 
       <div class="text-dat">

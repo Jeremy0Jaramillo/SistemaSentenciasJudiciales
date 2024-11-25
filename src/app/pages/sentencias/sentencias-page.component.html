@@ -29,6 +29,11 @@
 </div>
 
 <div class="dato-sent">
+  <label class="estudiante" for="email">3. Correo:</label><br>
+  <input class="estudiante" type="email" id="email" name="email" [(ngModel)]="sentencia.email" readonly><br>
+</div>
+
+<div class="dato-sent">
   <label class="label-docente" for="teacher">4. Docente:</label><br>
   <select class="docente" id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
     <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>

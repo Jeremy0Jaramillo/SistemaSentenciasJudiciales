@@ -19,23 +19,33 @@ import { RouterModule } from '@angular/router';
 import { CajaTextoComponent } from './components/caja-texto/caja-texto.component';
 import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component';
 import { msalConfig } from '../app/auth-config';
-import { MsalModule, MsalService, MsalGuard, MsalInterceptor, MSAL_INSTANCE, MsalBroadcastService, MsalRedirectComponent } from '@azure/msal-angular';
+import { MsalModule, MsalService, MsalGuard, MsalInterceptor, MSAL_INSTANCE, MsalBroadcastService, MsalRedirectComponent, MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IPublicClientApplication, InteractionType, PublicClientApplication, BrowserCacheLocation, LogLevel  } from '@azure/msal-browser';
 import { AuthService } from './services/auth.service';
 
-// export function MSALInstanceFactory(): PublicClientApplication {
-//   const pca = new PublicClientApplication(msalConfig);
-//   pca.initialize();
-//   return pca;
-// }
+
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+
+const msalGuardConfig: MsalGuardConfiguration = {
+  interactionType: InteractionType.Popup, // O InteractionType.Redirect
+  authRequest: {
+    scopes: ['user.read'] // Scopes básicos
+  }
+};
+
+const msalInterceptorConfig: MsalInterceptorConfiguration = {
+  interactionType: InteractionType.Popup,
+  protectedResourceMap: new Map([
+    ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+  ])
+};
 
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25', // Reemplaza con tu Client ID de Azure
-      authority: 'https://login.microsoftonline.com/common',
+      clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25', 
+      authority: 'https://login.microsoftonline.com/6eeb49aa-436d-43e6-becd-bbdf79e5077d',
       redirectUri: window.location.origin,
       postLogoutRedirectUri: window.location.origin,
       navigateToLoginRequestUrl: true
@@ -70,13 +80,6 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   });
 }
 
-const msalGuardConfig = {
-  interactionType: InteractionType.Popup,
-  authRequest: {
-    scopes: ['user.read']
-  }
-};
-
 
 @NgModule({
   declarations: [
@@ -92,6 +95,17 @@ const msalGuardConfig = {
     Evaluacion2Component
   ],
   imports: [
+    MsalModule.forRoot(new PublicClientApplication({
+      auth: {
+        clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25',
+        authority: `https://login.microsoftonline.com/6eeb49aa-436d-43e6-becd-bbdf79e5077d`,
+        redirectUri: 'http://localhost:4200' // Tu URL de redireccionamiento
+    },
+    cache: {
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: true
+    }
+  }), msalGuardConfig, msalInterceptorConfig),
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase), // Initialize AngularFireModule here

@@ -11,13 +11,35 @@ import { map, catchError, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
+  router: any;
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private msalService: MsalService
   ) {}
 
-  // Firebase Authentication Methods
+  login() {
+    const loginRequest = {
+      scopes: [
+        "User.Read",      
+        "openid",         
+        "profile"       
+      ]
+    };
+  
+    this.msalService.loginPopup(loginRequest)
+      .subscribe({
+        next: (response) => {
+          console.log('Login successful', response);
+          this.router.navigate(['/principal']);
+        },
+        error: (error) => {
+          console.error('Login failed', error);
+
+        }
+      });
+  }
+
   async loginWithFirebase(email: string, password: string): Promise<any> {
     try {
       const result = await this.afAuth.signInWithEmailAndPassword(email, password);

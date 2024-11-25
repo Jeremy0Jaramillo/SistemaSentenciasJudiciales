@@ -1,8 +1,8 @@
 <nav class="navbar">
   <div class="nav-left">
     <button class="bttn-nav" routerLink="/principal">Inicio</button>
-    <button class="bttn-nav">E-SATJE</button>
-    <button class="bttn-nav" >UTPL</button>
+    <button class="bttn-nav"  onclick="window.open('https://procesosjudiciales.funcionjudicial.gob.ec/busqueda', '_blank')">E-SATJE</button>
+    <button class="bttn-nav" onclick="window.open('https://www.utpl.edu.ec/', '_blank')">UTPL</button>
   </div>
   <div class="nav-right" *ngIf="user">
     <div class="user-info" (click)="toggleLogoutMenu()">

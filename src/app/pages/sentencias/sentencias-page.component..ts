@@ -10,6 +10,7 @@ interface Sentencia {
   numero_proceso: string;
   asunto: string;
   nombre_estudiante: string;
+  email: string;
   nombre_docente: string;
   archivoURL?: string; // Add archivoURL to store the URL of the uploaded file
 }
@@ -27,7 +28,8 @@ export class SentenciasPageComponent implements OnInit {
     numero_proceso: '',
     asunto: '',
     nombre_estudiante: '',
-    nombre_docente: ''
+    nombre_docente: '',
+    email: ''
   };
   docentes$: Observable<any[]> = new Observable<any[]>();
   selectedFile: File | null = null;
@@ -50,6 +52,7 @@ export class SentenciasPageComponent implements OnInit {
       if (user) {
         this.firestore.collection('users').doc(user.uid).valueChanges().subscribe((userData: any) => {
           this.sentencia.nombre_estudiante = userData.name;
+          this.sentencia.email = userData.email;
         });
       }
     });

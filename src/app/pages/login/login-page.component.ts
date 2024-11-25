@@ -23,6 +23,10 @@ export class LoginPageComponent implements OnInit, OnDestroy {
     private firestore: AngularFirestore
   ) { }
 
+  onLogin() {
+    this.authService.login();
+  }
+
   ngOnInit() {
     this.authStateSubscription = this.afAuth.authState.subscribe(user => {
       if (user) {
@@ -37,6 +41,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
         this.router.navigate(['/principal']);
       }
     });
+
 
     // Check for existing session on page load
     if (sessionStorage.getItem('sessionToken') === 'active') {
