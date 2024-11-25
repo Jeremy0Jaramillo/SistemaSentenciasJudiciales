@@ -48,9 +48,11 @@ export class PrincipalPageComponent implements OnInit {
               sentencia.nombre_estudiante.toLowerCase().includes(searchText.toLowerCase())
             )
           )
+          
         )
       )
     );
+    console.log(this.filteredSentencias$)
   }
 
   abrirRazon(sentencia: Sentencia, accion: 'aceptar' | 'negar') {
@@ -171,10 +173,10 @@ export class PrincipalPageComponent implements OnInit {
   loadSentencias(userName: string, userEmail: string): Observable<Sentencia[]> {
     return combineLatest([
       this.firestore.collection<Sentencia>('sentencias', ref =>
-        ref.where('nombre_estudiante', '==', userEmail)
+        ref.where('nombre_estudiante', '==', userName)
       ).valueChanges(),
       this.firestore.collection<Sentencia>('sentencias', ref =>
-        ref.where('nombre_docente', '==', userName)
+        ref.where('email', '==', userEmail)
       ).valueChanges()
     ]).pipe(
       map(([estudianteDocs, docenteDocs]) => {
