@@ -1,7 +1,7 @@
 // src/auth-config.ts
 export const msalConfig = {
     auth: {
-      clientId: 'eb54c6a8-3633-45bb-9975-f6a8e9389745', // Use the Azure AD Application (client) ID
+      clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25', 
       authority: 'https://login.microsoftonline.com/6eeb49aa-436d-43e6-becd-bbdf79e5077d',
       redirectUri: 'http://localhost:4200',
     },

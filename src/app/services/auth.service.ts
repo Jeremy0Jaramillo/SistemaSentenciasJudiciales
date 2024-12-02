@@ -87,7 +87,7 @@ export class AuthService {
   }
 
   // Common Authentication Methods
-  private async setUserSession(provider: 'firebase' | 'azure', userId: string): Promise<void> {
+  async setUserSession(provider: 'firebase' | 'azure', userId: string): Promise<void> {
     sessionStorage.setItem('sessionToken', 'active');
     sessionStorage.setItem('authProvider', provider);
     sessionStorage.setItem('userId', userId);
