@@ -130,19 +130,23 @@
   .bttn-azure {
     width: 100%;
     padding: 10px;
-    background-color: #ffffff;
-    border: 1px solid #8c8c8c;
+    background-color: white;
+    border: none;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    color: #172D5A;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-family: poppins;
   }
   
   .bttn-azure:hover {
-    background-color: #f3f3f3;
+    background-color: #172D5A;
+    color: white;
+    border: none;
   }
   
   .azure-icon {

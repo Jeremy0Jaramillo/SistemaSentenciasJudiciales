@@ -95,11 +95,23 @@ export class LoginPageComponent implements OnInit, OnDestroy {
     microsoftProvide.addScope('profile')
 
     this.afAuth.signInWithPopup(microsoftProvide)
-      .then(response => {
-        if(response.additionalUserInfo?.isNewUser === true){
-          console.log(response.additionalUserInfo.profile)
-        }
+  .then(response => {
+    const profile = response.additionalUserInfo?.profile as any;
+    const userData = {
+      name: profile.displayName || profile.name,
+      email: profile.mail || profile.userPrincipalName,
+      role: 'estudiante' // default role
+    };
+
+    // Save to Firestore
+    this.firestore.collection('users').doc(response.user?.uid).set(userData, { merge: true })
+      .then(() => {
+        console.log('User data saved successfully');
+      })
+      .catch(error => {
+        console.error('Error saving user data', error);
       });
+  });
   }
  
   /* next: (response: AuthenticationResult) => {
