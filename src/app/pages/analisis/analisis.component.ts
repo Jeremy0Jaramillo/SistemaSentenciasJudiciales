@@ -359,7 +359,7 @@ export class AnalisisComponent implements OnInit {
   }
 
   submitForm() {
-    if (this.analisisForm.valid){
+        if (this.analisisForm.valid){
       this.isSubmitting = true;
     this.cargando = true;
     const problemQuestionValue = this.analisisForm.get('problem_question')?.value;
@@ -405,9 +405,6 @@ export class AnalisisComponent implements OnInit {
         this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
         this.isSubmitting = false;
       });
-    } else {
-      this.isSubmitting = false;
-      this.mostrarMensajeError('Complete todos los campos antes de guardar.');
     }
 }
 

@@ -56,7 +56,4 @@ export class CajaTextoComponent implements ControlValueAccessor {
     isDisabled ? this.formControl.disable() : this.formControl.enable();
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
-    return this.formControl.valid ? null : { invalidForm: { valid: false, message: "form is invalid" } };
-  }
 }
