@@ -53,23 +53,40 @@ export class AnalisisComponent implements OnInit {
     // Modificación en la creación del FormGroup
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
-      normativas: this.fb.array([], Validators.required),
-      facticas: this.fb.array([], Validators.required),
+      normativas: this.fb.array([
+        this.fb.group({
+          pregunta: ['', Validators.required],
+          respuesta: ['', Validators.required],
+          calificacion: ['No Calificado', Validators.required],
+          retroalimentacion: [''],
+          showCalificar: [false]
+        })
+      ], Validators.required), // Validators.required hace que el array no pueda estar vacío
+      facticas: this.fb.array([
+        this.fb.group({
+          pregunta: ['', Validators.required],
+          respuesta: ['', Validators.required],
+          calificacion: ['No Calificado', Validators.required],
+          retroalimentacion: [''],
+          showCalificar: [false]
+        })
+      ], Validators.required),
       saved: [false],
       docenteSaved: [false],
       problem_question: this.fb.group({
         pregunta: [''],
-        calificacion: ['No Calificado'],  
+        calificacion: ['No Calificado', Validators.required],
         retroalimentacion: [''],
         showCalificar: [false]
       }),
       problem_decision: this.fb.group({
         decision: [''],
-        calificacion: ['No Calificado'],  
+        calificacion: ['No Calificado', Validators.required],
         retroalimentacion: [''],
         showCalificar: [false]
       })
     });
+    
     
 
   this.mostrarRetroalimentacion = [];
@@ -359,54 +376,63 @@ export class AnalisisComponent implements OnInit {
   }
 
   submitForm() {
-        if (this.analisisForm.valid){
-      this.isSubmitting = true;
-    this.cargando = true;
-    const problemQuestionValue = this.analisisForm.get('problem_question')?.value;
-    const problemDecisionValue = this.analisisForm.get('problem_decision')?.value;
-    const analisisData = {
-      ...this.analisisForm.value,
-      problem_question: {
-        pregunta: problemQuestionValue.pregunta || '',
-        calificacion: problemQuestionValue.calificacion || 'No Calificado',
-        retroalimentacion: problemQuestionValue.retroalimentacion || '',
-        showCalificar: problemQuestionValue.showCalificar || false
-      },
-      problem_decision: {
-        decision: problemDecisionValue.decision || '',
-        calificacion: problemDecisionValue.calificacion || 'No Calificado',
-        retroalimentacion: problemDecisionValue.retroalimentacion || '',
-        showCalificar: problemDecisionValue.showCalificar || false
-      },
-      saved: true,
-      timestamp: new Date() // Agregamos timestamp para asegurar que se detecte el cambio
-    };
+    const normativasArray = this.analisisForm.get('normativas') as FormArray;
+const facticasArray = this.analisisForm.get('facticas') as FormArray;
 
-    console.log('Datos enviados:', analisisData);
-    
-    // Guardar los datos en Firestore
-    this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
-      .then(() => {
-        this.saved = true;
-        this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
-        this.cargando = false;
-        this.mostrarMensajeExito('Guardado con éxito');
-        
-        // Esperamos un momento para asegurar que los datos se guardaron
-        setTimeout(() => {
-          this.isSubmitting = false;
-          // Forzamos la recarga de la página
-          window.location.reload();
-        }, 1000); // Esperamos 1 segundo antes de recargar
-      })
-      .catch(error => {
-        console.error("Error saving document: ", error);
-        this.cargando = false;
-        this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
-        this.isSubmitting = false;
-      });
+    if (this.analisisForm.valid) {
+      console.log('Formulario válido, enviando...');
+      // Lógica para enviar
+    } else {
+      console.error('Formulario no válido');
     }
-}
+    
+    if (this.analisisForm.valid) {
+      this.isSubmitting = true;
+      this.cargando = true;
+  
+      // Obtener los valores de normativas y facticas
+      const normativasValue = this.analisisForm.get('normativas')?.value;
+      const facticasValue = this.analisisForm.get('facticas')?.value;
+  
+      // Crear el objeto con todos los datos, incluyendo normativas y facticas
+      const analisisData = {
+        ...this.analisisForm.value,
+        normativas: normativasValue, // Asegúrate de incluir las normativas
+        facticas: facticasValue, // Asegúrate de incluir las facticas
+        problem_question: {
+          ...this.analisisForm.get('problem_question')?.value,
+        },
+        problem_decision: {
+          ...this.analisisForm.get('problem_decision')?.value,
+        },
+        saved: true,
+        timestamp: new Date() // Agregamos un timestamp para asegurar que se detecte el cambio
+      };
+    
+      // Guardar los datos en Firestore
+      this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
+        .then(() => {
+          this.saved = true;
+          this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
+          this.cargando = false;
+          this.mostrarMensajeExito('Guardado con éxito');
+          
+          // Forzamos la recarga de la página después de guardar
+          setTimeout(() => {
+            this.isSubmitting = false;
+            window.location.reload();
+          }, 1000);
+        })
+        .catch(error => {
+          console.error("Error al guardar el documento: ", error);
+          this.cargando = false;
+          this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+          this.isSubmitting = false;
+        });
+    }
+  }
+  
+  
 
   // Método para mostrar mensaje de éxito
   mostrarMensajeExito(mensaje: string) {
@@ -479,19 +505,10 @@ export class AnalisisComponent implements OnInit {
   setCalificacion(index: number, type: string, calificacion: string) {
     const control = type === 'normativa' ? this.normativas.at(index) : this.facticas.at(index);
     control.patchValue({ calificacion });
-    // Actualizar en la base de datos
-    const updatedData = { [`${type}s`]: this.analisisForm.get(`${type}s`)?.value };
-    this.firestore.collection('analisis').doc(this.numero_proceso).update(updatedData)
-      .then(() => {
-        console.log('Calificación actualizada en la base de datos');
-      })
-      .catch(error => {
-        console.error('Error al actualizar la calificación:', error);
-      });
-
     this.selectedButtons[`${type}_${index}`] = calificacion;
   }
-
+  
+  
   isCalificacionCorrecta(type: string, index: number): boolean {
     const formArray = type === 'normativa' ? this.normativas : this.facticas;
     const control = formArray.at(index);
