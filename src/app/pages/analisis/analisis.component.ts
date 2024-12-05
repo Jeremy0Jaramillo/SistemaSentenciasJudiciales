@@ -48,48 +48,52 @@ export class AnalisisComponent implements OnInit {
     private firestore: AngularFirestore,
     private router: Router,
     private route: ActivatedRoute,
-    private afAuth: AngularFireAuth,
+    private afAuth: AngularFireAuth
   ) {
     // Modificación en la creación del FormGroup
     this.analisisForm = this.fb.group({
       numero_proceso: ['', Validators.required],
-      normativas: this.fb.array([
-        this.fb.group({
-          pregunta: ['', Validators.required],
-          respuesta: ['', Validators.required],
-          calificacion: ['No Calificado', Validators.required],
-          retroalimentacion: [''],
-          showCalificar: [false]
-        })
-      ], Validators.required), // Validators.required hace que el array no pueda estar vacío
-      facticas: this.fb.array([
-        this.fb.group({
-          pregunta: ['', Validators.required],
-          respuesta: ['', Validators.required],
-          calificacion: ['No Calificado', Validators.required],
-          retroalimentacion: [''],
-          showCalificar: [false]
-        })
-      ], Validators.required),
+      normativas: this.fb.array(
+        [
+          this.fb.group({
+            pregunta: ['', Validators.required],
+            respuesta: ['', Validators.required],
+            calificacion: ['No Calificado'],
+            retroalimentacion: [''],
+            showCalificar: [false],
+          }),
+        ],
+        Validators.required
+      ), // Validators.required hace que el array no pueda estar vacío
+      facticas: this.fb.array(
+        [
+          this.fb.group({
+            pregunta: ['', Validators.required],
+            respuesta: ['', Validators.required],
+            calificacion: ['No Calificado'],
+            retroalimentacion: [''],
+            showCalificar: [false],
+          }),
+        ],
+        Validators.required
+      ),
       saved: [false],
       docenteSaved: [false],
       problem_question: this.fb.group({
-        pregunta: [''],
-        calificacion: ['No Calificado', Validators.required],
+        pregunta: ['', Validators.required],
+        calificacion: ['No Calificado'],
         retroalimentacion: [''],
-        showCalificar: [false]
+        showCalificar: [false],
       }),
       problem_decision: this.fb.group({
-        decision: [''],
-        calificacion: ['No Calificado', Validators.required],
+        decision: ['', Validators.required],
+        calificacion: ['No Calificado'],
         retroalimentacion: [''],
-        showCalificar: [false]
-      })
+        showCalificar: [false],
+      }),
     });
-    
-    
 
-  this.mostrarRetroalimentacion = [];
+    this.mostrarRetroalimentacion = [];
   }
 
   toggleRetroalimentacion(event: Event, index: number) {
@@ -377,7 +381,7 @@ export class AnalisisComponent implements OnInit {
 
   submitForm() {
     const normativasArray = this.analisisForm.get('normativas') as FormArray;
-const facticasArray = this.analisisForm.get('facticas') as FormArray;
+    const facticasArray = this.analisisForm.get('facticas') as FormArray;
 
     if (this.analisisForm.valid) {
       console.log('Formulario válido, enviando...');
@@ -429,6 +433,9 @@ const facticasArray = this.analisisForm.get('facticas') as FormArray;
           this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
           this.isSubmitting = false;
         });
+    } else {
+      this.isSubmitting = false;
+      this.mostrarMensajeError('Llene todos los campos requeridos.');
     }
   }
   
