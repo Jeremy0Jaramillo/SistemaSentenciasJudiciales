@@ -2,7 +2,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { catchError, Observable, Subscription, switchMap, throwError } from 'rxjs';
+import { catchError, first, Observable, Subscription, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { AuthenticationResult } from '@azure/msal-browser';
 import { MsalService } from '@azure/msal-angular';
@@ -13,12 +13,15 @@ import firebase from 'firebase/compat/app';
   templateUrl: './login-page.component.html', 
   styleUrls: ['./login-page.component.css']
 })
+
+
 export class LoginPageComponent implements OnInit, OnDestroy {
   alerta: boolean = false;
   isLogin = true;
   alertaMessage = '';
   private authStateSubscription: Subscription | undefined;
 
+  
   constructor(
     private afAuth: AngularFireAuth,
     private authService: AuthService,
@@ -83,11 +86,9 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  loginWithAzure() {
-    /* const loginRequest = {
-      scopes: ['user.read']
-    }; */
+  
 
+  loginWithAzure() {
     const microsoftProvide = new firebase.auth.OAuthProvider("microsoft.com")
     microsoftProvide.setCustomParameters({tenant: "6eeb49aa-436d-43e6-becd-bbdf79e5077d"})
     microsoftProvide.addScope('user.read')
@@ -97,23 +98,68 @@ export class LoginPageComponent implements OnInit, OnDestroy {
     this.afAuth.signInWithPopup(microsoftProvide)
   .then(response => {
     const profile = response.additionalUserInfo?.profile as any;
-    const userData = {
-      name: profile.displayName || profile.name,
-      email: profile.mail || profile.userPrincipalName,
-      role: 'estudiante' // default role
-    };
+    const userId = response.user?.uid;
 
-    // Save to Firestore
-    this.firestore.collection('users').doc(response.user?.uid).set(userData, { merge: true })
-      .then(() => {
-        console.log('User data saved successfully');
+    // Primero, consulta el rol actual en Firestore
+    this.firestore.collection('users').doc(userId).get().pipe(
+      first() // Toma solo el primer valor del observable
+    ).subscribe(doc => {
+      let currentRole = 'estudiante'; // Valor por defecto
+    
+      if (doc.exists) {
+        // Usa aserción de tipo para indicar a TypeScript la estructura
+        const userData = doc.data() as UserData;
+        currentRole = userData.role || 'estudiante';
+      }
+      const userData = {
+        name: profile.displayName || profile.name,
+        email: profile.mail || profile.userPrincipalName,
+        role: currentRole // Usa el rol existente
+      };
+
+      this.firestore.collection('users').doc(userId).set(userData, { merge: true })
+        .then(() => {
+          console.log('User data saved successfully');
+        })
+        .catch(error => {
+          console.error('Error saving user data', error);
+        });
+    });
+  });
+
+  }
+
+
+  register(name: string, email: string, password: string) {
+    this.afAuth.createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        if (userCredential.user) {
+          this.firestore.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: userCredential.user.email,
+            role: 'estudiante'
+          });
+          sessionStorage.setItem('sessionToken', 'active');
+        }
       })
       .catch(error => {
-        console.error('Error saving user data', error);
+        // Handle registration error
+        console.error('Registration error:', error);
       });
-  });
   }
- 
+
+  toggleForm(event: Event) {
+    event.preventDefault();
+    this.isLogin = !this.isLogin;
+    this.alerta = false; // Resetea la alerta al cambiar de formulario
+  }
+}
+
+interface UserData {
+  name: string;
+  email: string;
+  role: string;
+} 
   /* next: (response: AuthenticationResult) => {
           const account = this.msalService.instance.getActiveAccount();
           if (account) {
@@ -145,27 +191,4 @@ export class LoginPageComponent implements OnInit, OnDestroy {
           this.alertaMessage = 'Error al iniciar sesión con Azure';
         } */
 
-  register(name: string, email: string, password: string) {
-    this.afAuth.createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        if (userCredential.user) {
-          this.firestore.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: userCredential.user.email,
-            role: 'estudiante'
-          });
-          sessionStorage.setItem('sessionToken', 'active');
-        }
-      })
-      .catch(error => {
-        // Handle registration error
-        console.error('Registration error:', error);
-      });
-  }
-
-  toggleForm(event: Event) {
-    event.preventDefault();
-    this.isLogin = !this.isLogin;
-    this.alerta = false; // Resetea la alerta al cambiar de formulario
-  }
-}
+  
