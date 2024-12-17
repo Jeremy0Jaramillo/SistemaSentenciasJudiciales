@@ -78,7 +78,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 
   loginWithAzure() {
     const microsoftProvide = new firebase.auth.OAuthProvider("microsoft.com")
-    microsoftProvide.setCustomParameters({tenant: ""})
+    microsoftProvide.setCustomParameters({tenant: "6eeb49aa-436d-43e6-becd-bbdf79e5077d"})
     microsoftProvide.addScope('user.read')
     microsoftProvide.addScope('openid')
     microsoftProvide.addScope('profile')
