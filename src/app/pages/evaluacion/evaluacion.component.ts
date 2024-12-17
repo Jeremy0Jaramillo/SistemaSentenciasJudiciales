@@ -177,11 +177,11 @@ export class EvaluacionComponent implements OnInit {
       this.loadFormData();
     });
     this.evaluacionForm.get('motivationType_calificacion')?.valueChanges.subscribe(value => {
-      console.log('Calificación changed to:', value);
+      // console.log('Calificación changed to:', value);
     });
     this.changeDetectorRef.detectChanges();
     setTimeout(() => {
-      console.log('Estado de los radio buttons después de 2 segundos:');
+      // console.log('Estado de los radio buttons después de 2 segundos:');
       this.debugRadioButtons();
     }, 2000);
   }
@@ -274,7 +274,7 @@ export class EvaluacionComponent implements OnInit {
         }, 100);
       })
       .catch(error => {
-        console.error("Error saving document: ", error);
+        // console.error("Error saving document: ", error);
         this.cargando = false;
         this.mostrarMensajeError('Error al guardar');
       });
@@ -296,7 +296,7 @@ export class EvaluacionComponent implements OnInit {
       controlPath = controlName
     } else {
       controlPath = `${section}.${controlName}`
-      console.log(controlPath)
+      // console.log(controlPath)
     }
     return this.buttonStates[controlPath] === value;
   }
@@ -367,7 +367,7 @@ export class EvaluacionComponent implements OnInit {
         this.disableFormControls(this.evaluacionForm); // Disable the form controls
       })
       .catch(error => {
-        console.error("Error locking form: ", error);
+        // console.error("Error locking form: ", error);
       });
   }
 
@@ -515,17 +515,17 @@ export class EvaluacionComponent implements OnInit {
         if (control instanceof FormGroup) {
           searchRadioControls(control, currentPath);
         } else if (key.startsWith('lack') || key.includes('exists')) {
-          console.log(`Radio button ${currentPath}:`, {
-            value: control.value,
-            dirty: control.dirty,
-            touched: control.touched,
-            disabled: control.disabled
-          });
+          // console.log(`Radio button ${currentPath}:`, {
+          //   value: control.value,
+          //   dirty: control.dirty,
+          //   touched: control.touched,
+          //   disabled: control.disabled
+          // });
         }
       }
     };
 
-    console.log('=== Debug Radio Buttons ===');
+    // console.log('=== Debug Radio Buttons ===');
     searchRadioControls(this.evaluacionForm);
   }
 

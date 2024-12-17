@@ -155,10 +155,10 @@ export class Evaluacion2Component implements OnInit {
       this.loadUserData();
       this.checkDocenteSaved();
       setTimeout(() => {
-        console.log('isDocente:', this.isDocente);
-        console.log('saved:', this.evaluacion2Form.get('saved')?.value);
-        console.log('buttonStates:', this.buttonStates);
-        console.log('Form value:', this.evaluacion2Form.value);
+        // console.log('isDocente:', this.isDocente);
+        // console.log('saved:', this.evaluacion2Form.get('saved')?.value);
+        // console.log('buttonStates:', this.buttonStates);
+        // console.log('Form value:', this.evaluacion2Form.value);
       }, 2000);
     });
   }
@@ -177,10 +177,10 @@ export class Evaluacion2Component implements OnInit {
       .then(() => {
         this.evaluacion2Form.disable();
         this.isFormLocked = true;
-        console.log('Formulario bloqueado');
+        // console.log('Formulario bloqueado');
       })
       .catch(error => {
-        console.error("Error locking form: ", error);
+        // console.error("Error locking form: ", error);
       });
   }
 
@@ -219,11 +219,11 @@ export class Evaluacion2Component implements OnInit {
           this.cargando = false;
           this.saved = true;
           this.evaluacion2Form.patchValue({ saved: true });
-          console.log('Form submitted and saved:', analisisData);
+          // console.log('Form submitted and saved:', analisisData);
           window.location.reload();
         })
         .catch(error => {
-          console.error("Error saving document: ", error);
+          // console.error("Error saving document: ", error);
           this.cargando = false;
         });
     } else {
@@ -261,7 +261,7 @@ export class Evaluacion2Component implements OnInit {
         }
       },
       (error) => {
-        console.error("Error loading document: ", error);
+        // console.error("Error loading document: ", error);
       }
     );
   }
@@ -341,7 +341,7 @@ export class Evaluacion2Component implements OnInit {
 
   getCalificacionValue(controlName: string): string {
     const value = this.evaluacion2Form.get(controlName)?.value;
-    console.log(`Calificación para ${controlName}:`, value); // Para depuración
+    // console.log(`Calificación para ${controlName}:`, value); // Para depuración
     return value ? value : 'No Calificado';
   }
 
@@ -364,14 +364,14 @@ export class Evaluacion2Component implements OnInit {
   saveFormChanges() {
     const formData = this.evaluacion2Form.value;
     formData.saved = true;
-    console.log('Saving form data:', formData);
+    // console.log('Saving form data:', formData);
     this.firestore.collection('evaluacion2').doc(this.numero_proceso).update(formData)
       .then(() => {
-        console.log('Cambios guardados correctamente');
+        // console.log('Cambios guardados correctamente');
         this.evaluacion2Form.patchValue({ saved: true });
       })
       .catch(error => {
-        console.error('Error al guardar los cambios:', error);
+        // console.error('Error al guardar los cambios:', error);
       });
   }
 

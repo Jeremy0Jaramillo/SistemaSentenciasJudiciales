@@ -127,7 +127,7 @@ export class Analisis2Component implements OnInit {
         this.disableFormControls(this.analisis2Form); // Disable the form controls
       })
       .catch(error => {
-        console.error("Error locking form: ", error);
+        // console.error("Error locking form: ", error);
       });
   }
 
@@ -217,7 +217,7 @@ export class Analisis2Component implements OnInit {
         window.location.reload();
       })
       .catch(error => {
-        console.error("Error saving document: ", error);
+        // console.error("Error saving document: ", error);
         this.cargando = false;
         this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
         this.isSubmitting = false;
@@ -255,7 +255,7 @@ export class Analisis2Component implements OnInit {
 
   redirectToEvaluacion(event: Event) {
     event.preventDefault();
-    console.log('Estado de docenteSaved:', this.docenteSaved); // Log para depuración
+    // console.log('Estado de docenteSaved:', this.docenteSaved); // Log para depuración
     if (this.analisis2Form.valid) {
       if (this.analisis2Form.dirty) {
         this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
@@ -271,7 +271,7 @@ export class Analisis2Component implements OnInit {
           }
         });
       } else {
-        console.log('Datos no guardados, mostrando alerta');
+        // console.log('Datos no guardados, mostrando alerta');
         this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
       }
     } else {

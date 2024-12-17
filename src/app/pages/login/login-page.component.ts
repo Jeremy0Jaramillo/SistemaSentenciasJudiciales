@@ -71,62 +71,86 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       })
       .catch(error => {
         // Handle login error
-        console.error('Login error:', error);
+        // console.error('Login error:', error);
         this.alerta = true;
       });
   }
-  // async login(email: string, password: string) {
-  //   try {
-  //     await this.authService.loginWithFirebase(email, password);
-  //     this.router.navigate(['/principal']);
-  //   } catch (error: any) {
-  //     console.error('Login error:', error);
-  //     this.alerta = true;
-  //     // this.alertaMessage = this.getErrorMessage(error.code);
-  //   }
-  // }
-
-  
 
   loginWithAzure() {
     const microsoftProvide = new firebase.auth.OAuthProvider("microsoft.com")
-    microsoftProvide.setCustomParameters({tenant: "6eeb49aa-436d-43e6-becd-bbdf79e5077d"})
+    microsoftProvide.setCustomParameters({tenant: ""})
     microsoftProvide.addScope('user.read')
     microsoftProvide.addScope('openid')
     microsoftProvide.addScope('profile')
-
+  
     this.afAuth.signInWithPopup(microsoftProvide)
-  .then(response => {
-    const profile = response.additionalUserInfo?.profile as any;
-    const userId = response.user?.uid;
-
-    // Primero, consulta el rol actual en Firestore
-    this.firestore.collection('users').doc(userId).get().pipe(
-      first() // Toma solo el primer valor del observable
-    ).subscribe(doc => {
-      let currentRole = 'estudiante'; // Valor por defecto
-    
-      if (doc.exists) {
-        // Usa aserción de tipo para indicar a TypeScript la estructura
-        const userData = doc.data() as UserData;
-        currentRole = userData.role || 'estudiante';
+    .then(async (response) => {
+      const profile = response.additionalUserInfo?.profile as any;
+      const azureUserId = response.user?.uid;
+      const azureUserEmail = profile.mail || profile.userPrincipalName;
+  
+      // Buscar si existe un usuario con el mismo correo registrado por email/password
+      const emailPasswordUsers = await this.firestore.collection('users', 
+        ref => ref.where('email', '==', azureUserEmail)
+      ).get().toPromise();
+  
+      let currentRole = 'estudiante'; // Rol por defecto
+      let existingUserIds: string[] = [];
+  
+      // Verificar si hay documentos antes de iterar
+      if (emailPasswordUsers && emailPasswordUsers.docs.length > 0) {
+        for (let doc of emailPasswordUsers.docs) {
+          const userData = doc.data() as UserData;
+          
+          // Si el rol es docente, mantenerlo
+          if (userData.role === 'docente') {
+            currentRole = 'docente';
+          }
+  
+          // Recopilar IDs de usuarios a eliminar (excluyendo el usuario de Azure)
+          if (doc.id !== azureUserId) {
+            existingUserIds.push(doc.id);
+          }
+        }
+  
+        // Eliminar documentos de usuarios duplicados
+        for (let userId of existingUserIds) {
+          try {
+            // Eliminar el documento de Firestore
+            await this.firestore.collection('users').doc(userId).delete();
+            
+            // Opcional: Intentar eliminar el usuario de autenticación
+            try {
+              const userToDelete = await this.afAuth.fetchSignInMethodsForEmail(azureUserEmail);
+              if (userToDelete.includes('password')) {
+                // Nota: Esto requeriría re-autenticación del usuario actual
+                const user = await this.afAuth.currentUser;
+                await user?.delete();
+              }
+            } catch (authError) {
+              console.error('Error eliminando usuario de autenticación:', authError);
+            }
+          } catch (firestoreError) {
+            console.error('Error eliminando documento de Firestore:', firestoreError);
+          }
+        }
       }
-      const userData = {
+  
+      // Guardar datos de usuario de Azure
+      const azureUserData = {
         name: profile.displayName || profile.name,
-        email: profile.mail || profile.userPrincipalName,
-        role: currentRole // Usa el rol existente
+        email: azureUserEmail,
+        role: currentRole
       };
-
-      this.firestore.collection('users').doc(userId).set(userData, { merge: true })
-        .then(() => {
-          console.log('User data saved successfully');
-        })
-        .catch(error => {
-          console.error('Error saving user data', error);
-        });
+  
+      await this.firestore.collection('users').doc(azureUserId).set(azureUserData, { merge: true });
+  
+      // Navegación después del inicio de sesión
+      this.router.navigate(['/principal']);
+    })
+    .catch(error => {
+      console.error('Error en inicio de sesión con Azure:', error);
     });
-  });
-
   }
 
 
@@ -144,7 +168,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       })
       .catch(error => {
         // Handle registration error
-        console.error('Registration error:', error);
+        // console.error('Registration error:', error);
       });
   }
 
@@ -160,35 +184,4 @@ interface UserData {
   email: string;
   role: string;
 } 
-  /* next: (response: AuthenticationResult) => {
-          const account = this.msalService.instance.getActiveAccount();
-          if (account) {
-            // Guardar usuario en Firestore
-            this.firestore.collection('users').doc(response.uniqueId).set({
-              name: account.name,
-              email: account.username,
-              role: 'estudiante',
-              authProvider: 'azure',
-              createdAt: new Date()
-            }).then(() => {
-              // Establecer sesión
-              this.authService.setUserSession('azure', response.uniqueId);
-              this.router.navigate(['/principal']);
-            }).catch(error => {
-              console.error('Error guardando usuario:', error);
-              this.alerta = true;
-              this.alertaMessage = 'Error al guardar información de usuario';
-            });
-          } else {
-            console.error('No se pudo obtener la cuenta activa');
-            this.alerta = true;
-            this.alertaMessage = 'No se pudo obtener la información de la cuenta';
-          }
-        },
-        error: (error) => {
-          console.error('Azure login error:', error);
-          this.alerta = true;
-          this.alertaMessage = 'Error al iniciar sesión con Azure';
-        } */
-
-  
+ 

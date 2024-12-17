@@ -160,7 +160,7 @@ export class AnalisisComponent implements OnInit {
         this.disableFormControls(this.analisisForm); // Disable the form controls
       })
       .catch(error => {
-        console.error("Error locking form: ", error);
+        // console.error("Error locking form: ", error);
       });
   }
 
@@ -191,7 +191,7 @@ export class AnalisisComponent implements OnInit {
 
   onFormChange() {
     if (!this.isSubmitting && this.saved) {
-      console.log('Formulario modificado, reseteando saved');
+      // console.log('Formulario modificado, reseteando saved');
       this.saved = true;
     }
   }
@@ -367,7 +367,7 @@ export class AnalisisComponent implements OnInit {
           this.mostrarRetroalimentacionDecision = false;
         }
       }, error => {
-        console.error('Error al cargar los datos:', error);
+        // console.error('Error al cargar los datos:', error);
         this.mostrarMensajeError('Error al cargar los datos. Por favor, intente de nuevo.');
       });
   }
@@ -384,10 +384,10 @@ export class AnalisisComponent implements OnInit {
     const facticasArray = this.analisisForm.get('facticas') as FormArray;
 
     if (this.analisisForm.valid) {
-      console.log('Formulario válido, enviando...');
+      // console.log('Formulario válido, enviando...');
       // Lógica para enviar
     } else {
-      console.error('Formulario no válido');
+      // console.error('Formulario no válido');
     }
     
     if (this.analisisForm.valid) {
@@ -428,7 +428,7 @@ export class AnalisisComponent implements OnInit {
           }, 1000);
         })
         .catch(error => {
-          console.error("Error al guardar el documento: ", error);
+          // console.error("Error al guardar el documento: ", error);
           this.cargando = false;
           this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
           this.isSubmitting = false;
@@ -506,7 +506,7 @@ export class AnalisisComponent implements OnInit {
   }
   toggleCalificar2(section: string) {
     this.calificarState[section] = !this.calificarState[section];
-    console.log(this.calificarState);
+    // console.log(this.calificarState);
   }
 
   setCalificacion(index: number, type: string, calificacion: string) {
@@ -556,17 +556,17 @@ export class AnalisisComponent implements OnInit {
   }
 
   setRetroalimentacion(section: string, event: any) {
-    console.log('setRetroalimentacion called with:', section, event);
+    // console.log('setRetroalimentacion called with:', section, event);
     if (section === 'problem_question') {
       const retroalimentacion = (event && event.target) ? event.target.value : event;
-      console.log('Setting retroalimentacion to:', retroalimentacion);
+      // console.log('Setting retroalimentacion to:', retroalimentacion);
       const problemQuestionGroup = this.analisisForm.get('problem_question');
       if (problemQuestionGroup) {
         problemQuestionGroup.patchValue({
           retroalimentacion: retroalimentacion
         });
         // Verifica que se actualizó correctamente
-        console.log('Updated form value:', this.analisisForm.get('problem_question')?.value);
+        // console.log('Updated form value:', this.analisisForm.get('problem_question')?.value);
         // Solo guarda si los datos ya están cargados
         if (this.dataLoaded) {
           this.submitForm();
@@ -579,14 +579,14 @@ export class AnalisisComponent implements OnInit {
     if (section === 'problem_decision') {
       const retroalimentacion = (event && event.target) ? event.target.value : event;
       
-      console.log('Setting retroalimentacion to:', retroalimentacion);
+      // console.log('Setting retroalimentacion to:', retroalimentacion);
       
       const decisionQuestionGroup = this.analisisForm.get('problem_decision');
       if (decisionQuestionGroup) {
         decisionQuestionGroup.patchValue({
           retroalimentacion: retroalimentacion
         });
-        console.log('Updated form value:', this.analisisForm.get('problem_decisions')?.value);
+        // console.log('Updated form value:', this.analisisForm.get('problem_decisions')?.value);
         if (this.dataLoaded) {
           this.submitForm();
         }
