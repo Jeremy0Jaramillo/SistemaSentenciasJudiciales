@@ -452,14 +452,14 @@ export class EvaluacionComponent implements OnInit {
   }
 
   redirectToEvaluacion2(event: Event) {
-    event.preventDefault();
-    if (!this.validateAllSections()) {
-      return;
-    }
-    if (!this.saved) {
-      this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
-      return;
-    }
+    // event.preventDefault();
+    // if (!this.validateAllSections()) {
+    //   return;
+    // }
+    // if (!this.saved) {
+    //   this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
+    //   return;
+    // }
     this.router.navigate(['/evaluacion2'], {
       queryParams: {
         numero_proceso: this.numero_proceso,

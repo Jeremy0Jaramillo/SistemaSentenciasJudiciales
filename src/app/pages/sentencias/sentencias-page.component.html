@@ -14,9 +14,18 @@
   <form (ngSubmit)="submitForm()">
 
     <div class="dato-sent">
-  <label class="numero-proceso" for="process">1. Numero de Proceso:</label><br>
-  <input class="numero-proceso" type="text" id="process" name="process" [(ngModel)]="sentencia.numero_proceso" required><br>
-</div>
+      <label class="numero-proceso" for="process">1. Numero de Proceso:</label><br>
+      <input 
+        class="numero-proceso" 
+        type="text" 
+        id="process" 
+        name="process" 
+        [(ngModel)]="sentencia.numero_proceso" 
+        (keypress)="validarNumeroProcess($event)"
+        (input)="formatearNumeroProcess($event)"
+        placeholder="Ejemplo: 12345-67890"
+        required><br>
+    </div>
 
 <div class="dato-sent">
   <label class="asunto" for="subject">2. Asunto:</label><br>

@@ -144,5 +144,79 @@ export class SentenciasPageComponent implements OnInit {
   cerrarAlerta(index: number) {
     this.alertas.splice(index, 1);
   }
+
+  validarNumeroProcess(event: KeyboardEvent): boolean {
+    // Si es espacio, convertir a guion
+    if (event.key === ' ') {
+      event.preventDefault();
+      const input = event.target as HTMLInputElement;
+      const cursorPosition = input.selectionStart || 0;
+      const valor = input.value;
+      
+      // Solo agregar guion si no hay uno ya en la posición actual o anterior
+      if (valor[cursorPosition - 1] !== '-' && valor[cursorPosition] !== '-') {
+        const nuevoValor = 
+          valor.slice(0, cursorPosition) + 
+          '-' + 
+          valor.slice(cursorPosition);
+        
+        this.sentencia.numero_proceso = nuevoValor;
+        
+        // Mover el cursor después del guion insertado
+        setTimeout(() => {
+          input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+        }, 0);
+      }
+      return false;
+    }
+
+    // Permitir solo números y guiones
+    const pattern = /[0-9-]/;
+    const inputChar = String.fromCharCode(event.charCode);
+
+    // Si el carácter no coincide con el patrón, prevenir la entrada
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+      return false;
+    }
+
+    // Si es guion, verificar que sea válido
+    if (inputChar === '-') {
+      const input = event.target as HTMLInputElement;
+      const cursorPosition = input.selectionStart || 0;
+      const valor = input.value;
+
+      // Prevenir guiones consecutivos
+      if (valor[cursorPosition - 1] === '-' || valor[cursorPosition] === '-') {
+        event.preventDefault();
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // Método para formatear el número de proceso
+  formatearNumeroProcess(event: any) {
+    const input = event.target;
+    let valor = input.value;
+
+    // Eliminar caracteres no permitidos
+    valor = valor.replace(/[^0-9-]/g, '');
+    
+    // Asegurar que solo haya un guion entre números
+    valor = valor.replace(/-+/g, '-');
+    
+    // Eliminar guiones del inicio si no hay números antes
+    valor = valor.replace(/^-+/, '');
+    
+    // Eliminar guiones del final si no hay números después
+    valor = valor.replace(/-+$/, '');
+
+    // Actualizar el valor
+    this.sentencia.numero_proceso = valor;
+  }
 }
+
+
 
