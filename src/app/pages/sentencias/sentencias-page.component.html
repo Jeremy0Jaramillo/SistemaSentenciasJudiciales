@@ -4,9 +4,9 @@
   <div class="alert-content">
     <div *ngFor="let alerta of alertas; let i = index" class="alerta" (click)="cerrarAlerta(i)">
       <p>{{ alerta }}</p>
+    </div>
   </div>
-  </div>
-  
+
   <div class="tittle-sent">
     <h4>SISTEMA JURÍDICO AVANZADO DE SENTENCIAS DE PRIMER NIVEL EN EL ECUADOR</h4>
   </div>
@@ -15,68 +15,65 @@
 
     <div class="dato-sent">
       <label class="numero-proceso" for="process">1. Numero de Proceso:</label><br>
-      <input 
-        class="numero-proceso" 
-        type="text" 
-        id="process" 
-        name="process" 
-        [(ngModel)]="sentencia.numero_proceso" 
-        (keypress)="validarNumeroProcess($event)"
-        (input)="formatearNumeroProcess($event)"
-        placeholder="Ejemplo: 12345-67890"
-        required><br>
+      <input class="numero-proceso" type="text" id="process" name="process" [(ngModel)]="sentencia.numero_proceso"
+        (keypress)="validarNumeroProcess($event)" (input)="formatearNumeroProcess($event)" required><br>
+      <small class="input-info">
+        Únicamente se admite números y guiones "-"
+      </small>
     </div>
 
-<div class="dato-sent">
-  <label class="asunto" for="subject">2. Asunto:</label><br>
-  <input class="asunto" type="text" id="subject" name="subject" [(ngModel)]="sentencia.asunto" required><br>
-</div>
+    <div class="dato-sent">
+      <label class="asunto" for="subject">2. Asunto:</label><br>
+      <input class="asunto" type="text" id="subject" name="subject" [(ngModel)]="sentencia.asunto" required><br>
+    </div>
 
-<div class="dato-sent">
-  <label class="estudiante" for="student">3. Estudiante:</label><br>
-  <input class="estudiante" type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante" readonly><br>
-</div>
+    <div class="dato-sent">
+      <label class="estudiante" for="student">3. Estudiante:</label><br>
+      <input class="estudiante" type="text" id="student" name="student" [(ngModel)]="sentencia.nombre_estudiante"
+        readonly><br>
+    </div>
 
-<div class="dato-sent">
-  <label class="estudiante" for="email">3. Correo:</label><br>
-  <input class="estudiante" type="email" id="email" name="email" [(ngModel)]="sentencia.email" readonly><br>
-</div>
+    <div class="dato-sent">
+      <label class="estudiante" for="email">3. Correo:</label><br>
+      <input class="estudiante" type="email" id="email" name="email" [(ngModel)]="sentencia.email" readonly><br>
+    </div>
 
-<div class="dato-sent">
-  <label class="label-docente" for="teacher">4. Docente:</label><br>
-  <select class="docente" id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
-    <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>
-  </select><br><br>
-</div>
-
-
-<div class="dato-sent-file">
-  <label for="archivo"> Carga de sentencia: </label><br>
-  <label for="archivo" id="cargar-archivo-label">
-    <img src="../../../assets/images/Cargar.png" alt="">
-  </label>
-  <input type="file" id="archivo" name="archivo" (change)="onFileSelected($event)" accept="application/pdf" style="display: none;">
-</div>
-<p class="msg-file-status" [ngClass]="{'sin-archivo': !fileLoaded, 'archivo-subido': fileLoaded}">
-  {{ archivoMensaje }}
-</p>
-
-<div class="save">
-  <button class="bttn-stnd" type="submit" [disabled]="cargando">Guardar</button>
-  <button class="custom-button" type="button" *ngIf="cargando">
-    <div class="spinner"></div>
-    <span class="button-text">Cargando sentencia...</span>
-  </button>
-</div>
-<div *ngIf="mostrarMensajeExito" class="mensaje-exito">
-  {{ mensajeExito }}
-</div>
+    <div class="dato-sent">
+      <label class="label-docente" for="teacher">4. Docente:</label><br>
+      <select class="docente" id="teacher" name="teacher" [(ngModel)]="sentencia.nombre_docente" required>
+        <option *ngFor="let docente of docentes$ | async" [value]="docente.name">{{ docente.name }}</option>
+      </select><br><br>
+    </div>
 
 
+    <div class="dato-sent-file">
+      <label for="archivo"> Carga de sentencia: </label><br>
+      <label for="archivo" id="cargar-archivo-label">
+        <img src="../../../assets/images/Cargar.png" alt="">
+      </label>
+      <input type="file" id="archivo" name="archivo" (change)="onFileSelected($event)" accept="application/pdf"
+        style="display: none;">
+    </div>
+    <p class="msg-file-status" [ngClass]="{'sin-archivo': !fileLoaded, 'archivo-subido': fileLoaded}">
+      {{ archivoMensaje }}
+    </p>
+
+    <div class="save">
+      <button class="bttn-stnd" type="submit" [disabled]="cargando">Guardar</button>
+      <button class="custom-button" type="button" *ngIf="cargando">
+        <div class="spinner"></div>
+        <span class="button-text">Cargando sentencia...</span>
+      </button>
+    </div>
+    <div *ngIf="mostrarMensajeExito" class="mensaje-exito">
+      {{ mensajeExito }}
+    </div>
+    
   </form>
+</div>
 
-<script>
-  document.getElementById('cargar-archivo-label').addEventListener('click', function() {
-    document.getElementById('archivo').click();
-  });
-</script>
+  <script>
+    document.getElementById('cargar-archivo-label').addEventListener('click', function () {
+      document.getElementById('archivo').click();
+    });
+  </script>

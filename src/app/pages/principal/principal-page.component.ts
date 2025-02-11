@@ -33,6 +33,10 @@ export class PrincipalPageComponent implements OnInit {
  razonTexto = '';
  accionPendiente: 'aceptar' | 'negar' = 'aceptar';
  sentenciaPendiente: Sentencia | null = null;
+ numeroProcesoBusqueda: string = '';
+ sentenciaEncontrada: Sentencia | null = null;
+ mensajeBusqueda: string = '';
+ mostrarMensajeBusqueda: boolean = false;
 
  constructor(
    private afAuth: AngularFireAuth,
@@ -202,4 +206,75 @@ export class PrincipalPageComponent implements OnInit {
  onSearchTextChanged() {
    this.searchSubject.next(this.searchText);
  }
+
+// Método para mostrar mensajes
+private mostrarMensaje(mensaje: string) {
+  this.mensajeBusqueda = mensaje;
+  this.mostrarMensajeBusqueda = true;
+  setTimeout(() => {
+    this.mostrarMensajeBusqueda = false;
+  }, 3000);
+}
+
+// Método para limpiar la búsqueda
+limpiarBusqueda() {
+  this.numeroProcesoBusqueda = '';
+  this.sentenciaEncontrada = null;
+  this.mostrarMensajeBusqueda = false;
+}
+
+validarBusquedaProceso(event: KeyboardEvent): boolean {
+  // Bloquear espacios
+  if (event.key === ' ') {
+    event.preventDefault();
+    return false;
+  }
+
+  // Permitir solo números y guiones
+  const pattern = /[0-9-]/;
+  const inputChar = String.fromCharCode(event.charCode);
+
+  // Si el carácter no coincide con el patrón, prevenir la entrada
+  if (!pattern.test(inputChar)) {
+    event.preventDefault();
+    return false;
+  }
+
+  return true;
+}
+
+// Método para formatear el input de búsqueda
+formatearBusquedaProceso(event: any) {
+  let valor = event.target.value;
+  // Eliminar cualquier carácter que no sea número o guion
+  valor = valor.replace(/[^0-9-]/g, '');
+  this.numeroProcesoBusqueda = valor;
+}
+
+// Método de búsqueda actualizado
+async buscarPorNumeroProceso() {
+  const numeroProceso = this.numeroProcesoBusqueda.trim();
+  
+  if (!numeroProceso) {
+    this.mostrarMensaje('Por favor, ingrese un número de proceso');
+    return;
+  }
+
+  try {
+    const querySnapshot = await this.firestore.collection('sentencias')
+      .ref.where('numero_proceso', '==', numeroProceso)
+      .get();
+
+    if (querySnapshot.empty) {
+      this.sentenciaEncontrada = null;
+      this.mostrarMensaje('No se encontró ninguna sentencia con ese número de proceso');
+    } else {
+      this.sentenciaEncontrada = querySnapshot.docs[0].data() as Sentencia;
+      this.mostrarMensaje('Sentencia encontrada');
+    }
+  } catch (error) {
+    console.error('Error al buscar la sentencia:', error);
+    this.mostrarMensaje('Error al buscar la sentencia');
+  }
+}
 }

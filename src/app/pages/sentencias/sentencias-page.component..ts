@@ -146,27 +146,9 @@ export class SentenciasPageComponent implements OnInit {
   }
 
   validarNumeroProcess(event: KeyboardEvent): boolean {
-    // Si es espacio, convertir a guion
+    // Bloquear espacios
     if (event.key === ' ') {
       event.preventDefault();
-      const input = event.target as HTMLInputElement;
-      const cursorPosition = input.selectionStart || 0;
-      const valor = input.value;
-      
-      // Solo agregar guion si no hay uno ya en la posición actual o anterior
-      if (valor[cursorPosition - 1] !== '-' && valor[cursorPosition] !== '-') {
-        const nuevoValor = 
-          valor.slice(0, cursorPosition) + 
-          '-' + 
-          valor.slice(cursorPosition);
-        
-        this.sentencia.numero_proceso = nuevoValor;
-        
-        // Mover el cursor después del guion insertado
-        setTimeout(() => {
-          input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
-        }, 0);
-      }
       return false;
     }
 
@@ -180,19 +162,6 @@ export class SentenciasPageComponent implements OnInit {
       return false;
     }
 
-    // Si es guion, verificar que sea válido
-    if (inputChar === '-') {
-      const input = event.target as HTMLInputElement;
-      const cursorPosition = input.selectionStart || 0;
-      const valor = input.value;
-
-      // Prevenir guiones consecutivos
-      if (valor[cursorPosition - 1] === '-' || valor[cursorPosition] === '-') {
-        event.preventDefault();
-        return false;
-      }
-    }
-
     return true;
   }
 
@@ -201,21 +170,12 @@ export class SentenciasPageComponent implements OnInit {
     const input = event.target;
     let valor = input.value;
 
-    // Eliminar caracteres no permitidos
+    // Eliminar cualquier carácter que no sea número o guion
     valor = valor.replace(/[^0-9-]/g, '');
     
-    // Asegurar que solo haya un guion entre números
-    valor = valor.replace(/-+/g, '-');
-    
-    // Eliminar guiones del inicio si no hay números antes
-    valor = valor.replace(/^-+/, '');
-    
-    // Eliminar guiones del final si no hay números después
-    valor = valor.replace(/-+$/, '');
-
     // Actualizar el valor
     this.sentencia.numero_proceso = valor;
-  }
+  } 
 }
 
 

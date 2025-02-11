@@ -10,6 +10,39 @@
     *ngIf="userRole == 'docente'" placeholder="Buscar por nombre de estudiante">
 </div>
 
+<div *ngIf="userRole === 'estudiante'" class="busqueda-proceso">
+  <div class="input-busqueda">
+    <div class="input-container">
+      <input 
+        type="text" 
+        [(ngModel)]="numeroProcesoBusqueda" 
+        placeholder="Buscar por número de proceso"
+        (keypress)="validarBusquedaProceso($event)"
+        (input)="formatearBusquedaProceso($event)"
+        class="input-proceso">
+      <small class="input-info">
+        Únicamente se admite números y guiones "-"
+      </small>
+    </div>
+    <button (click)="buscarPorNumeroProceso()" class="bttn-search">Buscar</button>
+    <button *ngIf="sentenciaEncontrada" (click)="limpiarBusqueda()" class="bttn-clear">Limpiar</button>
+  </div>
+
+  <!-- Mensaje de estado de búsqueda -->
+  <div *ngIf="mostrarMensajeBusqueda" class="mensaje-busqueda"
+       [ngClass]="{'mensaje-error': !sentenciaEncontrada, 'mensaje-exito': sentenciaEncontrada}">
+    {{ mensajeBusqueda }}
+  </div>
+
+  <!-- Resultados de la búsqueda -->
+  <div *ngIf="sentenciaEncontrada" class="resultado-busqueda">
+    <div class="sentencia-encontrada">
+      <h3>Sentencia encontrada:</h3>
+      <p><strong>Estado:</strong> {{ getStatusText(sentenciaEncontrada.estado || null) }}</p>
+    </div>
+  </div>
+</div>
+
 <div class="sentencias">
 
   <div *ngIf="(filteredSentencias$ | async)?.length === 0" class="no-sentencias">

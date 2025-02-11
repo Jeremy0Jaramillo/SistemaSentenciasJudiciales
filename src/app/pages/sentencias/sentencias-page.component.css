@@ -20,7 +20,7 @@ body {
     display: flex;
     flex-direction: column;
     background: #b0b7c53e;
-    height: 600px;
+    height: auto;
     margin: 25px 200px 0px 200px;
     border-radius: 10px;
 }
@@ -198,4 +198,11 @@ body {
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+
+  .input-info {
+    color: #666;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+    display: block;
   }
