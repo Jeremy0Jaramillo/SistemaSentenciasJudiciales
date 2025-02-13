@@ -14,6 +14,7 @@ interface Sentencia {
  estado?: 'aceptar' | 'negar' | null;
  razon?: string;
  email?: string;
+ isLocked?: boolean;
 }
 
 
@@ -37,6 +38,9 @@ export class PrincipalPageComponent implements OnInit {
  sentenciaEncontrada: Sentencia | null = null;
  mensajeBusqueda: string = '';
  mostrarMensajeBusqueda: boolean = false;
+ showEditarEstadoOverlay = false;
+ nuevoEstado: 'aceptar' | 'negar' | null = null;
+ sentenciaEditar: Sentencia | null = null;
 
  constructor(
    private afAuth: AngularFireAuth,
@@ -261,20 +265,89 @@ async buscarPorNumeroProceso() {
   }
 
   try {
-    const querySnapshot = await this.firestore.collection('sentencias')
+    // Primero buscar la sentencia
+    const sentenciaSnapshot = await this.firestore.collection('sentencias')
       .ref.where('numero_proceso', '==', numeroProceso)
       .get();
 
-    if (querySnapshot.empty) {
+    if (sentenciaSnapshot.empty) {
       this.sentenciaEncontrada = null;
       this.mostrarMensaje('No se encontró ninguna sentencia con ese número de proceso');
-    } else {
-      this.sentenciaEncontrada = querySnapshot.docs[0].data() as Sentencia;
-      this.mostrarMensaje('Sentencia encontrada');
+      return;
     }
+
+    // Obtener los datos de la sentencia
+    const sentenciaData = sentenciaSnapshot.docs[0].data() as Sentencia;
+
+    // Buscar el estado de bloqueo
+    const lockDoc = await this.firestore.doc(`locks/${numeroProceso}`).get().toPromise();
+    const lockData = lockDoc?.data() as { locked?: boolean } | undefined;
+    
+    // Asignar el estado de bloqueo
+    this.sentenciaEncontrada = {
+      ...sentenciaData,
+      isLocked: lockData?.locked || false
+    };
+
+    this.mostrarMensaje('Sentencia encontrada');
+
   } catch (error) {
     console.error('Error al buscar la sentencia:', error);
     this.mostrarMensaje('Error al buscar la sentencia');
   }
 }
+
+// Método para obtener el texto del estado de bloqueo
+getEstadoBloqueo(sentencia: Sentencia): string {
+  return sentencia.isLocked ? 'Finalizada' : 'En proceso';
+}
+
+abrirEdicionEstado(sentencia: Sentencia) {
+  this.sentenciaEditar = sentencia;
+  this.nuevoEstado = sentencia.estado ?? null;
+  this.razonTexto = sentencia.razon || '';
+  this.showEditarEstadoOverlay = true;
+}
+
+// Method to save edited status
+async guardarEdicionEstado() {
+  if (!this.sentenciaEditar || !this.nuevoEstado || !this.razonTexto.trim()) {
+    console.error('Falta información necesaria para actualizar el estado');
+    return;
+  }
+
+  try {
+    const querySnapshot = await this.firestore.collection('sentencias')
+      .ref.where('numero_proceso', '==', this.sentenciaEditar.numero_proceso)
+      .limit(1)
+      .get();
+
+    if (!querySnapshot.empty) {
+      const docSnapshot = querySnapshot.docs[0];
+      await docSnapshot.ref.update({
+        estado: this.nuevoEstado,
+        razon: this.razonTexto.trim(),
+      });
+
+      this.closeEditarEstadoOverlay();
+      console.log('Estado actualizado exitosamente');
+    }
+  } catch (error) {
+    console.error('Error al actualizar el estado:', error);
+  }
+}
+
+// Method to close edit status overlay
+closeEditarEstadoOverlay() {
+  this.showEditarEstadoOverlay = false;
+  this.sentenciaEditar = null;
+  this.nuevoEstado = null;
+  this.razonTexto = '';
+}
+
+// Method to cancel edit status
+cancelarEdicionEstado() {
+  this.closeEditarEstadoOverlay();
+}
+
 }
