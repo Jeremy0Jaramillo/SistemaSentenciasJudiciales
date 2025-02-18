@@ -23,6 +23,7 @@ import { MsalModule, MsalService, MsalGuard, MsalInterceptor, MSAL_INSTANCE, Msa
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IPublicClientApplication, InteractionType, PublicClientApplication, BrowserCacheLocation, LogLevel  } from '@azure/msal-browser';
 import { AuthService } from './services/auth.service';
+import { FooterComponent } from "./components/footer/footer.component";
 
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
@@ -96,16 +97,16 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   ],
   imports: [
     MsalModule.forRoot(new PublicClientApplication({
-      auth: {
-        clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25',
-        authority: `https://login.microsoftonline.com/6eeb49aa-436d-43e6-becd-bbdf79e5077d`,
-        redirectUri: 'http://localhost:4200' // Tu URL de redireccionamiento
-    },
-    cache: {
-      cacheLocation: 'localStorage',
-      storeAuthStateInCookie: true
-    }
-  }), msalGuardConfig, msalInterceptorConfig),
+        auth: {
+            clientId: 'aaad0f75-155d-4ad2-9463-03586ed64f25',
+            authority: `https://login.microsoftonline.com/6eeb49aa-436d-43e6-becd-bbdf79e5077d`,
+            redirectUri: 'http://localhost:4200' // Tu URL de redireccionamiento
+        },
+        cache: {
+            cacheLocation: 'localStorage',
+            storeAuthStateInCookie: true
+        }
+    }), msalGuardConfig, msalInterceptorConfig),
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase), // Initialize AngularFireModule here
@@ -114,8 +115,9 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     FormsModule,
     AngularFirestoreModule,
     RouterModule,
-    MsalModule
-  ],
+    MsalModule,
+    FooterComponent
+],
   providers: [
     {
       provide: MSAL_INSTANCE,
