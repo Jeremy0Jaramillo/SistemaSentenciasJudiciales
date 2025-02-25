@@ -208,8 +208,7 @@ export class AnalisisComponent implements OnInit {
     this.normativas.push(this.fb.group({
       pregunta: ['', Validators.required],
       respuesta: ['', Validators.required],
-      valida: ['', Validators.required],
-      calificacion: [''],
+      calificacion: ['No Calificado'],
       retroalimentacion: [''],
       showCalificar: [false]
     }));
@@ -220,15 +219,14 @@ export class AnalisisComponent implements OnInit {
   removeNormativa(index: number) {
     this.normativas.removeAt(index);
     this.mostrarRetroalimentacion.splice(index, 1);
-    this.normativas.removeAt(index);
-    this.onFormChange()
+    this.onFormChange();
   }
+  
 
   addFactica() {
     this.facticas.push(this.fb.group({
       pregunta: ['', Validators.required],
       respuesta: ['', Validators.required],
-      valida: ['', Validators.required],
       calificacion: [''],
       retroalimentacion: [''],
       showCalificar: [false]
@@ -239,9 +237,8 @@ export class AnalisisComponent implements OnInit {
 
   removeFactica(index: number) {
     this.facticas.removeAt(index);
-    this.normativas.removeAt(index);
     this.mostrarRetroalimentacion.splice(index, 1);
-    this.onFormChange()
+    this.onFormChange();
   }
 
   toggleRetroalimentacionPregunta(event: Event) {

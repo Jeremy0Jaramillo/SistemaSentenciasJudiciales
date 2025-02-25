@@ -24,14 +24,11 @@
 
   .sentencias {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    /* Columnas automáticas con mínimo de 300px */
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
-    /* Espacio entre cada sentencia */
     padding: 20px;
-    /* Ajuste de padding según necesidad */
     justify-items: center;
-    /* Centrar elementos horizontalmente */
+    
   }
 
   .sent {
@@ -40,7 +37,9 @@
     display: flex;
     flex-direction: column;
     padding: 0px 0px 10px;
-    width: 100%;
+    width: 350px; /* Ancho fijo para todas las tarjetas */
+    min-height: 300px; /* Altura mínima para todas las tarjetas */
+    justify-content: space-between;
   }
 
   .sent .more {
@@ -69,6 +68,8 @@
     font-weight: 600;
     line-height: normal;
     margin: 0px 10px 0px 20px;
+    flex: 1; /* Permite que esta sección ocupe el espacio disponible */
+    overflow: hidden; 
   }
 
   .text-dat {
@@ -78,6 +79,10 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+  }
+
+  .more, .bttn-acetp, .bttn-status {
+    margin-top: auto;
   }
 
   .search-bar {
