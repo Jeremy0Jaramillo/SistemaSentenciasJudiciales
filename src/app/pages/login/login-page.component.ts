@@ -106,6 +106,10 @@ export class LoginPageComponent implements OnInit, OnDestroy {
           if (userData.role === 'docente') {
             currentRole = 'docente';
           }
+
+           if (userData.role === 'administrador') {
+            currentRole = 'administrador';
+          }
   
           // Recopilar IDs de usuarios a eliminar (excluyendo el usuario de Azure)
           if (doc.id !== azureUserId) {
