@@ -60,6 +60,11 @@ html, body {
     margin-bottom: 20px;
 }
 
+.bttnlo{
+    display: flex;
+    justify-content: center;
+}
+
 .label-login {
     color: rgba(0, 0, 0, 0.50);
     font-family: Poppins;

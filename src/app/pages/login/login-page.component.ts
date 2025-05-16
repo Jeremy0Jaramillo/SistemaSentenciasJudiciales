@@ -158,23 +158,54 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   }
 
 
-  register(name: string, email: string, password: string) {
-    this.afAuth.createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        if (userCredential.user) {
-          this.firestore.collection('users').doc(userCredential.user.uid).set({
-            name: name,
-            email: userCredential.user.email,
-            role: 'estudiante'
-          });
-          sessionStorage.setItem('sessionToken', 'active');
-        }
-      })
-      .catch(error => {
-        // Handle registration error
-        // console.error('Registration error:', error);
+async register(name: string, email: string, password: string) {
+  try {
+    // Buscar si ya existe un documento con este correo
+    const querySnapshot = await this.firestore.collection('users', ref => ref.where('email', '==', email)).get().toPromise();
+
+    let existingUserData: UserData | null = null;
+    let existingDocId: string | null = null;
+
+    if (querySnapshot && !querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      existingUserData = doc.data() as UserData;
+      existingDocId = doc.id;
+    }
+
+    // Crear el usuario en Firebase Auth
+    const userCredential = await this.afAuth.createUserWithEmailAndPassword(email, password);
+    const newUserId = userCredential.user?.uid;
+
+    if (!newUserId) throw new Error("No se pudo obtener el UID del nuevo usuario.");
+
+    // Si ya existe un documento con ese correo
+    if (existingUserData && (existingUserData.role === 'docente' || existingUserData.role === 'administrador')) {
+      // Solo guardar el UID con el mismo rol y nombre ya registrado (no lo sobrescribimos)
+      await this.firestore.collection('users').doc(newUserId).set({
+        name: existingUserData.name,
+        email: email,
+        role: existingUserData.role
+      }, { merge: true });
+    } else {
+      // Nuevo usuario o no es docente/admin → crear como estudiante
+      await this.firestore.collection('users').doc(newUserId).set({
+        name: name.toUpperCase(),
+        email: email,
+        role: 'estudiante'
       });
+    }
+
+    // Guardar sesión y redirigir
+    sessionStorage.setItem('sessionToken', 'active');
+    this.router.navigate(['/principal']);
+
+  } catch (error) {
+    console.error('Error en el registro:', error);
+    this.alerta = true;
+    this.alertaMessage = 'No se pudo registrar. Verifica tu información o si el correo ya está en uso.';
   }
+}
+
 
   toggleForm(event: Event) {
     event.preventDefault();

@@ -13,44 +13,46 @@
         </div>
         
         <!-- Formulario de inicio de sesión -->
-        <!-- <form *ngIf="isLogin" class="txt" (ngSubmit)="login(email.value, password.value)">
+        <form *ngIf="isLogin" class="txt" (ngSubmit)="login(email.value, password.value)">
           <label class="label-login" for="email">Email:</label> <br>
           <input class="input-login" type="email" #email required> <br><br>
           <label class="label-login" for="password">Contraseña:</label> <br>
           <input class="input-login" type="password" #password required> <br><br>
-          <button class="bttn-stnd" type="submit">Iniciar sesión</button> -->
+          <div class="bttnlo">
+            <button class="bttn-stnd" type="submit">Iniciar sesión</button>
+          </div>
           
           <!-- Botón de Azure -->
-          <!-- <div class="separator">
+          <div class="separator">
             <span>o</span>
-          </div> -->
+          </div>
           <button type="button" class="bttn-azure" (click)="loginWithAzure()">
             <i class="fa-brands fa-microsoft">
             </i> 
             Iniciar sesión con UTPL
           </button>
-        <!-- </form> -->
+        </form>
         
         <!-- Formulario de registro -->
-        <!-- <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)"> -->
+        <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)">
           <!-- Resgistro de nombre y apellido -->
-          <!-- <label class="label-login" for="regName">Nombres y Apellidos:</label> <br> -->
-          <!-- <input class="input-login" type="text" #regName required> <br><br> -->
+          <label class="label-login" for="regName">Nombres y Apellidos:</label> <br>
+          <input class="input-login" type="text" #regName required> <br><br>
           <!-- Registrar correo -->
-          <!-- <label class="label-login" for="regEmail">Email:</label> <br> -->
-          <!-- <input class="input-login" type="email" #regEmail required> <br><br> -->
+          <label class="label-login" for="regEmail">Email:</label> <br>
+          <input class="input-login" type="email" #regEmail required> <br><br>
           <!-- Registrar Contraseña -->
-          <!-- <label class="label-login" for="regPassword">Contraseña:</label> <br> -->
-          <!-- <input class="input-login" type="password" #regPassword required> <br><br> -->
+          <label class="label-login" for="regPassword">Contraseña:</label> <br>
+          <input class="input-login" type="password" #regPassword required> <br><br>
           <!-- Boton registro -->
-          <!-- <button class="bttn-stnd" type="submit">Registrarse</button> -->
-        <!-- </form> -->
+          <button class="bttn-stnd" type="submit">Registrarse</button>
+        </form>
         
-        <!-- <a href="" class="termycon">Términos y Condiciones</a>
+        <a href="" class="termycon">Términos y Condiciones</a>
         <p class="change-form">
           {{ isLogin ? '¿No te has registrado?' : '¿Ya tienes una cuenta?' }}
           <a href="#" (click)="toggleForm($event)">{{ isLogin ? 'Regístrate' : 'Inicia sesión' }}</a>
-        </p> -->
+        </p>
       </div>
     </div>
     <img src="../../../assets/images/logo-inicio.png" alt="" class="img-sentencia">
