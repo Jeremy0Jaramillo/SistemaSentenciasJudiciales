@@ -2,8 +2,21 @@
 
 <div class="titulo">
   <h2>Sistema Jurídico Avanzado de Sentencias de Primer Nivel en Ecuador</h2>
-  <button *ngIf="userRole !== 'docente'" class="bttn-stnd" (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
+  <button *ngIf="userRole == 'estudiante'" class="bttn-stnd" (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
 </div>
+
+<!-- Solo visible para el administrador -->
+<div *ngIf="userRole === 'administrador'" class="admin-panel">
+  <label for="csvInput" class="btn-cargar-docentes">Cargar docentes CSV</label>
+  <input type="file" id="csvInput" (change)="onFileSelected($event)" accept=".csv" style="display: none;">
+</div>
+<div *ngIf="alert" 
+     [ngClass]="{'success-notification': alertype === 'success', 'error-notification': alertype === 'error'}" 
+     class="notification-box">
+  {{ alert }}
+</div>
+
+
 
 <div class="search-bar">
   <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"

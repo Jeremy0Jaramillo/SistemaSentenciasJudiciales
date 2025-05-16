@@ -467,3 +467,54 @@
     line-height: 24px;
     color: #000000;
   }	
+
+  .notification-box {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  font-family: Poppins;
+}
+
+.success-notification {
+  background-color: #4caf50; /* verde */
+
+}
+
+.error-notification {
+  background-color: #f44336; /* rojo */
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeout {
+  from { opacity: 1; transform: translateY(0);}
+  to { opacity: 0; transform: translateY(-10px);}
+}
+
+.btn-cargar-docentes{
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  background-color: #172D5A;
+  padding: 10px;
+  color: white;
+  border-radius: 10px;
+}
+
+.admin-panel{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
+}

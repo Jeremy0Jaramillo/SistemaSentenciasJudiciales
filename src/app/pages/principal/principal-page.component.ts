@@ -4,6 +4,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { Observable, combineLatest, of, BehaviorSubject } from 'rxjs';
 import { switchMap, map, startWith } from 'rxjs/operators';
+import * as Papa from 'papaparse'; // Asegúrate de instalar papaparse con `npm install papaparse`
+
 
 interface Sentencia {
  numero_proceso: string;
@@ -41,6 +43,10 @@ export class PrincipalPageComponent implements OnInit {
  showEditarEstadoOverlay = false;
  nuevoEstado: 'aceptar' | 'negar' | null = null;
  sentenciaEditar: Sentencia | null = null;
+ archivoSeleccionado: File | null = null;
+ docentesCargados: { nombre: string; email: string }[] = [];
+  alert: string = '';
+  alertype: 'success' | 'error' = 'success';
 
  constructor(
    private afAuth: AngularFireAuth,
@@ -349,5 +355,113 @@ closeEditarEstadoOverlay() {
 cancelarEdicionEstado() {
   this.closeEditarEstadoOverlay();
 }
+
+onFileSelected(event: any) {
+    const input = event.target;
+    const file = input.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (result: { data: { email: string; name: string; }[]; }) => {
+        const rows = result.data as { email: string; name: string }[];
+
+        for (const row of rows) {
+          const email = row.email?.trim().toLowerCase();
+          const name = row.name?.trim().toUpperCase();
+
+          if (!email || !name) continue;
+
+          const userQuery = await this.firestore.collection('users', ref =>
+            ref.where('email', '==', email)
+          ).get().toPromise();
+
+          if (userQuery?.empty) {
+            await this.firestore.collection('users').add({
+              email,
+              name,
+              role: 'docente'
+            });
+          }
+        }
+
+        this.showNotification('Carga de docentes completa.', 'success');
+        input.value = '';
+      },
+      error: (err: any) => {
+        console.error('Error al procesar el CSV:', err);
+        this.showNotification('Error al procesar el archivo CSV.', 'error');
+        input.value = '';
+      }
+    });
+  }
+
+  showNotification(message: string, type: 'success' | 'error') {
+    this.alert = message;
+    this.alertype = type;
+    setTimeout(() => {
+      this.alert = '';
+    }, 4000); // Se oculta después de 4 segundos
+  }
+
+
+procesarArchivo(): void {
+  if (!this.archivoSeleccionado) return;
+
+  const reader = new FileReader();
+
+  reader.onload = (e: any) => {
+    const contenido = e.target.result as string;
+
+    // Si es un CSV simple, separado por comas: nombre,email
+    const lineas = contenido.split('\n');
+    this.docentesCargados = [];
+
+    for (let linea of lineas) {
+      const [nombre, email] = linea.trim().split(',');
+      if (nombre && email) {
+        this.docentesCargados.push({ nombre, email });
+
+        // Si deseas guardar directamente en Firebase:
+        /*
+        this.firestore.collection('docentes').add({ nombre, email }).catch(err => {
+          console.error('Error al guardar en Firestore:', err);
+        });
+        */
+      }
+    }
+  };
+
+  reader.readAsText(this.archivoSeleccionado);
+}
+
+async cargarUsuariosDesdeCSV(usuarios: { nombre: string; email: string }[]) {
+  const batch = this.firestore.firestore.batch(); // Lote para optimización
+
+  for (const usuario of usuarios) {
+    const docRef = this.firestore.collection('users').doc(usuario.email).ref;
+
+    const existingDoc = await docRef.get();
+    if (!existingDoc.exists) {
+      // Solo agregar si no existe
+      batch.set(docRef, {
+        name: usuario.nombre,
+        email: usuario.email,
+        role: 'docente',
+      });
+    } else {
+      console.log(`El usuario con email ${usuario.email} ya existe, se omite.`);
+    }
+  }
+
+  try {
+    await batch.commit();
+    console.log('Carga finalizada sin duplicados');
+  } catch (error) {
+    console.error('Error al guardar usuarios desde CSV:', error);
+  }
+}
+
 
 }
