@@ -88,17 +88,16 @@ export class SentenciasPageComponent implements OnInit {
 
   const checkNumeroProceso = new Promise<void>((resolve) => {
     this.firestore.collection('sentencias', ref => ref.where('numero_proceso', '==', this.sentencia.numero_proceso))
-      .get()
-      .subscribe(querySnapshot => {
-        if (querySnapshot.size > 0) {
-          this.alertas.push('El número de proceso ya existe.');
-        }
-        resolve();
-      }, error => {
-        console.error('Error checking for duplicate numero_proceso: ', error);
-        this.alertas.push('Error al verificar el número de proceso.');
-        resolve();
-      });
+  .get()
+  .subscribe(querySnapshot => {
+    const yaExisteAprobada = querySnapshot.docs.some(doc => (doc.data() as any)['estado'] === 'aceptar');
+
+    if (yaExisteAprobada) {
+      this.alertas.push('El número de proceso ya fue aprobado y no se puede volver a subir.');
+    }
+    resolve();
+  });
+
   });
 
   Promise.all([checkArchivo, checkNumeroProceso]).then(() => {
