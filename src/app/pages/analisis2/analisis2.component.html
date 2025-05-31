@@ -15,15 +15,16 @@
   </div>
 
   <h3 class="titulo-analisis">Análisis de las argumentaciones de la sentencia</h3>
+  <p style="font-family: Poppins;"> Todas las preguntas marcadas con un asterisco (*) son obligatorias. </p>
 
     <div class="analisis" *ngFor="let section of [
-      {id: 'narracion_hechos', title: '1. Narración de los hechos'},
-      {id: 'problema_juridico', title: '2. Problema jurídico'},
-      {id: 'cuestiones_subcuestiones', title: '3. Cuestiones o subcuestiones para solucionar el problema'},
-      {id: 'respuesta_cuestiones', title: '4. Respuesta a las cuestiones'},
-      {id: 'ratio_obiter', title: '5. Ratio decidendi y obiter dictum'},
-      {id: 'solucion_problema', title: '6. Solución al problema'},
-      {id: 'decision', title: '7. Decisión'}
+      {id: 'narracion_hechos', title: '1. Narración de los hechos *'},
+      {id: 'problema_juridico', title: '2. Problema jurídico *'},
+      {id: 'cuestiones_subcuestiones', title: '3. Cuestiones o subcuestiones para solucionar el problema *'},
+      {id: 'respuesta_cuestiones', title: '4. Respuesta a las cuestiones *'},
+      {id: 'ratio_obiter', title: '5. Ratio decidendi y obiter dictum *'},
+      {id: 'solucion_problema', title: '6. Solución al problema *'},
+      {id: 'decision', title: '7. Decisión *'}
     ]; let i = index">
     <div *ngIf="!isDocente && analisis2Form.get('saved')?.value" class="calificaciones">
       <div class="calificacion-display" [ngClass]="{
@@ -36,7 +37,7 @@
     </div>
       <app-caja-texto [id]="section.id" [formControlName]="section.id" [titulo]="section.title">
       </app-caja-texto>
-      <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(section.id)">Calificar</button>
+      <button class="rate" *ngIf="isDocente" type="button" (click)="toggleCalificar(section.id)">Calificar *</button>
       <div *ngIf="calificarState[section.id]">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
@@ -48,7 +49,7 @@
         </div>
         <div>
           <app-caja-texto [formControlName]="section.id + '_retroalimentacion'"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
+            [titulo]="'Retroalimentación *'"></app-caja-texto>
         </div>
       </div>
 

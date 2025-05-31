@@ -17,7 +17,9 @@
     <div>
         <div class="checkbox-class">
             <h2 class="titulo">MOTIVACIÓN CORRECTA</h2>
-            <h3 class="tittle-check">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA</h3>
+    <p style="font-family: Poppins;"> Todas las preguntas marcadas con un asterisco (*) son obligatorias. </p>
+
+            <h3 class="tittle-check">SEÑALE LA MATERIA CORRESPONDIENTE DE LA SENTENCIA *</h3>
 
             <h5 class="description">Este cuestionario aplica para jueces de primer nivel en las materias de:</h5>
             <div class="options">
@@ -170,7 +172,7 @@
             </div>
 
             <button class="rate" *ngIf="isDocente" type="button"
-                (click)="toggleCalificar('sentenceSubject')">Calificar</button>
+                (click)="toggleCalificar('sentenceSubject')">Calificar *</button>
             <div *ngIf="calificarState['sentenceSubject']">
                 <div class="bttns-rate">
                     <button class="correct-button" type="button"
@@ -186,7 +188,7 @@
                 </div>
                 <div>
                     <app-caja-texto [formControlName]="'sentenceSubject_retroalimentacion'"
-                        [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación'"></app-caja-texto>
+                        [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación *'"></app-caja-texto>
                 </div>
             </div>
         </div>
@@ -221,7 +223,7 @@
                             <div class="calificacion-display" [ngClass]="{
                                 'calificacion-correcta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Correcto',
                                 'calificacion-incorrecta': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'Incorrecto',
-                                'calificacion-no-calificado': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'No Calificado',                           }">
+                                'calificacion-no-calificado': getCalificacionValue('section' + sectionIndex + '_calificacion') === 'No Calificado',}">
                                 {{ getCalificacionValue('section' + sectionIndex + '_calificacion') }}
                             </div>
                         </div>
@@ -237,7 +239,7 @@
                 <!-- Boton de calificar y opcion de retroalimentacion que da el docente -->
                 <ng-container *ngIf="isDocente">
                     <button class="rate" type="button" (click)="toggleCalificar2('section' + sectionIndex)">
-                        Calificar
+                        Calificar *
                     </button>
                     <div *ngIf="calificarState['section' + sectionIndex]">
                         <div class="bttns-rate">
@@ -257,7 +259,7 @@
                         </div>
                         <div>
                             <app-caja-texto [formControlName]="'section' + sectionIndex + '_retroalimentacion'"
-                                [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación de la Sección'">
+                                [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación *'">
                             </app-caja-texto>
                         </div>
                     </div>
@@ -271,13 +273,13 @@
                         defecto) por
                         un juez de
                         segunda
-                        instancia a través de la presentación de un recurso de apelación.</label>
+                        instancia a través de la presentación de un recurso de apelación *.</label>
                     <input type="radio" name="judgeAnalysis" value="Si" formControlName="judgeAnalysis"> Si
                     <input type="radio" name="judgeAnalysis" value="No" formControlName="judgeAnalysis"> No
                 </div>
                 <div>
                     <app-caja-texto name="reasonsNormativa" formControlName="reasonsNormative"
-                        [titulo]="'Justifique su respuesta (500 palabras)'">
+                        [titulo]="'Justifique su respuesta (500 palabras) *'">
                     </app-caja-texto>
                     <!-- Vista de la retroalimentacion del estudiante -->
                     <div *ngIf="!isDocente && getRetroalimentacionValue('reasonsNormative_retroalimentacion')">
@@ -293,7 +295,7 @@
                 </div>
                 <!-- Opcion de calificar y retroalimentacion que da el docente -->
                 <button class="rate" *ngIf="isDocente" type="button"
-                    (click)="toggleCalificar('reasonsNormative')">Calificar</button>
+                    (click)="toggleCalificar('reasonsNormative')">Calificar *</button>
                 <div *ngIf="calificarState['reasonsNormative']">
                     <div class="bttns-rate">
                         <button class="correct-button"
@@ -325,7 +327,7 @@
             <div class="likert-table">
                 <div>
                     <app-caja-texto name="finalConclusion" formControlName="finalConclusion"
-                        [titulo]="'Conclusión final'">
+                        [titulo]="'Resultados y Discusión *'">
                     </app-caja-texto>
                     <div *ngIf="!isDocente && getRetroalimentacionValue('finalConclusion_retroalimentacion')">
                         <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -339,7 +341,7 @@
                     </div>
                 </div>
                 <button class="rate" *ngIf="isDocente" type="button"
-                    (click)="toggleCalificar('finalConclusion')">Calificar</button>
+                    (click)="toggleCalificar('finalConclusion')">Calificar *</button>
                 <div *ngIf="calificarState['finalConclusion']">
                     <div class="bttns-rate">
                         <button class="correct-button"
@@ -353,7 +355,7 @@
                     </div>
                     <div>
                         <app-caja-texto [formControlName]="'finalConclusion_retroalimentacion'"
-                            [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación'"></app-caja-texto>
+                            [disabled]="evaluacion2Form.disabled" [titulo]="'Retroalimentación *'"></app-caja-texto>
                     </div>
                 </div>
                 <div *ngIf="!isDocente && evaluacion2Form.get('saved')?.value" class="calificaciones">

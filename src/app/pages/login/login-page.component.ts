@@ -20,6 +20,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   isLogin = true;
   alertaMessage = '';
   private authStateSubscription: Subscription | undefined;
+  mostrarFormAlternativo: boolean = false;
 
   
   constructor(

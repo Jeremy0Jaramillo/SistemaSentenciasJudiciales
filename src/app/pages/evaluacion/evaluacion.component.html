@@ -11,19 +11,16 @@
   <form [formGroup]="evaluacionForm" (ngSubmit)="submitForm()">
 
   <h3 class="titulo-analisis">Cuestionarios de estándar de suficiencia de la motivación </h3>
+  <p style="font-family: Poppins;"> Todas las preguntas marcadas con un asterisco (*) son obligatorias. </p>
 
     <div *ngIf="evaluacionForm.disabled" class="locked-message">
       Esta sentencia está bloqueada y no puede ser editada.
   </div>
   
     <div>
-      <h3 class="titulo" for="motivationType">Tipo de Motivación</h3>
-      <h5 class="titulo">En caso de identificar deficiencia motivacional en la sentencia, seleccione solamente uno de
-        los siguientes tipos</h5>
-
         <div>
           <h3 class="titulo">Tipo de motivación</h3>
-          <h5 class="titulo">Por favor, seleccione una opción</h5>
+                <h5 class="titulo">Elija el tipo de deficiencia motivacional y complete lo solicitado en cada uno *</h5>
           <div class="options">
             <div>
               <input type="radio" id="nonexistinence" name="motivationType" value="nonexistinence" formControlName="motivationType">
@@ -40,7 +37,7 @@
           </div>
         </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('motivationType')">Calificar</button>
+        (click)="toggleCalificar('motivationType')">Calificar *</button>
       <div *ngIf="calificarState['motivationType']">
         <div class="bttns-rate">
           <button class="correct-button"
@@ -56,7 +53,7 @@
         </div>
         <div>
           <app-caja-texto formControlName="motivationType_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
+            [titulo]="'Retroalimentación *'"></app-caja-texto>
         </div>
       </div>
       <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -76,8 +73,9 @@
     <!-- Fundamentacion normativa en formulario de inexistencia -->
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
+        <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa? *</h4>
         <label>
+        <h4 class="titulo-eva">Responda si/no *</h4>
           <input type="radio" 
                  [value]="'Si'" 
                  [checked]="isRadioSelected('nonexistinence.lackFoundationNormative', 'Si')"
@@ -93,7 +91,7 @@
         </label>      </div>
       <div>
         <app-caja-texto name="reasonsNormative" [disabled]="evaluacionForm.disabled" formControlName="reasonsNormative"
-          [titulo]="'¿Por qué?'">
+          [titulo]="'¿Por qué? *'">
         </app-caja-texto>
       </div>
       <div *ngIf="!isDocente && getRetroalimentacionValue('nonexistinence.normative_retroalimentacion')">
@@ -107,7 +105,7 @@
         </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar</button>
+        (click)="toggleCalificar('nonexistinence.reasonsNormative')">Calificar *</button>
       <div *ngIf="calificarState['nonexistinence.reasonsNormative']">
         <div class="bttns-rate">
           <button class="correct-button"
@@ -122,7 +120,7 @@
         <div>
           <div>
             <app-caja-texto formControlName="normative_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
       </div>
@@ -139,8 +137,9 @@
       <!-- Fundamentacion fatica en formulario de inexistencia -->
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
+        <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica? *</h4>
         <label>
+          <h4 class="titulo-eva">Responda si/no *</h4>
           <input type="radio" 
                  [value]="'Si'" 
                  [checked]="isRadioSelected('lackFoundationFactual', 'Si')" 
@@ -157,7 +156,7 @@
             </div>
       <div>
         <app-caja-texto name="reasonsFactual" [disabled]="evaluacionForm.disabled" formControlName="reasonsFactual"
-          [titulo]="'¿Por qué?'">
+          [titulo]="'¿Por qué? *'">
         </app-caja-texto>
       </div>
       <div *ngIf="!isDocente && getRetroalimentacionValue('nonexistinence.factual_retroalimentacion')">
@@ -171,7 +170,7 @@
         </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar</button>
+        (click)="toggleCalificar('nonexistinence.reasonsFactual')">Calificar *</button>
       <div *ngIf="calificarState['nonexistinence.reasonsFactual']">
         <div class="bttns-rate">
           <button class="correct-button"
@@ -182,7 +181,7 @@
             (click)="selectButton('nonexistinence', 'factual_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
-          <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
+          <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación *'"></app-caja-texto>
         </div>
       </div>
       <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -197,8 +196,9 @@
       <hr>
       <!-- Señalar si la sentencia deberia ser analizada en formulario de inexistencia -->
       <div>
-        <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
+        <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación *</h3>
         <label>
+          <h4 class="titulo-eva">Responda si/no *</h4>
           <input type="radio" 
                  [value]="'Si'" 
                  [checked]="isRadioSelected('lackMotivation', 'Si')" 
@@ -215,11 +215,11 @@
       
       </div>
       <div>
-        <app-caja-texto formControlName="reasonsMotivation" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+        <app-caja-texto formControlName="reasonsMotivation" [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
         </app-caja-texto>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar</button>
+        (click)="toggleCalificar('nonexistinence.reasonsMotivation')">Calificar *</button>
       <div *ngIf="calificarState['nonexistinence.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
@@ -230,7 +230,7 @@
             (click)="selectButton('nonexistinence', 'motivation_calificacion', 'Incorrecto')">Incorrecto</button>
         </div>
         <div>
-          <app-caja-texto formControlName="motivation_retroalimentacion" [titulo]="'Retroalimentación'">
+          <app-caja-texto formControlName="motivation_retroalimentacion" [titulo]="'Retroalimentación *'">
           </app-caja-texto>
         </div>
       </div>
@@ -260,7 +260,7 @@
       <!-- Fundamentacion normatica en insuficiencia -->
       <h3 class="titulo">Fundamentación normativa</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa?</h4>
+        <h4 class="titulo-eva">¿Carece totalmente de fundamentación normativa? *</h4>
         <label>
           <input type="radio" 
                  [value]="'Si'" 
@@ -278,7 +278,7 @@
       </div>
       <div>
         <app-caja-texto name="reasonsNormative" formControlName="reasonsNormative" [disabled]="evaluacionForm.disabled"
-          [titulo]="'¿Por qué?'"></app-caja-texto>
+          [titulo]="'¿Por qué? *'"></app-caja-texto>
         <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.normative_retroalimentacion')">
           <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
             {{ mostrarRetroalimentacion['sentenceSubject'] ? 'Ocultar' : 'Ver' }} retroalimentación
@@ -291,7 +291,7 @@
         </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('insufficiency.reasonsNormative')">Calificar</button>
+        (click)="toggleCalificar('insufficiency.reasonsNormative')">Calificar *</button>
       <div *ngIf="calificarState['insufficiency.reasonsNormative']">
         <div class="bttns-rate">
           <button class="correct-button"
@@ -306,7 +306,7 @@
           </button>
         </div>
         <div>
-          <app-caja-texto formControlName="normative_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
+          <app-caja-texto formControlName="normative_retroalimentacion" [titulo]="'Retroalimentación *'"></app-caja-texto>
         </div>
       </div>
       <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -322,7 +322,7 @@
       <!-- Fundamentacion fatica en inuficiencia -->
       <h3 class="titulo">Fundamentación fáctica</h3>
       <div>
-        <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica?</h4>
+        <h4 class="titulo-eva">¿Carece totalmente de fundamentación fáctica? *</h4>
         <label>
           <input type="radio" 
                  [value]="'Si'" 
@@ -340,7 +340,7 @@
       </div>
       <div>
         <app-caja-texto name="reasonsFactual" formControlName="reasonsFactual" [disabled]="evaluacionForm.disabled"
-          [titulo]="'¿Por qué?'">
+          [titulo]="'¿Por qué? *'">
         </app-caja-texto>
         <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.factual_retroalimentacion')">
           <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -354,7 +354,7 @@
         </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('insufficiency.reasonsFactual')">Calificar</button>
+        (click)="toggleCalificar('insufficiency.reasonsFactual')">Calificar *</button>
       <div *ngIf="calificarState['insufficiency.reasonsFactual']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
@@ -366,7 +366,7 @@
         </div>
         <div>
           <div>
-            <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación'"></app-caja-texto>
+            <app-caja-texto formControlName="factual_retroalimentacion" [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
       </div>
@@ -382,7 +382,7 @@
       <hr>
       <!-- Deficit de motivacion en insuficiencia -->
       <div>
-        <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h3>
+        <h3 class="titulo">Señale si la sentencia analizada debe ser anulada por déficit de motivación *</h3>
         <label>
           <input type="radio" 
                  [value]="'Si'" 
@@ -400,7 +400,7 @@
             </div>
       <div>
         <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
-          [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+          [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
         </app-caja-texto>
         <div *ngIf="!isDocente && getRetroalimentacionValue('insufficiency.motivation_retroalimentacion')">
           <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -414,7 +414,7 @@
         </div>
       </div>
       <button class="rate" *ngIf="isDocente" type="button"
-        (click)="toggleCalificar('insufficiency.reasonsMotivation')">Calificar</button>
+        (click)="toggleCalificar('insufficiency.reasonsMotivation')">Calificar *</button>
       <div *ngIf="calificarState['insufficiency.reasonsMotivation']">
         <div class="bttns-rate">
           <button class="correct-button" type="button"
@@ -426,7 +426,7 @@
         </div>
         <div>
           <app-caja-texto formControlName="motivation_retroalimentacion"
-            [titulo]="'Retroalimentación'"></app-caja-texto>
+            [titulo]="'Retroalimentación *'"></app-caja-texto>
         </div>
       </div>
 
@@ -445,15 +445,15 @@
       <h2 class="titulo">Apariencia</h2>
       <h5 class="titulo">En caso de señalar Sí en este tipo de deficiencia motivacional, proceda a identificar uno de
         los vicios
-        motivacionales de la apariencia que constan a continuación.</h5>
-        <!-- Razón de la apariencia -->
+        motivacionales de la.</h5>
+        <!-- Razón de la apariencia --> apariencia que constan a continuación
         <app-caja-texto name="appearanceReason" formControlName="appearanceReason"
-        [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+        [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
       </app-caja-texto>
          <!-- Opciones de la apariencia -->
       <div class="appearance-options">
         <h3 class="titulo">Vicios motivacionales</h3>
-        <h5 class="titulo ">En caso de identificar vicios motivacionales, seleccione solamente uno de ellos</h5>
+        <h5 class="titulo ">Elija el tipo de vicio motivacional y complete lo solicitado en cada uno *</h5>
         <div class="options">
           <input type="radio" name="motivationalHabit" value="incoherence" formControlName="motivationalHabit">
           Incoherencia
@@ -465,7 +465,7 @@
           Incongruencia
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.motivationalHabit')">Calificar</button>
+          (click)="toggleCalificar('appearance.motivationalHabit')">Calificar *</button>
         <div *ngIf="calificarState['appearance.motivationalHabit']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -494,7 +494,7 @@
         <h3 class="titulo">Incoherencia</h3>
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
-          <h4 class="titulo-eva">¿Existe incoherencia lógica normativa?</h4>
+          <h4 class="titulo-eva">¿Existe incoherencia lógica normativa? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -512,7 +512,7 @@
                 </div>
         <div>
           <app-caja-texto name="reasonsLogicaNormative" formControlName="reasonsLogicaNormative"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.logicaNormative_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -526,7 +526,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
+          (click)="toggleCalificar('appearance.incoherence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -540,7 +540,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="logicaNormative_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -554,7 +554,7 @@
         </div>
 
         <div>
-          <h4 class="titulo-eva">¿Existe incoherencia decisional normativa?</h4>
+          <h4 class="titulo-eva">¿Existe incoherencia decisional normativa? *</h4>
           <input type="radio" name="existsDecisionalNormative" value="Si" formControlName="existsDecisionalNormative">
           Si
           <input type="radio" name="existsDecisionalNormative" value="No" formControlName="existsDecisionalNormative">
@@ -562,7 +562,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsDecisionalNormative" formControlName="reasonsDecisionalNormative"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.decisionalNormative_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -576,7 +576,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
+          (click)="toggleCalificar('appearance.incoherence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -590,7 +590,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="decisionalNormative_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -605,7 +605,7 @@
 
         <h3 class="titulo">Fundamentación Fáctica</h3>
         <div>
-          <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica?</h4>
+          <h4 class="titulo-eva">¿Existe incoherencia lógica fáctica? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -623,7 +623,7 @@
                 </div>
         <div>
           <app-caja-texto name="reasonsLogicalFactual" formControlName="reasonsLogicalFactual"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.logicalFactual_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -637,7 +637,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
+          (click)="toggleCalificar('appearance.incoherence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -651,7 +651,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="logicalFactual_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -665,7 +665,7 @@
         </div>
 
         <div>
-          <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica?</h4>
+          <h4 class="titulo-eva">¿Existe incoherencia decisional fáctica? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -683,7 +683,7 @@
                 </div>
         <div>
           <app-caja-texto name="reasonsDecisionalFactual" formControlName="reasonsDecisionalFactual"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.decisionalFactual_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -697,7 +697,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
+          (click)="toggleCalificar('appearance.incoherence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -711,7 +711,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="decisionalFactual_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
 
@@ -726,7 +726,7 @@
         </div>
 
         <div>
-          <h4 class="titulo-eva">Señale si la sentencia analizada debe ser anulada por déficit de motivación</h4>
+          <h4 class="titulo-eva">Señale si la sentencia analizada debe ser anulada por déficit de motivación *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -744,7 +744,7 @@
                 </div>
         <div>
           <app-caja-texto name="reasonsMotivation" formControlName="reasonsMotivation"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incoherence.motivation_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -758,7 +758,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incoherence')">Calificar</button>
+          (click)="toggleCalificar('appearance.incoherence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incoherence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -772,7 +772,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="motivation_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -791,7 +791,7 @@
         <h3 class="titulo">Inanitencia</h3>
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
-          <h4 class="titulo-eva">¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido?</h4>
+          <h4 class="titulo-eva">¿Se esgrimen razones jurídicas que no “tienen que ver” con el punto controvertido? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -810,7 +810,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsInatinenceJuridical" formControlName="reasonsInatinenceJuridical"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.inatinence.inatinenceJuridical_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -824,7 +824,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
+          (click)="toggleCalificar('appearance.inatinence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -842,7 +842,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceJuridical_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
 
@@ -859,7 +859,7 @@
 
         <h3 class="titulo">Fundamentación fáctica</h3>
         <div>
-          <h4 class="titulo-eva">¿Se esgrimen razones fácticas que no “tienen que ver” con el punto controvertido?</h4>
+          <h4 class="titulo-eva">¿Se esgrimen razones fácticas que no “tienen que ver” con el punto controvertido? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -877,7 +877,7 @@
                 </div>
         <div>
           <app-caja-texto name="reasonsInatinenceFactual" formControlName="reasonsInatinenceFactual"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.inatinence.inatinenceFactual_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -891,7 +891,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.inatinence')">Calificar</button>
+          (click)="toggleCalificar('appearance.inatinence')">Calificar *</button>
         <div *ngIf="calificarState['appearance.inatinence']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -909,7 +909,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="inatinenceFactual_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -929,7 +929,7 @@
         <h3 class="titulo">Fundamentación Jurídica</h3>
         <div>
           <h4 class="titulo-eva">¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
-            para un profesional del derecho ciudadano?</h4>
+            para un profesional del derecho ciudadano? *</h4>
           <input type="radio" name="existsIncomprehensibilityJuridical" value="Si"
             formControlName="existsIncomprehensibilityJuridical">
           Si
@@ -939,7 +939,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncomprehensibilityJuridical" [disabled]="evaluacionForm.disabled"
-            formControlName="reasonsIncomprehensibilityJuridical" [titulo]="'¿Por qué?'">
+            formControlName="reasonsIncomprehensibilityJuridical" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityJuridical_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -953,7 +953,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
+          (click)="toggleCalificar('appearance.incomprehensibility')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -967,7 +967,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="incomprehensibilityJuridical_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -984,7 +984,7 @@
         <h3 class="titulo">Fundamentación fáctica</h3>
         <div>
           <h4 class="titulo-eva">¿Existen fragmentos de la sentencia que no son razonablemente inteligibles
-            para un profesional del derecho ciudadano?</h4>
+            para un profesional del derecho ciudadano? *</h4>
             <label>
               <input type="radio" 
                      [value]="'Si'" 
@@ -1003,7 +1003,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncomprehensibilityFactual" formControlName="reasonsIncomprehensibilityFactual"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incomprehensibility.incomprehensibilityFactual_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -1017,7 +1017,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incomprehensibility')">Calificar</button>
+          (click)="toggleCalificar('appearance.incomprehensibility')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incomprehensibility']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -1031,7 +1031,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="incomprehensibilityFactual_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
 
@@ -1051,7 +1051,7 @@
         <h3 class="titulo">Incongruencia</h3>
         <h3 class="titulo ">Fundamentación Jurídica</h3>
         <div>
-          <h4 class="titulo-eva">¿Existe incongruencia normativa frente a las partes?</h4>
+          <h4 class="titulo-eva">¿Existe incongruencia normativa frente a las partes? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -1070,7 +1070,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityNormativeParticipants" [disabled]="evaluacionForm.disabled"
-            formControlName="reasonsIncongruityNormativeParticipants" [titulo]="'¿Por qué?'">
+            formControlName="reasonsIncongruityNormativeParticipants" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.normativeParticipants_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -1084,7 +1084,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
+          (click)="toggleCalificar('appearance.incongruity')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -1098,7 +1098,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="normativeParticipants_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -1112,7 +1112,7 @@
         </div>
 
         <div>
-          <h4 class="titulo-eva">¿Existe incongruencia normativa frente al derecho?</h4>
+          <h4 class="titulo-eva">¿Existe incongruencia normativa frente al derecho? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -1131,7 +1131,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityNormativeLaw" formControlName="reasonsIncongruityNormativeLaw"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.normativeLaw_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -1145,7 +1145,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
+          (click)="toggleCalificar('appearance.incongruity')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -1159,7 +1159,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="normativeLaw_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -1174,7 +1174,7 @@
 
         <h3 class="titulo">Fundamentación fáctica</h3>
         <div>
-          <h4 class="titulo-eva">¿Existe incongruencia fáctica frente a las partes?</h4>
+          <h4 class="titulo-eva">¿Existe incongruencia fáctica frente a las partes? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -1193,7 +1193,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityFactualParticipants" [disabled]="evaluacionForm.disabled"
-            formControlName="reasonsIncongruityFactualParticipants" [titulo]="'¿Por qué?'">
+            formControlName="reasonsIncongruityFactualParticipants" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.factualParticipants_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -1207,7 +1207,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
+          (click)="toggleCalificar('appearance.incongruity')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -1221,7 +1221,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="factualParticipants_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">
@@ -1235,7 +1235,7 @@
         </div>
 
         <div>
-          <h4 class="titulo-eva ">¿Existe incongruencia fáctica frente al derecho?</h4>
+          <h4 class="titulo-eva ">¿Existe incongruencia fáctica frente al derecho? *</h4>
           <label>
             <input type="radio" 
                    [value]="'Si'" 
@@ -1254,7 +1254,7 @@
         </div>
         <div>
           <app-caja-texto name="reasonsIncongruityFactualLaw" formControlName="reasonsIncongruityFactualLaw"
-            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué?'">
+            [disabled]="evaluacionForm.disabled" [titulo]="'¿Por qué? *'">
           </app-caja-texto>
           <div *ngIf="!isDocente && getRetroalimentacionValue('appearance.incongruity.factualLaw_retroalimentacion')">
             <button type="button" (click)="toggleRetroalimentacion('sentenceSubject')" class="bttn-toggle">
@@ -1268,7 +1268,7 @@
           </div>
         </div>
         <button class="rate" *ngIf="isDocente" type="button"
-          (click)="toggleCalificar('appearance.incongruity')">Calificar</button>
+          (click)="toggleCalificar('appearance.incongruity')">Calificar *</button>
         <div *ngIf="calificarState['appearance.incongruity']">
           <div class="bttns-rate">
             <button class="correct-button"
@@ -1282,7 +1282,7 @@
           </div>
           <div>
             <app-caja-texto formControlName="factualLaw_retroalimentacion"
-              [titulo]="'Retroalimentación'"></app-caja-texto>
+              [titulo]="'Retroalimentación *'"></app-caja-texto>
           </div>
         </div>
         <div *ngIf="!isDocente && evaluacionForm.get('saved')?.value" class="calificaciones">

@@ -9,6 +9,7 @@
 
   <div class="info-analisis">
     <h3 class="titulo-analisis">Esquema de las argumentaciones de la sentencia</h3>
+    <p style="font-family: Poppins;"> Todas las preguntas marcadas con un asterisco (*) son obligatorias. </p>
     <form [formGroup]="analisisForm" (ngSubmit)="submitForm()">
       <!-- Alerta de bloqueo -->
       <div *ngIf="analisisForm.disabled" class="locked-message">
@@ -25,17 +26,19 @@
             {{ getCalificacionValue('problem_question.calificacion') }}
           </div>
         </div>
+        <!-- Secciones para responder las preguntas del problema -->
         <div class="pregunta-container">
-          <h5 class="pregunta">Pregunta del problema</h5>
+          <h5 class="pregunta">Pregunta del problema *</h5>
           <div [formGroupName]="'problem_question'">
             <app-caja-texto formControlName="pregunta"></app-caja-texto>
           </div>
         </div>
       </div>
+      <!-- Opciones de califacion del docente -->
       <div *ngIf="isDocente">
         <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar2('problem_question')">
-        Calificar
+        Calificar *
       </button>
         <div *ngIf="calificarState['problem_question']">
           <div class="bttns-rate">
@@ -53,7 +56,7 @@
             </button>
           </div>
           <div>
-            <h5 class="pregunta">Retroalimentación</h5>
+            <h5 class="pregunta">Retroalimentación *</h5>
             <div [formGroupName]="'problem_question'">
               <app-caja-texto 
                 formControlName="retroalimentacion"
@@ -88,12 +91,13 @@
                 {{ getCalificacionValue('normativas.' + i + '.calificacion') }}
               </div>
             </div>
+            <!-- Seccion para responder las preguntas normativas -->
             <div class="pregunta-container">
-              <h5 class="pregunta">Cuestión normativa</h5>
+              <h5 class="pregunta">Cuestión normativa *</h5>
               <app-caja-texto formControlName="pregunta"></app-caja-texto>
             </div>
             <div class="razones-container">
-              <h5 class="pregunta">Respuesta o razones</h5>
+              <h5 class="pregunta">Respuesta o razones *</h5>
               <app-caja-texto formControlName="respuesta"></app-caja-texto>
             </div>
 
@@ -115,7 +119,7 @@
 
             <div class="">
               <button class="rate" *ngIf="isDocente" type="button"
-                (click)="toggleCalificar(i, 'normativa')">Calificar</button>
+                (click)="toggleCalificar(i, 'normativa')">Calificar *</button>
               <div *ngIf="normativa.get('showCalificar')?.value">
                 <div class="bttns-rate">
                   <button class="correct-button" 
@@ -131,7 +135,7 @@
                     Incorrecto
                   </button>
                 </div>
-                <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
+                <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación *</label>
                 <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
               </div>
             </div>
@@ -152,12 +156,12 @@
           </div>
           <div class="pa">
             <div class="pregunta-container">
-              <h5 class="pregunta">Cuestión fáctica</h5>
+              <h5 class="pregunta">Cuestión fáctica *</h5>
               <app-caja-texto formControlName="pregunta"></app-caja-texto>
             </div>
 
             <div class="razones-container">
-              <h5 class="pregunta">Respuesta o razones</h5>
+              <h5 class="pregunta">Respuesta o razones *</h5>
               <app-caja-texto formControlName="respuesta"></app-caja-texto>
             </div>
 
@@ -180,7 +184,7 @@
 
             <div>
               <button class="rate" *ngIf="isDocente" type="button"
-                (click)="toggleCalificar(i, 'factica')">Calificar</button>
+                (click)="toggleCalificar(i, 'factica')">Calificar *</button>
               <div *ngIf="factica.get('showCalificar')?.value">
                 <div class="bttns-rate">
                   <button class="correct-button" [class.calificacion-correcta]="isCalificacionCorrecta('factica', i)"
@@ -192,7 +196,7 @@
                     Incorrecto
                   </button>
                 </div>
-                <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación</label>
+                <label class="label-for-text" for="retroalimentacion-{{i}}">Retroalimentación *</label>
                 <app-caja-texto id="retroalimentacion-{{i}}" formControlName="retroalimentacion"></app-caja-texto>
               </div>
             </div>
@@ -212,7 +216,7 @@
           </div>
         </div>
         <div class="pregunta-container">
-          <h5 class="pregunta">Decisión del problema</h5>
+          <h5 class="pregunta">Decisión del problema *</h5>
           <div [formGroupName]="'problem_decision'">
             <app-caja-texto formControlName="decision"></app-caja-texto>
           </div>
@@ -221,7 +225,7 @@
       <div *ngIf="isDocente">
         <button class="rate" *ngIf="isDocente" type="button"
         (click)="toggleCalificar2('problem_decision')">
-        Calificar
+        Calificar *
       </button>
         <div *ngIf="calificarState['problem_decision']">
           <div class="bttns-rate">
@@ -239,7 +243,7 @@
             </button>
           </div>
           <div>
-            <h5 class="pregunta">Retroalimentación</h5>
+            <h5 class="pregunta">Retroalimentación *</h5>
             <div [formGroupName]="'problem_decision'">
               <app-caja-texto 
                 formControlName="retroalimentacion"

@@ -24,6 +24,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IPublicClientApplication, InteractionType, PublicClientApplication, BrowserCacheLocation, LogLevel  } from '@azure/msal-browser';
 import { AuthService } from './services/auth.service';
 import { FooterComponent } from "./components/footer/footer.component";
+import { EditarSentenciaComponent } from './pages/editar-sentencia/editar-sentencia.component';
+import { CommonModule } from '@angular/common';
 
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
@@ -93,7 +95,8 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     Analisis2Component,
     EvaluacionComponent,
     CajaTextoComponent,
-    Evaluacion2Component
+    Evaluacion2Component,
+    EditarSentenciaComponent
   ],
   imports: [
     MsalModule.forRoot(new PublicClientApplication({
@@ -112,11 +115,12 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     AngularFireModule.initializeApp(environment.firebase), // Initialize AngularFireModule here
     AngularFireAuthModule,
     ReactiveFormsModule,
-    FormsModule,
     AngularFirestoreModule,
     RouterModule,
-    MsalModule,
-    FooterComponent
+    FooterComponent,
+    FormsModule,
+    FormsModule,
+    CommonModule
 ],
   providers: [
     {

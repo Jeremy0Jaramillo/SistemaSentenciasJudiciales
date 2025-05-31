@@ -7,6 +7,7 @@ import { AnalisisComponent } from './pages/analisis/analisis.component';
 import { Analisis2Component } from './pages/analisis2/analisis2.component';
 import { EvaluacionComponent } from './pages/evaluacion/evaluacion.component';
 import { Evaluacion2Component } from './pages/evaluacion2/evaluacion2.component';
+import { EditarSentenciaComponent } from './pages/editar-sentencia/editar-sentencia.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,7 +17,8 @@ export const routes: Routes = [
   { path: 'analisis', component: AnalisisComponent },
   { path: 'analisis2', component: Analisis2Component },
   { path: 'evaluacion', component: EvaluacionComponent },
-  { path: 'evaluacion2', component: Evaluacion2Component }
+  { path: 'evaluacion2', component: Evaluacion2Component },
+  { path: 'editar-sentencia', component: EditarSentenciaComponent }
   // Define other routes here
 ];
 

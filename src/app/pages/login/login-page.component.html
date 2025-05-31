@@ -7,52 +7,67 @@
   <div class="flex-login">
     <div class="login">
       <div class="imputs-login">
-        <p class="titulo-login">{{ isLogin ? 'Inicia sesión con tu correo institucional' : 'Regístrate con tu correo institucional' }}</p>
-        <div *ngIf="alerta" class="alerta">
-          <p>{{ alertaMessage || 'Contraseña o correo incorrectos' }}</p>
-        </div>
-        
-        <!-- Formulario de inicio de sesión -->
-        <form *ngIf="isLogin" class="txt" (ngSubmit)="login(email.value, password.value)">
-          <label class="label-login" for="email">Email:</label> <br>
-          <input class="input-login" type="email" #email required> <br><br>
-          <label class="label-login" for="password">Contraseña:</label> <br>
-          <input class="input-login" type="password" #password required> <br><br>
-          <div class="bttnlo">
-            <button class="bttn-stnd" type="submit">Iniciar sesión</button>
-          </div>
-          
-          <!-- Botón de Azure -->
-          <div class="separator">
-            <span>o</span>
-          </div>
+
+        <!-- Botón UTPL -->
+        <div *ngIf="!mostrarFormAlternativo">
           <button type="button" class="bttn-azure" (click)="loginWithAzure()">
-            <i class="fa-brands fa-microsoft">
-            </i> 
+            <i class="fa-brands fa-microsoft"></i> 
             Iniciar sesión con UTPL
           </button>
-        </form>
-        
-        <!-- Formulario de registro -->
-        <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)">
-          <!-- Resgistro de nombre y apellido -->
-          <label class="label-login" for="regName">Nombres y Apellidos:</label> <br>
-          <input class="input-login" type="text" #regName required> <br><br>
-          <!-- Registrar correo -->
-          <label class="label-login" for="regEmail">Email:</label> <br>
-          <input class="input-login" type="email" #regEmail required> <br><br>
-          <!-- Registrar Contraseña -->
-          <label class="label-login" for="regPassword">Contraseña:</label> <br>
-          <input class="input-login" type="password" #regPassword required> <br><br>
-          <!-- Boton registro -->
-          <button class="bttn-stnd" type="submit">Registrarse</button>
-        </form>
-        
-        <a href="" class="termycon">Términos y Condiciones</a>
-        <p class="change-form">
-          {{ isLogin ? '¿No te has registrado?' : '¿Ya tienes una cuenta?' }}
-          <a href="#" (click)="toggleForm($event)">{{ isLogin ? 'Regístrate' : 'Inicia sesión' }}</a>
-        </p>
+
+          <!-- Enlace para mostrar otros métodos -->
+          <p class="change-form" style="margin-top: 20px;">
+            <a href="#" (click)="mostrarFormAlternativo = true">Si no cuenta con credenciales UTPL, inicie aquí con Gmail o Hotmail</a>
+          </p>
+        </div>
+
+        <!-- Formulario de login y registro -->
+        <div *ngIf="mostrarFormAlternativo">
+          <p class="titulo-login">
+            {{ isLogin ? 'Inicia sesión con tu correo' : 'Regístrate con tu correo' }}
+          </p>
+
+          <!-- Alerta -->
+          <div *ngIf="alerta" class="alerta">
+            <p>{{ alertaMessage || 'Contraseña o correo incorrectos' }}</p>
+          </div>
+
+          <!-- Formulario de inicio de sesión -->
+          <form *ngIf="isLogin" class="txt" (ngSubmit)="login(email.value, password.value)">
+            <label class="label-login" for="email">Email:</label><br>
+            <input class="input-login" type="email" #email required><br><br>
+            <label class="label-login" for="password">Contraseña:</label><br>
+            <input class="input-login" type="password" #password required><br><br>
+            <div class="bttnlo">
+              <button class="bttn-stnd" type="submit">Iniciar sesión</button>
+            </div>
+          </form>
+
+          <!-- Formulario de registro -->
+          <form *ngIf="!isLogin" class="txt" (ngSubmit)="register(regName.value, regEmail.value, regPassword.value)">
+            <label class="label-login" for="regName">Nombres y Apellidos:</label><br>
+            <input class="input-login" type="text" #regName required><br><br>
+            <label class="label-login" for="regEmail">Email:</label><br>
+            <input class="input-login" type="email" #regEmail required><br><br>
+            <label class="label-login" for="regPassword">Contraseña:</label><br>
+            <input class="input-login" type="password" #regPassword required><br><br>
+            <button class="bttn-stnd" type="submit">Registrarse</button>
+          </form>
+
+          <!-- Enlace cambiar entre login y registro -->
+          <p class="change-form">
+            {{ isLogin ? '¿No te has registrado?' : '¿Ya tienes una cuenta?' }}
+            <a href="#" (click)="toggleForm($event)">{{ isLogin ? 'Regístrate' : 'Inicia sesión' }}</a>
+          </p>
+
+          <!-- Regresar a inicio con UTPL -->
+          <p style="margin-top: 10px; font-family: Poppins;">
+            <a href="#" (click)="mostrarFormAlternativo = false">Volver a iniciar sesión con UTPL</a>
+          </p>
+
+          <a href="" class="termycon">Términos y Condiciones</a>
+        </div>
+
       </div>
     </div>
     <img src="../../../assets/images/logo-inicio.png" alt="" class="img-sentencia">

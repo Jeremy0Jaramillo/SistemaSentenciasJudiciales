@@ -29,7 +29,7 @@ export class Evaluacion2Component implements OnInit {
     //SECCION 1: "Fundamentacion normativa correcta"
     {
       id: '1',
-      title: 'Fundamentacion normativa correcta de la sentencia, analizaremos si el juez aplicó de manera adecuada las normas jurídicas y si esta aplicación representa la mejor argumentación posible conforme al derecho.',
+      title: 'Fundamentacion normativa correcta de la sentencia, analizaremos si el juez aplicó de manera adecuada las normas jurídicas y si esta aplicación representa la mejor argumentación posible conforme al derecho. *',
       questions: [
         'Parámetro 1: Selección de normas: ¿El juez utiliza disposiciones relevantes de la Constitución y de la ley específicamente?',
         'Parámetro 2: Interpretación de normas: ¿La interpretación del juez es coherente con el contenido de cada norma?',
@@ -39,7 +39,7 @@ export class Evaluacion2Component implements OnInit {
     //SECCION 2: "Fundamentacion Factica"
     {
       id: '2',
-      title: 'Fundamentación fáctica correcta de la sentencia, se revisa si el juez ha realizado una valoración adecuada y exhaustiva de las pruebas y si la fundamentación representa la mejor argumentación posible conforme a los hechos.',
+      title: 'Fundamentación fáctica correcta de la sentencia, se revisa si el juez ha realizado una valoración adecuada y exhaustiva de las pruebas y si la fundamentación representa la mejor argumentación posible conforme a los hechos. *',
       questions: [
         'Parámetro 1: Selección y Presentación de las Pruebas: ¿El juez examina y selecciona las pruebas pertinentes para resolver el problema?',
         'Parámetro 2: Análisis y Valoración de las Pruebas: ¿El juez valora cada prueba en relación con su relevancia en el proceso?',
