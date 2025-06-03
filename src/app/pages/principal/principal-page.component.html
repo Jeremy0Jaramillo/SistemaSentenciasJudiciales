@@ -17,8 +17,6 @@
   {{ alert }}
 </div>
 
-
-
 <div class="search-bar" *ngIf="userRole === 'docente' || userRole === 'administrador'">
   <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"
     [placeholder]="userRole === 'administrador' ? 'Buscar sentencia' : 'Buscar por nombre de estudiante'" />
@@ -103,8 +101,16 @@
     <div class="bttn-acetp" *ngIf="userRole === 'docente' || userRole === 'administrador'">
       <!-- Buttons for pending sentences -->
       <ng-container *ngIf="!sentencia.estado">
-        <button (click)="abrirRazon(sentencia, 'aceptar')" class="bttn-accept">Aceptar</button>
-        <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
+        <!-- Nueva lógica para deshabilitar botones y mostrar mensaje -->
+        <ng-container *ngIf="!sentencia.isLockedForAcceptance; else lockedButtons">
+          <button (click)="abrirRazon(sentencia, 'aceptar')" class="bttn-accept">Aceptar</button>
+          <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
+        </ng-container>
+        <ng-template #lockedButtons>
+          <button class="bttn-accept" [disabled]="true">Aceptar</button>
+          <button class="bttn-reject" [disabled]="true">Negar</button>
+          <p class="locked-message">Este número de proceso ya ha sido aceptado.</p>
+        </ng-template>
       </ng-container>
 
       <!-- Edit button for sentences with existing status -->
@@ -113,9 +119,8 @@
       </button>
     </div>
     <!-- O si prefieres mantener el método original, asegúrate de que el número de proceso sea único -->
-<button class="bttn-edit" (click)="editarSentencia(sentencia.numero_proceso, sentencia.email_estudiante, sentencia.email_docente)">Editar</button>
-
-
+    <button class="bttn-edit"
+      (click)="editarSentencia(sentencia.numero_proceso, sentencia.email_estudiante, sentencia.email_docente)">Editar</button>
 
     <div class="overlay" *ngIf="showEditarEstadoOverlay">
       <div class="overlay-content">
@@ -136,7 +141,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- Vista del estudiante -->
     <div *ngIf="userRole !== 'docente' && sentencia.estado" class="bttn-status">

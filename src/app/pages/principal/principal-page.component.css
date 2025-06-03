@@ -511,6 +511,26 @@
   border-radius: 10px;
 }
 
+.locked-message {
+    color: #dc3545; /* Un color rojo para indicar un estado de advertencia/error */
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+    padding: 8px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+  }
+
+  /* Estilos para los botones deshabilitados si quieres darles un aspecto diferente */
+  .bttn-accept[disabled],
+  .bttn-reject[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #cccccc; /* Un color gris para indicar que están inactivos */
+    border-color: #999999;
+  }
+  
 .admin-panel{
   display: flex;
   justify-content: center;

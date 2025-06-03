@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import * as Papa from 'papaparse'; // Asegúrate de instalar papaparse con `npm install papaparse`
 
 interface Sentencia {
-  docente: any;
+  docente?: any; // Puede que necesites definir un tipo más específico para 'docente'
   numero_proceso: string;
   asunto: string;
   nombre_estudiante: string;
@@ -18,7 +18,8 @@ interface Sentencia {
   archivoURL?: string;
   estado?: 'aceptar' | 'negar' | null;
   razon?: string;
-  isLocked?: boolean;
+  isLocked?: boolean; // Esta propiedad parece venir de tu HTML original, la mantengo
+  isLockedForAcceptance?: boolean; // Indica si los botones de aceptar/negar deben estar deshabilitados
 }
 
 @Component({
@@ -29,8 +30,9 @@ interface Sentencia {
 export class PrincipalPageComponent implements OnInit {
   user: any = null;
   userRole: string | null = null;
-  sentencias$: Observable<Sentencia[]> = of([]);
-  filteredSentencias$: Observable<Sentencia[]>;
+  // Cambiamos sentencias$ para que sea un BehaviorSubject que se actualizará con los datos crudos
+  private _allSentencias = new BehaviorSubject<Sentencia[]>([]);
+  public filteredSentencias$: Observable<Sentencia[]>; // Este es el observable que usará el HTML
   searchText: string = '';
   private searchSubject = new BehaviorSubject<string>('');
   showRazonOverlay = false;
@@ -59,22 +61,52 @@ export class PrincipalPageComponent implements OnInit {
     private firestore: AngularFirestore,
     private router: Router
   ) {
-    this.filteredSentencias$ = this.searchSubject.pipe(
-      startWith(''),
-      switchMap(searchText =>
-        this.sentencias$.pipe(
-          map(sentencias =>
-            sentencias.filter(sentencia => {
-              if (this.userRole === 'estudiante') {
-                return sentencia.email_estudiante?.toLowerCase().includes(searchText.toLowerCase());
-              } else if (this.userRole === 'docente') {
-                return sentencia.nombre_estudiante?.toLowerCase().includes(searchText.toLowerCase());
-              }
-              return true;
-            })
-          )
-        )
-      )
+    // Configurar filteredSentencias$ para que reaccione a cambios en _allSentencias y searchSubject
+    this.filteredSentencias$ = combineLatest([
+      this._allSentencias.asObservable(),
+      this.searchSubject.asObservable()
+    ]).pipe(
+      map(([sentencias, searchText]) => {
+        // Paso 1: Identificar todos los numero_proceso que ya tienen una sentencia 'aceptar'
+        const acceptedProcessNumbers = new Set<string>();
+        sentencias.forEach(s => {
+          if (s.estado === 'aceptar') {
+            acceptedProcessNumbers.add(s.numero_proceso);
+          }
+        });
+
+        // Paso 2: Mapear las sentencias para añadir la bandera isLockedForAcceptance
+        const processedSentencias = sentencias.map(s => {
+          const isLocked = acceptedProcessNumbers.has(s.numero_proceso);
+          return {
+            ...s,
+            isLockedForAcceptance: isLocked
+          };
+        });
+
+        // Paso 3: Aplicar lógica de filtrado por búsqueda (searchText)
+        let filtered = processedSentencias;
+        if (searchText) {
+          if (this.userRole === 'estudiante') {
+            filtered = filtered.filter(s =>
+              s.email_estudiante?.toLowerCase().includes(searchText.toLowerCase())
+            );
+          } else if (this.userRole === 'docente') {
+            filtered = filtered.filter(s =>
+              s.nombre_estudiante?.toLowerCase().includes(searchText.toLowerCase()) ||
+              s.numero_proceso.toLowerCase().includes(searchText.toLowerCase()) ||
+              s.asunto?.toLowerCase().includes(searchText.toLowerCase())
+            );
+          } else if (this.userRole === 'administrador') {
+            filtered = filtered.filter(s =>
+              Object.values(s).some(value =>
+                value?.toString().toLowerCase().includes(searchText.toLowerCase())
+              )
+            );
+          }
+        }
+        return filtered;
+      })
     );
   }
 
@@ -131,20 +163,41 @@ export class PrincipalPageComponent implements OnInit {
   // Método corregido para actualizar la sentencia correcta
   async guardarDecision() {
     if (!this.sentenciaPendiente || !this.razonTexto.trim()) {
-      console.error('Falta información necesaria para actualizar la sentencia');
+      console.error('Falta información necesaria para actualizar la sentencia.');
       return;
     }
 
     try {
-      // console.log('🔍 Iniciando actualización de sentencia...');
-      // console.log('Número de proceso:', this.sentenciaPendiente.numero_proceso);
-      // console.log('Email estudiante:', this.sentenciaPendiente.email_estudiante);
-      // console.log('Usuario actual:', this.userEmail);
+      console.log('🔍 Iniciando actualización de sentencia...');
+      console.log('Número de proceso:', this.sentenciaPendiente.numero_proceso);
+      console.log('Email estudiante:', this.sentenciaPendiente.email_estudiante);
+      console.log('Usuario actual:', this.userEmail);
 
       // Verificar conexión
       await this.firestore.firestore.enableNetwork();
 
-      // Query más específica usando numero_proceso Y email_estudiante Y email_docente
+      // PASO 1: Verificar si este numero_proceso ya ha sido aceptado por CUALQUIER sentencia.
+      // Esto previene que se acepten múltiples sentencias para el mismo proceso.
+      if (this.accionPendiente === 'aceptar') {
+        console.log('🔎 Verificando si el número de proceso ya está aceptado globalmente...');
+        const existingAcceptedQuery = await this.firestore
+          .collection('sentencias')
+          .ref.where('numero_proceso', '==', this.sentenciaPendiente.numero_proceso)
+          .where('estado', '==', 'aceptar')
+          .limit(1)
+          .get();
+
+        if (!existingAcceptedQuery.empty) {
+          console.warn('⚠️ Este número de proceso ya ha sido aceptado por otra sentencia. No se puede aceptar de nuevo.');
+          this.resetFormState(); // Limpiar el estado del formulario
+          // Opcional: mostrar una notificación al usuario aquí
+          this.showNotification('Este número de proceso ya ha sido aceptado por otra sentencia.', 'error');
+          return; // Detener el proceso
+        }
+        console.log('✅ Número de proceso no encontrado como aceptado previamente.');
+      }
+
+      // PASO 2: Obtener la sentencia específica que este docente está manejando
       const querySnapshot = await this.firestore
         .collection('sentencias')
         .ref.where('numero_proceso', '==', this.sentenciaPendiente.numero_proceso)
@@ -154,59 +207,89 @@ export class PrincipalPageComponent implements OnInit {
         .get();
 
       if (querySnapshot.empty) {
-        // console.error('❌ No se encontró la sentencia específica para este estudiante y docente');
-        // console.log('Criterios de búsqueda:', {
-        //   numero_proceso: this.sentenciaPendiente.numero_proceso,
-        //   email_estudiante: this.sentenciaPendiente.email_estudiante,
-        //   email_docente: this.userEmail,
-        // });
+        console.error('❌ No se encontró la sentencia específica para este estudiante y docente.');
+        console.log('Criterios de búsqueda:', {
+          numero_proceso: this.sentenciaPendiente.numero_proceso,
+          email_estudiante: this.sentenciaPendiente.email_estudiante,
+          email_docente: this.userEmail,
+        });
+        this.resetFormState();
         return;
       }
 
       const docSnapshot = querySnapshot.docs[0];
-      // console.log('📄 Documento encontrado con ID:', docSnapshot.id);
-      // console.log('📊 Datos actuales del documento:', docSnapshot.data());
+      console.log('📄 Documento encontrado con ID:', docSnapshot.id);
+      console.log('📊 Datos actuales del documento:', docSnapshot.data());
 
-      const updateData = {
-        estado: this.accionPendiente,
-        razon: this.razonTexto.trim(),
-        fecha_actualizacion: new Date(),
-        actualizado_por: this.userEmail,
-      };
-
-      // console.log('🔄 Datos que se van a actualizar:', updateData);
-
-      // Usar transacción para garantizar consistencia
+      // PASO 3: Usar una transacción para garantizar la consistencia
       await this.firestore.firestore.runTransaction(async (transaction) => {
         const docRef = docSnapshot.ref;
         const doc = await transaction.get(docRef);
 
         if (!doc.exists) {
-          throw new Error('Documento no existe en la transacción');
+          throw new Error('Documento no existe en la transacción.');
         }
 
-        console.log('📋 Datos antes de la transacción:', doc.data());
-        transaction.update(docRef, updateData);
-        // console.log('✅ Transacción de actualización ejecutada');
+        // Datos para actualizar la sentencia actual
+        const updateData = {
+          estado: this.accionPendiente,
+          razon: this.razonTexto.trim(),
+          fecha_actualizacion: new Date(),
+          actualizado_por: this.userEmail,
+        };
+
+        console.log('🔄 Datos que se van a actualizar (sentencia actual):', updateData);
+        transaction.update(docRef, updateData); // Actualizar la sentencia actual
+
+        // PASO 4: Si la acción es 'aceptar', rechazar automáticamente todas las demás sentencias con el mismo numero_proceso
+        if (this.accionPendiente === 'aceptar') {
+          console.log('🌐 Acción: Aceptar. Rechazando otras sentencias con el mismo número de proceso...');
+          const numeroProcesoAceptado = this.sentenciaPendiente!.numero_proceso;
+
+          // Obtener todas las demás sentencias con el mismo numero_proceso
+          const otherSentenciasQuery = await this.firestore
+            .collection('sentencias')
+            .ref.where('numero_proceso', '==', numeroProcesoAceptado)
+            .get();
+
+          otherSentenciasQuery.docs.forEach((otherDoc) => {
+            // Solo actualizar si no es la sentencia que acabamos de aceptar y su estado no es ya 'aceptar'
+            const otherDocData = otherDoc.data() as Sentencia;
+            if (otherDoc.id !== docSnapshot.id && otherDocData.estado !== 'aceptar') {
+              console.log(`  - Rechazando documento con ID: ${otherDoc.id}`);
+              transaction.update(otherDoc.ref, {
+                estado: 'negar', // Cambiado a 'negar' para rechazo automático
+                razon: `Rechazada automáticamente: Sentencia con el número de proceso '${numeroProcesoAceptado}' ya fue aceptada por ${this.userEmail}.`,
+                fecha_actualizacion: new Date(),
+                actualizado_por: 'Sistema (auto-rechazo)',
+              });
+            }
+          });
+          console.log('✅ Proceso de auto-rechazo de sentencias completado.');
+        }
+        console.log('✅ Transacción de actualización ejecutada.');
       });
 
-      // Verificar la actualización
-      const updatedDoc = await docSnapshot.ref.get();
-      // console.log('🔍 Verificación post-actualización:', updatedDoc.data());
+      // Recargar datos para reflejar cambios en la UI
+      this.loadUserData(this.user.uid); // Recarga completa para actualizar el estado isLockedForAcceptance
 
-      // Recargar datos para reflejar cambios
-      this.loadUserData(this.user.uid);
+      this.resetFormState(); // Limpiar el estado del formulario
+      console.log('✅ Proceso de actualización completado');
+      this.showNotification('Decisión guardada exitosamente.', 'success');
 
-      this.showRazonOverlay = false;
-      this.sentenciaPendiente = null;
-      this.razonTexto = '';
-
-      // console.log('✅ Proceso de actualización completado');
     } catch (error) {
-      // console.error('❌ Error detallado al actualizar:', error);
-      // console.error('Código de error:', (error as any).code);
-      // console.error('Mensaje:', (error as any).message);
+      console.error('❌ Error detallado al actualizar:', error);
+      console.error('Código de error:', (error as any).code);
+      console.error('Mensaje:', (error as any).message);
+      this.showNotification('Error al guardar la decisión.', 'error');
     }
+  }
+
+  // Función auxiliar para limpiar el estado del formulario
+  private resetFormState() {
+    this.showRazonOverlay = false;
+    this.sentenciaPendiente = null;
+    this.razonTexto = '';
   }
 
   cancelarDecision() {
@@ -222,29 +305,36 @@ export class PrincipalPageComponent implements OnInit {
           this.userName = userData.name;
           this.userEmail = userData.email;
           this.userRole = userData.role;
-          return this.loadSentencias(this.userName, this.userEmail, this.userRole);
+          // Ahora llamamos a loadSentencias sin pasar los parámetros, ya que userEmail y userRole están en la clase
+          return this.loadSentencias();
         } else {
           return of([]);
         }
       })
     ).subscribe((sentencias) => {
-      this.sentencias$ = of(sentencias);
+      // Directamente actualizamos el BehaviorSubject con las sentencias cargadas
+      this._allSentencias.next(sentencias);
       this.searchSubject.next(this.searchText); // trigger initial filter
     });
   }
 
-  loadSentencias(userName: string, userEmail: string, userRole: any): Observable<Sentencia[]> {
+  // loadSentencias ahora solo carga los datos relevantes al rol del usuario,
+  // y la lógica de isLockedForAcceptance se maneja en filteredSentencias$
+  loadSentencias(): Observable<Sentencia[]> {
     let query;
 
-    if (userRole === 'estudiante') {
+    // Se cargan todas las sentencias si es administrador para poder calcular isLockedForAcceptance globalmente
+    // Si es docente o estudiante, se carga solo lo suyo para reducir el tráfico,
+    // pero la lógica de isLockedForAcceptance seguirá funcionando si ya hay una aceptada globalmente
+    if (this.userRole === 'estudiante' && this.userEmail) {
       query = this.firestore.collection('sentencias', ref =>
-        ref.where('email_estudiante', '==', userEmail)
+        ref.where('email_estudiante', '==', this.userEmail)
       );
-    } else if (userRole === 'docente') {
+    } else if (this.userRole === 'docente' && this.userEmail) {
       query = this.firestore.collection('sentencias', ref =>
-        ref.where('email_docente', '==', userEmail)
+        ref.where('email_docente', '==', this.userEmail)
       );
-    } else if (userRole === 'administrador') {
+    } else if (this.userRole === 'administrador') {
       query = this.firestore.collection('sentencias');
     } else {
       return of([]);
@@ -275,27 +365,8 @@ export class PrincipalPageComponent implements OnInit {
   }
 
   onSearchTextChanged() {
-    const query = this.searchText.toLowerCase();
-
-    if (this.userRole === 'administrador') {
-      this.filteredSentencias$ = this.sentencias$.pipe(
-        map(sentencias =>
-          sentencias.filter(sentencia =>
-            Object.values(sentencia).some(value =>
-              value?.toString().toLowerCase().includes(query)
-            )
-          )
-        )
-      );
-    } else if (this.userRole === 'docente') {
-      this.filteredSentencias$ = this.sentencias$.pipe(
-        map(sentencias =>
-          sentencias.filter(sentencia =>
-            sentencia.nombre_estudiante?.toLowerCase().includes(query)
-          )
-        )
-      );
-    }
+    // Simplemente actualiza el BehaviorSubject para que filteredSentencias$ reaccione
+    this.searchSubject.next(this.searchText);
   }
 
   // Método para mostrar mensajes
@@ -387,13 +458,14 @@ export class PrincipalPageComponent implements OnInit {
         );
         sentenciaParaMostrar = sentenciaDocente || sentenciaSnapshot.docs[0];
       } else {
-        // Si es administrador, mostrar la más reciente
+        // Si es administrador o estudiante, mostrar la primera encontrada (o la más relevante si tienes un criterio)
         sentenciaParaMostrar = sentenciaSnapshot.docs[0];
       }
 
       const sentenciaData = sentenciaParaMostrar.data() as Sentencia;
 
-      // Buscar el estado de bloqueo
+      // Buscar el estado de bloqueo (si usas una colección 'locks' separada)
+      // Si el bloqueo se basa en el estado 'aceptar' de la sentencia, esto podría simplificarse
       const lockDoc = await this.firestore.doc(`locks/${numeroProceso}`).get().toPromise();
       const lockData = lockDoc?.data() as { locked?: boolean } | undefined;
 
@@ -429,14 +501,6 @@ export class PrincipalPageComponent implements OnInit {
     }
 
     try {
-      // console.log('🔍 Iniciando edición de estado...');
-      // console.log('Sentencia a editar:', {
-      //   numero_proceso: this.sentenciaEditar.numero_proceso,
-      //   email_estudiante: this.sentenciaEditar.email_estudiante,
-      //   email_docente: this.sentenciaEditar.email_docente,
-      // });
-
-      // Query específica para encontrar la sentencia exacta
       const querySnapshot = await this.firestore
         .collection('sentencias')
         .ref.where('numero_proceso', '==', this.sentenciaEditar.numero_proceso)
@@ -447,7 +511,6 @@ export class PrincipalPageComponent implements OnInit {
 
       if (!querySnapshot.empty) {
         const docSnapshot = querySnapshot.docs[0];
-        // console.log('📄 Documento a editar encontrado:', docSnapshot.id);
 
         const updateData = {
           estado: this.nuevoEstado,
@@ -460,12 +523,15 @@ export class PrincipalPageComponent implements OnInit {
         console.log('✅ Estado actualizado exitosamente');
 
         this.closeEditarEstadoOverlay();
-        this.loadUserData(this.user.uid); // Recargar datos
+        this.loadUserData(this.user.uid); // Recargar datos para reflejar cambios
+        this.showNotification('Estado de sentencia actualizado.', 'success');
       } else {
         console.error('❌ No se encontró la sentencia específica para editar');
+        this.showNotification('No se encontró la sentencia para editar.', 'error');
       }
     } catch (error) {
       console.error('❌ Error al actualizar el estado:', error);
+      this.showNotification('Error al actualizar el estado de la sentencia.', 'error');
     }
   }
 
@@ -585,7 +651,8 @@ export class PrincipalPageComponent implements OnInit {
   async editarSentencia(numero_proceso: string, email_estudiante?: string, email_docente?: string): Promise<void> {
     console.log('🔧 Iniciando edición de sentencia:', numero_proceso);
 
-    const sentencias = await firstValueFrom(this.sentencias$);
+    // Obtener las sentencias actuales del BehaviorSubject
+    const sentencias = this._allSentencias.getValue();
     console.log('📋 Buscando en', sentencias.length, 'sentencias');
     let sentencia;
 
@@ -621,6 +688,7 @@ export class PrincipalPageComponent implements OnInit {
       });
     } else {
       console.error('❌ No se encontró la sentencia con los parámetros proporcionados');
+      this.showNotification('No se encontró la sentencia para editar.', 'error');
     }
   }
 
@@ -646,6 +714,10 @@ export class PrincipalPageComponent implements OnInit {
         this.firestore.collection('sentencias').doc(doc.id).delete().then(() => {
           console.log('Sentencia eliminada correctamente');
           this.loadUserData(this.user.uid); // Recargar datos
+          this.showNotification('Sentencia eliminada correctamente.', 'success');
+        }).catch(error => {
+          console.error('Error al eliminar sentencia:', error);
+          this.showNotification('Error al eliminar sentencia.', 'error');
         });
       });
     });
