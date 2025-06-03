@@ -2,7 +2,8 @@
 
 <div class="titulo">
   <h2>Sistema Jurídico Avanzado de Sentencias de Primer Nivel en Ecuador</h2>
-  <button *ngIf="userRole == 'estudiante'" class="bttn-stnd" (click)="redirectToNuevaSentencia()">Nueva Sentencia</button>
+  <button *ngIf="userRole == 'estudiante'" class="bttn-stnd" (click)="redirectToNuevaSentencia()">Nueva
+    Sentencia</button>
 </div>
 
 <!-- Solo visible para el administrador -->
@@ -10,29 +11,24 @@
   <label for="csvInput" class="btn-cargar-docentes">Cargar docentes CSV</label>
   <input type="file" id="csvInput" (change)="onFileSelected($event)" accept=".csv" style="display: none;">
 </div>
-<div *ngIf="alert" 
-     [ngClass]="{'success-notification': alertype === 'success', 'error-notification': alertype === 'error'}" 
-     class="notification-box">
+<div *ngIf="alert"
+  [ngClass]="{'success-notification': alertype === 'success', 'error-notification': alertype === 'error'}"
+  class="notification-box">
   {{ alert }}
 </div>
 
 
 
-<div class="search-bar">
+<div class="search-bar" *ngIf="userRole === 'docente' || userRole === 'administrador'">
   <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"
-    *ngIf="userRole == 'docente'" placeholder="Buscar por nombre de estudiante">
+    [placeholder]="userRole === 'administrador' ? 'Buscar sentencia' : 'Buscar por nombre de estudiante'" />
 </div>
 
 <div *ngIf="userRole === 'estudiante'" class="busqueda-proceso">
   <div class="input-busqueda">
     <div class="input-container">
-      <input 
-        type="text" 
-        [(ngModel)]="numeroProcesoBusqueda" 
-        placeholder="Buscar por número de proceso"
-        (keypress)="validarBusquedaProceso($event)"
-        (input)="formatearBusquedaProceso($event)"
-        class="input-proceso">
+      <input type="text" [(ngModel)]="numeroProcesoBusqueda" placeholder="Buscar por número de proceso"
+        (keypress)="validarBusquedaProceso($event)" (input)="formatearBusquedaProceso($event)" class="input-proceso">
       <small class="input-info">
         Únicamente se admite números y guiones "-"
       </small>
@@ -43,7 +39,7 @@
 
   <!-- Mensaje de estado de búsqueda -->
   <div *ngIf="mostrarMensajeBusqueda" class="mensaje-busqueda"
-       [ngClass]="{'mensaje-error': !sentenciaEncontrada, 'mensaje-exito': sentenciaEncontrada}">
+    [ngClass]="{'mensaje-error': !sentenciaEncontrada, 'mensaje-exito': sentenciaEncontrada}">
     {{ mensajeBusqueda }}
   </div>
 
@@ -104,43 +100,35 @@
         Descargar PDF
       </a>
     </div>
-    <div class="bttn-acetp" *ngIf="userRole === 'docente'">
+    <div class="bttn-acetp" *ngIf="userRole === 'docente' || userRole === 'administrador'">
       <!-- Buttons for pending sentences -->
       <ng-container *ngIf="!sentencia.estado">
         <button (click)="abrirRazon(sentencia, 'aceptar')" class="bttn-accept">Aceptar</button>
         <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
       </ng-container>
-      
+
       <!-- Edit button for sentences with existing status -->
       <button *ngIf="sentencia.estado" (click)="abrirEdicionEstado(sentencia)" class="bttn-edit">
         Editar estado
       </button>
     </div>
+    <!-- O si prefieres mantener el método original, asegúrate de que el número de proceso sea único -->
+<button class="bttn-edit" (click)="editarSentencia(sentencia.numero_proceso, sentencia.email_estudiante, sentencia.email_docente)">Editar</button>
 
-      <button class="bttn-edit" (click)="editarSentencia(sentencia.numero_proceso)">Editar sentencia</button>
 
-    
+
     <div class="overlay" *ngIf="showEditarEstadoOverlay">
       <div class="overlay-content">
         <h3>Editar estado de la sentencia</h3>
         <div class="estado-options">
-          <button 
-            [class.selected]="nuevoEstado === 'aceptar'"
-            (click)="nuevoEstado = 'aceptar'" 
-            class="bttn-accept">
+          <button [class.selected]="nuevoEstado === 'aceptar'" (click)="nuevoEstado = 'aceptar'" class="bttn-accept">
             Aceptar
           </button>
-          <button 
-            [class.selected]="nuevoEstado === 'negar'"
-            (click)="nuevoEstado = 'negar'" 
-            class="bttn-reject">
+          <button [class.selected]="nuevoEstado === 'negar'" (click)="nuevoEstado = 'negar'" class="bttn-reject">
             Negar
           </button>
         </div>
-        <textarea 
-          [(ngModel)]="razonTexto" 
-          placeholder="Ingrese la nueva razón..."
-          class="razon-textarea">
+        <textarea [(ngModel)]="razonTexto" placeholder="Ingrese la nueva razón..." class="razon-textarea">
         </textarea>
         <div class="overlay-buttons">
           <button (click)="guardarEdicionEstado()">Guardar</button>
@@ -148,7 +136,7 @@
         </div>
       </div>
     </div>
-    
+
 
     <!-- Vista del estudiante -->
     <div *ngIf="userRole !== 'docente' && sentencia.estado" class="bttn-status">
@@ -159,7 +147,7 @@
       <div class="overlay-content">
         <div class="overlay-content-text">
           <p *ngIf="selectedSentencia?.estado == 'aceptar'" class="bttn-accept">Sentencia aceptada</p>
-          <p *ngIf="selectedSentencia?.estado == 'negar'" class="bttn-reject" >Sentencia negada</p>
+          <p *ngIf="selectedSentencia?.estado == 'negar'" class="bttn-reject">Sentencia negada</p>
           <div class="reason-container">
             <p class="razon-est" *ngIf="selectedSentencia?.razon">
               <strong>Razón:</strong> {{ selectedSentencia?.razon }}
@@ -170,7 +158,7 @@
           </div>
         </div>
         <div class="bttn-close">
-        <button (click)="closeOverlay()" class="bttn-stnd">Cerrar</button>
+          <button (click)="closeOverlay()" class="bttn-stnd">Cerrar</button>
         </div>
       </div>
     </div>
@@ -185,5 +173,21 @@
         </div>
       </div>
     </div>
+    <!-- Botón de eliminar solo para docentes -->
+    <button *ngIf="userRole === 'docente' || userRole === 'administrador'" (click)="confirmarEliminacion(sentencia)"
+      style="background: none; border: none;" title="Eliminar sentencia">
+      <p style="color: brown;"><i class="fa-solid fa-trash" style="color: brown;"></i> Eliminar Sentencia</p>
+    </button>
   </div>
+  <!-- Overlay de confirmación para eliminar -->
+  <div class="overlay" *ngIf="sentenciaAEliminar">
+    <div class="overlay-content">
+      <h3>¿Está seguro de eliminar esta sentencia?</h3>
+      <div class="overlay-buttons">
+        <button class="bttn-accept" (click)="eliminarSentenciaConfirmada()">Sí, eliminar</button>
+        <button class="bttn-reject" (click)="cancelarEliminacion()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
 </div>

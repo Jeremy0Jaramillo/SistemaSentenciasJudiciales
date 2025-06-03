@@ -14,6 +14,9 @@ interface Sentencia {
   nombre_docente: string;
   email_docente: string;
   archivoURL?: string;
+  estado?: 'aceptar' | 'negar' | null;
+  razon?: string;
+  isLocked?: boolean;
 }
 
 @Component({
@@ -33,6 +36,10 @@ export class SentenciasPageComponent implements OnInit {
     email_estudiante: '',
     nombre_docente: '',
     email_docente: '',
+    archivoURL: '',
+    estado: null,
+    razon: '',
+    isLocked: false
   };
 
   docentes$: Observable<any[]> = new Observable<any[]>();
