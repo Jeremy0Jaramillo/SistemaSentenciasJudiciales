@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import * as Papa from 'papaparse'; // Asegúrate de instalar papaparse con `npm install papaparse`
 
 interface Sentencia {
+  id: any;
   docente?: any; // Puede que necesites definir un tipo más específico para 'docente'
   numero_proceso: string;
   asunto: string;
@@ -344,7 +345,7 @@ export class PrincipalPageComponent implements OnInit {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as Sentencia;
         const id = a.payload.doc.id;
-        return { id, ...data };
+        return { ...data, id };
       }))
     );
   }
@@ -370,7 +371,7 @@ export class PrincipalPageComponent implements OnInit {
   }
 
   // Método para mostrar mensajes
-  private mostrarMensaje(mensaje: string) {
+  private mostrarMensaje(mensaje: string, p0: boolean) {
     this.mensajeBusqueda = mensaje;
     this.mostrarMensajeBusqueda = true;
     setTimeout(() => {
@@ -418,7 +419,7 @@ export class PrincipalPageComponent implements OnInit {
     const numeroProceso = this.numeroProcesoBusqueda.trim();
 
     if (!numeroProceso) {
-      this.mostrarMensaje('Por favor, ingrese un número de proceso');
+      console.log('Por favor, ingrese un número de proceso');
       return;
     }
 
@@ -433,7 +434,7 @@ export class PrincipalPageComponent implements OnInit {
 
       if (sentenciaSnapshot.empty) {
         this.sentenciaEncontrada = null;
-        this.mostrarMensaje('No se encontró ninguna sentencia con ese número de proceso');
+        console.log('No se encontró ninguna sentencia con ese número de proceso');
         return;
       }
 
@@ -474,10 +475,10 @@ export class PrincipalPageComponent implements OnInit {
         isLocked: lockData?.locked || false,
       };
 
-      this.mostrarMensaje(`Sentencia encontrada (${sentenciaSnapshot.docs.length} total)`);
+      console.log(`Sentencia encontrada (${sentenciaSnapshot.docs.length} total)`);
     } catch (error) {
       console.error('Error al buscar la sentencia:', error);
-      this.mostrarMensaje('Error al buscar la sentencia');
+      console.log('Error al buscar la sentencia');
     }
   }
 
@@ -700,27 +701,31 @@ export class PrincipalPageComponent implements OnInit {
     this.sentenciaAEliminar = null;
   }
 
-  eliminarSentenciaConfirmada() {
-    const sentencia = this.sentenciaAEliminar;
-    if (!sentencia || !sentencia.numero_proceso) return;
+eliminarSentenciaConfirmada() {
+    const sentencia = this.sentenciaAEliminar as Sentencia; // Castear a Sentencia
+    if (!sentencia || !sentencia.id) {
+      // Verificar si hay sentencia y si tiene ID
+      console.error(
+        'No se puede eliminar la sentencia: falta información o ID.'
+      );
+      this.sentenciaAEliminar = null;
+      this.mostrarMensaje('Error al intentar eliminar la sentencia.', true);
+      return;
+    }
 
-    // Query específica para eliminar la sentencia correcta
-    this.firestore.collection('sentencias', ref =>
-      ref.where('numero_proceso', '==', sentencia.numero_proceso)
-        .where('email_estudiante', '==', sentencia.email_estudiante)
-        .where('email_docente', '==', sentencia.email_docente)
-    ).get().subscribe(snapshot => {
-      snapshot.forEach(doc => {
-        this.firestore.collection('sentencias').doc(doc.id).delete().then(() => {
-          console.log('Sentencia eliminada correctamente');
-          this.loadUserData(this.user.uid); // Recargar datos
-          this.showNotification('Sentencia eliminada correctamente.', 'success');
-        }).catch(error => {
-          console.error('Error al eliminar sentencia:', error);
-          this.showNotification('Error al eliminar sentencia.', 'error');
-        });
+    this.firestore
+      .collection('sentencias')
+      .doc(sentencia.id)
+      .delete()
+      .then(() => {
+        console.log('Sentencia eliminada correctamente con ID:', sentencia.id);
+        this.mostrarMensaje('Sentencia eliminada con éxito.', false);
+        this.loadUserData(this.user.uid); // Recargar datos
+      })
+      .catch((error) => {
+        console.error('Error al eliminar la sentencia:', error);
+        this.mostrarMensaje('Error al eliminar la sentencia.', true);
       });
-    });
 
     this.sentenciaAEliminar = null;
   }
