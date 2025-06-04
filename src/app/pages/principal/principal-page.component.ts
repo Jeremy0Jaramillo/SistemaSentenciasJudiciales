@@ -195,7 +195,7 @@ export class PrincipalPageComponent implements OnInit {
           this.showNotification('Este número de proceso ya ha sido aceptado por otra sentencia.', 'error');
           return; // Detener el proceso
         }
-        console.log('✅ Número de proceso no encontrado como aceptado previamente.');
+        // console.log('✅ Número de proceso no encontrado como aceptado previamente.');
       }
 
       // PASO 2: Obtener la sentencia específica que este docente está manejando
@@ -477,7 +477,7 @@ export class PrincipalPageComponent implements OnInit {
 
       console.log(`Sentencia encontrada (${sentenciaSnapshot.docs.length} total)`);
     } catch (error) {
-      console.error('Error al buscar la sentencia:', error);
+      // console.error('Error al buscar la sentencia:', error);
       console.log('Error al buscar la sentencia');
     }
   }
@@ -718,7 +718,7 @@ eliminarSentenciaConfirmada() {
       .doc(sentencia.id)
       .delete()
       .then(() => {
-        console.log('Sentencia eliminada correctamente con ID:', sentencia.id);
+        // console.log('Sentencia eliminada correctamente con ID:', sentencia.id);
         this.mostrarMensaje('Sentencia eliminada con éxito.', false);
         this.loadUserData(this.user.uid); // Recargar datos
       })
@@ -743,7 +743,7 @@ eliminarSentenciaConfirmada() {
         .ref.where('numero_proceso', '==', numeroProceso)
         .get();
 
-      console.log(`📊 Sentencias con número ${numeroProceso}:`, snapshot.docs.length);
+      // console.log(`📊 Sentencias con número ${numeroProceso}:`, snapshot.docs.length);
 
       snapshot.docs.forEach((doc, index) => {
         const data = doc.data() as Sentencia;
