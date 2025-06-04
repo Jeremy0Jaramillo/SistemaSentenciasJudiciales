@@ -1,39 +1,39 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { ChangeDetectorRef, Component, type OnInit } from "@angular/core"
+import { FormBuilder, FormGroup, FormControl, FormArray } from "@angular/forms"
+import { AngularFirestore } from "@angular/fire/compat/firestore"
+import { AngularFireAuth } from "@angular/fire/compat/auth"
+import { ActivatedRoute, Router } from "@angular/router"
+import { type Observable, of } from "rxjs"
 
 interface User {
-  uid: string;
-  role: string;
-  [key: string]: any;
+  uid: string
+  role: string
+  [key: string]: any
 }
 
 @Component({
-  selector: 'app-evaluacion',
-  templateUrl: './evaluacion.component.html',
-  styleUrls: ['./evaluacion.component.css']
+  selector: "app-evaluacion",
+  templateUrl: "./evaluacion.component.html",
+  styleUrls: ["./evaluacion.component.css"],
 })
 export class EvaluacionComponent implements OnInit {
-  buttonStates: { [key: string]: string } = {};
-  evaluacionForm: FormGroup;
-  numero_proceso: string = '';
-  asunto: string = '';
-  estudiante: string = '';
-  docente: string = '';
-  saved: boolean = false;
-  docenteSaved = false;
-  isDocente = false;
-  mostrarMensaje: boolean = false;
-  calificaciones: { [key: string]: string } = {};
-  currentUser: Observable<User | null | undefined> = of(null);
-  selectedButtons: { [key: string]: string } = {};
-  calificarState: { [key: string]: boolean } = {};
-  cargando: boolean = false; // Nueva propiedad para controlar el estado de carga
-  mostrarRetroalimentacion: { [key: string]: boolean } = {};
-  mensajeError: string = '';
+  buttonStates: { [key: string]: string } = {}
+  evaluacionForm: FormGroup
+  numero_proceso = ""
+  asunto = ""
+  estudiante = ""
+  docente = ""
+  saved = false
+  docenteSaved = false
+  isDocente = false
+  mostrarMensaje = false
+  calificaciones: { [key: string]: string } = {}
+  currentUser: Observable<User | null | undefined> = of(null)
+  selectedButtons: { [key: string]: string } = {}
+  calificarState: { [key: string]: boolean } = {}
+  cargando = false
+  mostrarRetroalimentacion: { [key: string]: boolean } = {}
+  mensajeError = ""
   private isSubmitting = false
 
   constructor(
@@ -42,479 +42,471 @@ export class EvaluacionComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private afAuth: AngularFireAuth,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.evaluacionForm = this.fb.group({
-      numero_proceso: new FormControl(''),
+      numero_proceso: new FormControl(""),
       saved: [false],
       docenteSaved: [false],
-      motivationType: new FormControl(''),
-      motivationType_calificacion: new FormControl(''),
-      motivationType_retroalimentacion: new FormControl(''),
+      motivationType: new FormControl(""),
+      motivationType_calificacion: new FormControl(""),
+      motivationType_retroalimentacion: new FormControl(""),
+
+      // NUEVA SECCIÓN: Campos para la pregunta final de déficit de motivación
+      finalMotivationDeficit: new FormControl(""),
+      finalMotivationReasons: new FormControl(""),
+      finalMotivation_calificacion: new FormControl(""),
+      finalMotivation_retroalimentacion: new FormControl(""),
+
       nonexistinence: this.fb.group({
-        lackFoundationNormative: new FormControl(''),
-        reasonsNormative: new FormControl(''),
-        normative_calificacion: new FormControl(''),
-        normative_retroalimentacion: new FormControl(''),
-        lackFoundationFactual: new FormControl(''),
-        reasonsFactual: new FormControl(''),
-        factual_calificacion: new FormControl(''),
-        factual_retroalimentacion: new FormControl(''),
-        lackMotivation: new FormControl(''),
-        reasonsMotivation: new FormControl(''),
-        motivation_calificacion: new FormControl(''),
-        motivation_retroalimentacion: new FormControl('')
+        lackFoundationNormative: new FormControl(""),
+        reasonsNormative: new FormControl(""),
+        normative_calificacion: new FormControl(""),
+        normative_retroalimentacion: new FormControl(""),
+        lackFoundationFactual: new FormControl(""),
+        reasonsFactual: new FormControl(""),
+        factual_calificacion: new FormControl(""),
+        factual_retroalimentacion: new FormControl(""),
+        // REMOVIDO: lackMotivation, reasonsMotivation, motivation_calificacion, motivation_retroalimentacion
       }),
       insufficiency: this.fb.group({
-        lackFoundationNormative: new FormControl(''),
-        reasonsNormative: new FormControl(''),
-        normative_calificacion: new FormControl(''),
-        normative_retroalimentacion: new FormControl(''),
-        lackFoundationFactual: new FormControl(''),
-        reasonsFactual: new FormControl(''),
-        factual_calificacion: new FormControl(''),
-        factual_retroalimentacion: new FormControl(''),
-        lackMotivation: new FormControl(''),
-        reasonsMotivation: new FormControl(''),
-        motivation_calificacion: new FormControl(''),
-        motivation_retroalimentacion: new FormControl('')
+        lackFoundationNormative: new FormControl(""),
+        reasonsNormative: new FormControl(""),
+        normative_calificacion: new FormControl(""),
+        normative_retroalimentacion: new FormControl(""),
+        lackFoundationFactual: new FormControl(""),
+        reasonsFactual: new FormControl(""),
+        factual_calificacion: new FormControl(""),
+        factual_retroalimentacion: new FormControl(""),
+        // REMOVIDO: lackMotivation, reasonsMotivation, motivation_calificacion, motivation_retroalimentacion
       }),
       appearance: this.fb.group({
-        appearanceReason: new FormControl(''),
-        motivationalHabit: new FormControl(''),
-        motivationalHabit_calificacion: new FormControl(''),
-        motivationalHabit_retroalimentacion: new FormControl(''),
+        appearanceReason: new FormControl(""),
+        motivationalHabit: new FormControl(""),
+        motivationalHabit_calificacion: new FormControl(""),
+        motivationalHabit_retroalimentacion: new FormControl(""),
         incoherence: this.fb.group({
-          existsLogicalNormative: new FormControl(''),
-          reasonsLogicaNormative: new FormControl(''),
-          logicaNormative_calificacion: new FormControl(''),
-          logicaNormative_retroalimentacion: new FormControl(''),
-          existsDecisionalNormative: new FormControl(''),
-          reasonsDecisionalNormative: new FormControl(''),
-          decisionalNormative_calificacion: new FormControl(''),
-          decisionalNormative_retroalimentacion: new FormControl(''),
-          existsLogicalFactual: new FormControl(''),
-          reasonsLogicalFactual: new FormControl(''),
-          logicalFactual_calificacion: new FormControl(''),
-          logicalFactual_retroalimentacion: new FormControl(''),
-          existsDecisionalFactual: new FormControl(''),
-          reasonsDecisionalFactual: new FormControl(''),
-          decisionalFactual_calificacion: new FormControl(''),
-          decisionalFactual_retroalimentacion: new FormControl(''),
-          lackMotivation: new FormControl(''),
-          reasonsMotivation: new FormControl(''),
-          motivation_calificacion: new FormControl(''),
-          motivation_retroalimentacion: new FormControl('')
+          existsLogicalNormative: new FormControl(""),
+          reasonsLogicaNormative: new FormControl(""),
+          logicaNormative_calificacion: new FormControl(""),
+          logicaNormative_retroalimentacion: new FormControl(""),
+          existsDecisionalNormative: new FormControl(""),
+          reasonsDecisionalNormative: new FormControl(""),
+          decisionalNormative_calificacion: new FormControl(""),
+          decisionalNormative_retroalimentacion: new FormControl(""),
+          existsLogicalFactual: new FormControl(""),
+          reasonsLogicalFactual: new FormControl(""),
+          logicalFactual_calificacion: new FormControl(""),
+          logicalFactual_retroalimentacion: new FormControl(""),
+          existsDecisionalFactual: new FormControl(""),
+          reasonsDecisionalFactual: new FormControl(""),
+          decisionalFactual_calificacion: new FormControl(""),
+          decisionalFactual_retroalimentacion: new FormControl(""),
+          // REMOVIDO: lackMotivation, reasonsMotivation, motivation_calificacion, motivation_retroalimentacion
         }),
         inatinence: this.fb.group({
-          existsInatinenceJuridical: new FormControl(''),
-          reasonsInatinenceJuridical: new FormControl(''),
-          inatinenceJuridical_calificacion: new FormControl(''),
-          inatinenceJuridical_retroalimentacion: new FormControl(''),
-          existsInatinenceFactual: new FormControl(''),
-          reasonsInatinenceFactual: new FormControl(''),
-          inatinenceFactual_calificacion: new FormControl(''),
-          inatinenceFactual_retroalimentacion: new FormControl('')
+          existsInatinenceJuridical: new FormControl(""),
+          reasonsInatinenceJuridical: new FormControl(""),
+          inatinenceJuridical_calificacion: new FormControl(""),
+          inatinenceJuridical_retroalimentacion: new FormControl(""),
+          existsInatinenceFactual: new FormControl(""),
+          reasonsInatinenceFactual: new FormControl(""),
+          inatinenceFactual_calificacion: new FormControl(""),
+          inatinenceFactual_retroalimentacion: new FormControl(""),
         }),
         incomprehensibility: this.fb.group({
-          existsIncomprehensibilityJuridical: new FormControl(''),
-          reasonsIncomprehensibilityJuridical: new FormControl(''),
-          incomprehensibilityJuridical_calificacion: new FormControl(''),
-          incomprehensibilityJuridical_retroalimentacion: new FormControl(''),
-          existsIncomprehensibilityFactual: new FormControl(''),
-          reasonsIncomprehensibilityFactual: new FormControl(''),
-          incomprehensibilityFactual_calificacion: new FormControl(''),
-          incomprehensibilityFactual_retroalimentacion: new FormControl('')
+          existsIncomprehensibilityJuridical: new FormControl(""),
+          reasonsIncomprehensibilityJuridical: new FormControl(""),
+          incomprehensibilityJuridical_calificacion: new FormControl(""),
+          incomprehensibilityJuridical_retroalimentacion: new FormControl(""),
+          existsIncomprehensibilityFactual: new FormControl(""),
+          reasonsIncomprehensibilityFactual: new FormControl(""),
+          incomprehensibilityFactual_calificacion: new FormControl(""),
+          incomprehensibilityFactual_retroalimentacion: new FormControl(""),
         }),
         incongruity: this.fb.group({
-          existsIncongruityNormativeParticipants: new FormControl(''),
-          reasonsIncongruityNormativeParticipants: new FormControl(''),
-          normativeParticipants_calificacion: new FormControl(''),
-          normativeParticipants_retroalimentacion: new FormControl(''),
-          existsIncongruityNormativeLaw: new FormControl(''),
-          reasonsIncongruityNormativeLaw: new FormControl(''),
-          normativeLaw_calificacion: new FormControl(''),
-          normativeLaw_retroalimentacion: new FormControl(''),
-          existsIncongruityFactualParticipants: new FormControl(''),
-          reasonsIncongruityFactualParticipants: new FormControl(''),
-          factualParticipants_calificacion: new FormControl(''),
-          factualParticipants_retroalimentacion: new FormControl(''),
-          existsIncongruityFactualLaw: new FormControl(''),
-          reasonsIncongruityFactualLaw: new FormControl(''),
-          factualLaw_calificacion: new FormControl(''),
-          factualLaw_retroalimentacion: new FormControl('')
-        })
-      })
-    });
-    // Call the method on form changes
-    this.evaluacionForm.get('motivationType')?.valueChanges.subscribe(value => {
-      this.handleMotivationTypeChange(value);
-    });
+          existsIncongruityNormativeParticipants: new FormControl(""),
+          reasonsIncongruityNormativeParticipants: new FormControl(""),
+          normativeParticipants_calificacion: new FormControl(""),
+          normativeParticipants_retroalimentacion: new FormControl(""),
+          existsIncongruityNormativeLaw: new FormControl(""),
+          reasonsIncongruityNormativeLaw: new FormControl(""),
+          normativeLaw_calificacion: new FormControl(""),
+          normativeLaw_retroalimentacion: new FormControl(""),
+          existsIncongruityFactualParticipants: new FormControl(""),
+          reasonsIncongruityFactualParticipants: new FormControl(""),
+          factualParticipants_calificacion: new FormControl(""),
+          factualParticipants_retroalimentacion: new FormControl(""),
+          existsIncongruityFactualLaw: new FormControl(""),
+          reasonsIncongruityFactualLaw: new FormControl(""),
+          factualLaw_calificacion: new FormControl(""),
+          factualLaw_retroalimentacion: new FormControl(""),
+        }),
+      }),
+    })
+
+    this.evaluacionForm.get("motivationType")?.valueChanges.subscribe((value) => {
+      this.handleMotivationTypeChange(value)
+    })
   }
 
   sectionErrors: { [key: string]: string[] } = {
     motivationType: [],
     nonexistence: [],
     insufficiency: [],
-    appearance: []
-  };
+    appearance: [],
+    finalMotivation: [], // NUEVO: Agregar validación para la sección final
+  }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.numero_proceso = params['numero_proceso'] || '';
-      this.asunto = params['asunto'] || '';
-      this.estudiante = params['estudiante'] || '';
-      this.docente = params['docente'] || '';
+    this.route.queryParams.subscribe((params) => {
+      this.numero_proceso = params["numero_proceso"] || ""
+      this.asunto = params["asunto"] || ""
+      this.estudiante = params["estudiante"] || ""
+      this.docente = params["docente"] || ""
       this.evaluacionForm.patchValue({
-        numero_proceso: this.numero_proceso
-      });
-      this.loadUserData();
-      this.checkSavedStatus();
-      this.checkDocenteSaved();
+        numero_proceso: this.numero_proceso,
+      })
+      this.loadUserData()
+      this.checkSavedStatus()
+      this.checkDocenteSaved()
       setTimeout(() => {
-        this.checkLockStatus();
-      }, 1000);
-      this.loadFormData();
-    });
-    this.evaluacionForm.get('motivationType_calificacion')?.valueChanges.subscribe(value => {
+        this.checkLockStatus()
+      }, 1000)
+      this.loadFormData()
+    })
+    this.evaluacionForm.get("motivationType_calificacion")?.valueChanges.subscribe((value) => {
       // console.log('Calificación changed to:', value);
-    });
-    this.changeDetectorRef.detectChanges();
+    })
+    this.changeDetectorRef.detectChanges()
     setTimeout(() => {
-      // console.log('Estado de los radio buttons después de 2 segundos:');
-      this.debugRadioButtons();
-    }, 2000);
+      this.debugRadioButtons()
+    }, 2000)
   }
 
   loadFormData() {
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
+    this.firestore
+      .collection("evaluacion")
+      .doc(this.numero_proceso)
+      .valueChanges()
       .subscribe((data: any) => {
         if (data) {
-          // Aplicamos los valores al formulario
-          this.evaluacionForm.patchValue(data, { emitEvent: false });
-
-          // Forzamos la detección de cambios
+          this.evaluacionForm.patchValue(data, { emitEvent: false })
           setTimeout(() => {
-            this.changeDetectorRef.detectChanges();
-          }, 100);
-
-          // Si es necesario, forzamos otra actualización después de un momento
+            this.changeDetectorRef.detectChanges()
+          }, 100)
           setTimeout(() => {
-            this.changeDetectorRef.detectChanges();
-          }, 500);
+            this.changeDetectorRef.detectChanges()
+          }, 500)
         }
-      });
+      })
   }
 
   handleRadioButtonValues(data: any) {
-    // Función recursiva para manejar los valores de radio buttons
-    const setRadioValues = (obj: any, parentPath: string = '') => {
+    const setRadioValues = (obj: any, parentPath = "") => {
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
-          const currentPath = parentPath ? `${parentPath}.${key}` : key;
-
-          if (typeof obj[key] === 'object' && obj[key] !== null) {
-            setRadioValues(obj[key], currentPath);
-          } else if (key.startsWith('lack') || key.includes('exists')) {
-            const control = this.evaluacionForm.get(currentPath);
+          const currentPath = parentPath ? `${parentPath}.${key}` : key
+          if (typeof obj[key] === "object" && obj[key] !== null) {
+            setRadioValues(obj[key], currentPath)
+          } else if (key.startsWith("lack") || key.includes("exists") || key === "finalMotivationDeficit") {
+            const control = this.evaluacionForm.get(currentPath)
             if (control) {
-              control.setValue(obj[key], { emitEvent: false });
+              control.setValue(obj[key], { emitEvent: false })
             }
           }
         }
       }
-    };
-
-    setRadioValues(data);
+    }
+    setRadioValues(data)
   }
 
   submitForm() {
     if (!this.validateAllSections()) {
-      return;
+      return
     }
-    this.isSubmitting = true;
-    this.cargando = true;
-    this.evaluacionForm.patchValue({ saved: true });
+    this.isSubmitting = true
+    this.cargando = true
+    this.evaluacionForm.patchValue({ saved: true })
     if (this.isDocente) {
-      this.evaluacionForm.patchValue({ docenteSaved: true });
+      this.evaluacionForm.patchValue({ docenteSaved: true })
     }
-    const analisisData = this.evaluacionForm.getRawValue();
-    // Actualizar las calificaciones
+    const analisisData = this.evaluacionForm.getRawValue()
+
     for (const [key, value] of Object.entries(this.buttonStates)) {
-      const parts = key.split('.');
-      let current: any = analisisData;
+      const parts = key.split(".")
+      let current: any = analisisData
       for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) current[parts[i]] = {};
-        current = current[parts[i]];
+        if (!current[parts[i]]) current[parts[i]] = {}
+        current = current[parts[i]]
       }
-      current[parts[parts.length - 1]] = value;
+      current[parts[parts.length - 1]] = value
     }
+
     const processRadioValues = (obj: any) => {
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (typeof obj[key] === 'object' && obj[key] !== null) {
-            processRadioValues(obj[key]);
-          } else if (key.startsWith('lack') || key.includes('exists')) {
-            // Asegurarnos de que los valores sean exactamente "Si" o "No"
-            if (obj[key] === true) obj[key] = "Si";
-            if (obj[key] === false) obj[key] = "No";
+          if (typeof obj[key] === "object" && obj[key] !== null) {
+            processRadioValues(obj[key])
+          } else if (key.startsWith("lack") || key.includes("exists") || key === "finalMotivationDeficit") {
+            if (obj[key] === true) obj[key] = "Si"
+            if (obj[key] === false) obj[key] = "No"
           }
         }
       }
-    };
+    }
 
-    processRadioValues(analisisData);
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).set(analisisData)
+    processRadioValues(analisisData)
+    this.firestore
+      .collection("evaluacion")
+      .doc(this.numero_proceso)
+      .set(analisisData)
       .then(() => {
-        this.saved = true;
-        window.location.reload();
-        this.cargando = false;
+        this.saved = true
+        window.location.reload()
+        this.cargando = false
         setTimeout(() => {
-          this.isSubmitting = false;
-        }, 100);
+          this.isSubmitting = false
+        }, 100)
       })
-      .catch(error => {
-        // console.error("Error saving document: ", error);
-        this.cargando = false;
-        this.mostrarMensajeError('Error al guardar');
-      });
+      .catch((error) => {
+        this.cargando = false
+        this.mostrarMensajeError("Error al guardar")
+      })
   }
 
   mostrarMensajeError(mensaje: string) {
-    this.mensajeError = mensaje;
-    this.mostrarMensaje = true;
+    this.mensajeError = mensaje
+    this.mostrarMensaje = true
     setTimeout(() => {
-      this.mostrarMensaje = false;
-      this.mensajeError = '';
-    }, 10000);
+      this.mostrarMensaje = false
+      this.mensajeError = ""
+    }, 10000)
   }
 
   isButtonSelected(section: string, controlName: string, value: string): boolean {
-    this.calificaciones[section] = value;
-    let controlPath = "";
-    if (section === "motivationType") {
+    this.calificaciones[section] = value
+    let controlPath = ""
+    if (section === "motivationType" || section === "finalMotivation") {
       controlPath = controlName
     } else {
       controlPath = `${section}.${controlName}`
-      // console.log(controlPath)
     }
-    return this.buttonStates[controlPath] === value;
+    return this.buttonStates[controlPath] === value
   }
 
   loadCalificaciones(data: any) {
-    this.buttonStates = {}; // Reinicia buttonStates
-    this.updateButtonStates(data, '');
-    this.changeDetectorRef.detectChanges(); // Forzar actualización de la vista
+    this.buttonStates = {}
+    this.updateButtonStates(data, "")
+    this.changeDetectorRef.detectChanges()
   }
-
 
   updateButtonStates(obj: any, prefix: string) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
-        const fullPath = prefix ? `${prefix}.${key}` : key;
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this.updateButtonStates(obj[key], fullPath);
-        } else if (key.endsWith('_calificacion')) {
-          this.buttonStates[fullPath] = obj[key];
+        const fullPath = prefix ? `${prefix}.${key}` : key
+        if (typeof obj[key] === "object" && obj[key] !== null) {
+          this.updateButtonStates(obj[key], fullPath)
+        } else if (key.endsWith("_calificacion")) {
+          this.buttonStates[fullPath] = obj[key]
         }
       }
     }
   }
 
   checkSavedStatus() {
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
+    this.firestore
+      .collection("evaluacion")
+      .doc(this.numero_proceso)
+      .valueChanges()
       .subscribe((data: any) => {
         if (data) {
-          this.saved = data.saved || false;
+          this.saved = data.saved || false
         }
         if (data && data.saved) {
-          this.saved = true;
-          // Desactiva el select
-          const selectElement = document.getElementById('motivationType') as HTMLSelectElement;
+          this.saved = true
+          const selectElement = document.getElementById("motivationType") as HTMLSelectElement
           if (selectElement) {
-            selectElement.disabled = true;
+            selectElement.disabled = true
           }
         }
-      });
+      })
   }
 
   checkLockStatus() {
-    this.firestore.collection('locks').doc(this.numero_proceso).valueChanges().subscribe((data: any) => {
-      if (data && data.locked) {
-        this.disableFormControls(this.evaluacionForm); // Disable the form if it's locked
-      }
-    });
+    this.firestore
+      .collection("locks")
+      .doc(this.numero_proceso)
+      .valueChanges()
+      .subscribe((data: any) => {
+        if (data && data.locked) {
+          this.disableFormControls(this.evaluacionForm)
+        }
+      })
   }
 
-  // Modificamos el método para marcar/desmarcar radio buttons
   setRadioValue(controlPath: string, value: string) {
-    const control = this.evaluacionForm.get(controlPath);
+    const control = this.evaluacionForm.get(controlPath)
     if (control) {
-      control.setValue(value, { emitEvent: true });
-      this.changeDetectorRef.detectChanges();
+      control.setValue(value, { emitEvent: true })
+      this.changeDetectorRef.detectChanges()
     }
   }
 
-  // Método para verificar el valor de un radio button
   isRadioSelected(controlPath: string, value: string): boolean {
-    const control = this.evaluacionForm.get(controlPath);
-    return control ? control.value === value : false;
+    const control = this.evaluacionForm.get(controlPath)
+    return control ? control.value === value : false
   }
 
   lockForm() {
-    this.firestore.collection('locks').doc(this.numero_proceso).set({ locked: true })
+    this.firestore
+      .collection("locks")
+      .doc(this.numero_proceso)
+      .set({ locked: true })
       .then(() => {
-        this.disableFormControls(this.evaluacionForm); // Disable the form controls
+        this.disableFormControls(this.evaluacionForm)
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error("Error locking form: ", error);
-      });
+      })
   }
 
   disableFormControls(formGroup: FormGroup | FormArray) {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control?.disable(); // Disable the control
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key)
+      control?.disable()
       if (control instanceof FormGroup || control instanceof FormArray) {
-        this.disableFormControls(control); // Recursively disable nested controls
+        this.disableFormControls(control)
       }
-    });
+    })
   }
 
   loadUserData() {
-    this.afAuth.user.subscribe(user => {
+    this.afAuth.user.subscribe((user) => {
       if (user) {
-        this.currentUser = this.firestore.collection('users').doc<User>(user.uid).valueChanges();
-        this.currentUser.subscribe(userData => {
-          if (userData && userData.role === 'docente') {
-            this.isDocente = true;
-            this.checkDocenteSaved();
+        this.currentUser = this.firestore.collection("users").doc<User>(user.uid).valueChanges()
+        this.currentUser.subscribe((userData) => {
+          if (userData && userData.role === "docente") {
+            this.isDocente = true
+            this.checkDocenteSaved()
           }
-        });
-        this.loadEvaluacionData();
+        })
+        this.loadEvaluacionData()
       }
-    });
+    })
   }
 
   loadEvaluacionData() {
-    this.firestore.collection('evaluacion', ref => ref.where('numero_proceso', '==', this.numero_proceso))
+    this.firestore
+      .collection("evaluacion", (ref) => ref.where("numero_proceso", "==", this.numero_proceso))
       .valueChanges()
-      .subscribe(data => {
+      .subscribe((data) => {
         if (data && data.length) {
-          const evaluationData = data[0] as evaluacionData; // Cast to the correct type
-          this.evaluacionForm.patchValue(evaluationData);
+          const evaluationData = data[0] as evaluacionData
+          this.evaluacionForm.patchValue(evaluationData)
         }
-      });
+      })
   }
 
   handleMotivationTypeChange(value: string): void {
-    // Solo actualizar el valor sin resetear otros campos
-    this.evaluacionForm.patchValue({ motivationType: value }, { emitEvent: false });
-    // No hacer ningún reset de campos
-    this.changeDetectorRef.detectChanges();
+    this.evaluacionForm.patchValue({ motivationType: value }, { emitEvent: false })
+    this.changeDetectorRef.detectChanges()
   }
 
   checkDocenteSaved() {
-    this.firestore.collection('evaluacion').doc(this.numero_proceso).valueChanges()
+    this.firestore
+      .collection("evaluacion")
+      .doc(this.numero_proceso)
+      .valueChanges()
       .subscribe((data: any) => {
         if (data && data.saved) {
-          this.docenteSaved = data.docenteSaved || false;
+          this.docenteSaved = data.docenteSaved || false
         }
-      });
+      })
   }
 
   getCalificacionValue(controlPath: string): string {
-    const control = this.evaluacionForm.get(controlPath);
+    const control = this.evaluacionForm.get(controlPath)
     if (control) {
-      return control.value ? control.value : 'No Calificado';
+      return control.value ? control.value : "No Calificado"
     }
-    return 'No Calificado';
+    return "No Calificado"
   }
 
-
   setCalificacion(controlPath: string, calificacion: string): void {
-    const control = this.evaluacionForm.get(controlPath);
+    const control = this.evaluacionForm.get(controlPath)
     if (control) {
-      control.setValue(calificacion);
-      this.selectedButtons['motivationType'] = calificacion;
+      control.setValue(calificacion)
+      this.selectedButtons["motivationType"] = calificacion
     }
   }
 
   redirectToAnalisis2() {
-    this.router.navigate(['/analisis2'], {
+    this.router.navigate(["/analisis2"], {
       queryParams: {
         numero_proceso: this.numero_proceso,
         asunto: this.asunto,
         estudiante: this.estudiante,
-        docente: this.docente
-      }
-    });
+        docente: this.docente,
+      },
+    })
   }
 
   redirectToEvaluacion2(event: Event) {
-    // event.preventDefault();
-    // if (!this.validateAllSections()) {
-    //   return;
-    // }
-    // if (!this.saved) {
-    //   this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
-    //   return;
-    // }
-    this.router.navigate(['/evaluacion2'], {
+    this.router.navigate(["/evaluacion2"], {
       queryParams: {
         numero_proceso: this.numero_proceso,
         asunto: this.asunto,
         estudiante: this.estudiante,
-        docente: this.docente
-      }
-    });
+        docente: this.docente,
+      },
+    })
   }
 
-
   toggleCalificar(section: string) {
-    this.calificarState[section] = !this.calificarState[section];
+    this.calificarState[section] = !this.calificarState[section]
   }
 
   selectButton(section: string, controlName: string, value: string) {
-    this.calificaciones[section] = value;
-    let controlPath = "";
-    if (section === "motivationType") {
-      controlPath = controlName;
+    this.calificaciones[section] = value
+    let controlPath = ""
+    if (section === "motivationType" || section === "finalMotivation") {
+      controlPath = controlName
     } else {
-      controlPath = `${section}.${controlName}`;
+      controlPath = `${section}.${controlName}`
     }
-    let control = this.evaluacionForm.get(controlPath);
+    const control = this.evaluacionForm.get(controlPath)
     if (control) {
-      control.setValue(value, { emitEvent: false });
-      this.buttonStates[controlPath] = value;
+      control.setValue(value, { emitEvent: false })
+      this.buttonStates[controlPath] = value
     }
-    this.changeDetectorRef.detectChanges();
+    this.changeDetectorRef.detectChanges()
   }
 
-
   isCalificacionCorrecta(field: string): boolean {
-    return this.calificaciones[field] === 'Correcto';
+    return this.calificaciones[field] === "Correcto"
   }
 
   isCalificacionIncorrecta(field: string): boolean {
-    return this.calificaciones[field] === 'Incorrecto';
+    return this.calificaciones[field] === "Incorrecto"
   }
+
   getRetroalimentacionValue(controlName: string): string {
-    return this.evaluacionForm.get(controlName)?.value || '';
+    return this.evaluacionForm.get(controlName)?.value || ""
   }
 
   toggleRetroalimentacion(sectionId: string) {
-    this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId];
+    this.mostrarRetroalimentacion[sectionId] = !this.mostrarRetroalimentacion[sectionId]
   }
-  debugRadioButtons() {
-    const searchRadioControls = (group: any, path = '') => {
-      for (const key in group.controls) {
-        const control = group.controls[key];
-        const currentPath = path ? `${path}.${key}` : key;
 
+  debugRadioButtons() {
+    const searchRadioControls = (group: any, path = "") => {
+      for (const key in group.controls) {
+        const control = group.controls[key]
+        const currentPath = path ? `${path}.${key}` : key
         if (control instanceof FormGroup) {
-          searchRadioControls(control, currentPath);
-        } else if (key.startsWith('lack') || key.includes('exists')) {
+          searchRadioControls(control, currentPath)
+        } else if (key.startsWith("lack") || key.includes("exists") || key === "finalMotivationDeficit") {
           // console.log(`Radio button ${currentPath}:`, {
           //   value: control.value,
           //   dirty: control.dirty,
@@ -523,186 +515,177 @@ export class EvaluacionComponent implements OnInit {
           // });
         }
       }
-    };
-
-    // console.log('=== Debug Radio Buttons ===');
-    searchRadioControls(this.evaluacionForm);
+    }
+    searchRadioControls(this.evaluacionForm)
   }
 
   validateSection(sectionName: string): string[] {
-    const errors: string[] = [];
-    const section = this.evaluacionForm.get(sectionName);
+    const errors: string[] = []
+    const section = this.evaluacionForm.get(sectionName)
 
-    if (!section) return errors;
+    if (!section) return errors
 
     switch (sectionName) {
-      case 'motivationType':
+      case "motivationType":
         if (!section.value) {
-          errors.push('Seleccione un tipo de motivación | ');
+          errors.push("Seleccione un tipo de motivación | ")
         }
-        break;
+        break
 
-      case 'nonexistinence':
-        const nonexistence = section.value;
-        if (!nonexistence.lackFoundationNormative) {
-          errors.push('Complete el campo de fundamentación normativa | ');
+      case "finalMotivation":
+        // NUEVA VALIDACIÓN: Para la sección final de déficit de motivación
+        const finalMotivationDeficit = this.evaluacionForm.get("finalMotivationDeficit")?.value
+        const finalMotivationReasons = this.evaluacionForm.get("finalMotivationReasons")?.value
+
+        if (!finalMotivationDeficit) {
+          errors.push("Complete la pregunta sobre déficit de motivación | ")
         }
-        if (nonexistence.lackFoundationNormative === 'Si' && !nonexistence.reasonsNormative) {
-          errors.push('Ingrese las razones de la fundamentación normativa | ');
+        if (!finalMotivationReasons) {
+          errors.push("Ingrese las razones sobre el déficit de motivación | ")
+        }
+        break
+
+      case "nonexistinence":
+        const nonexistence = section.value
+        if (!nonexistence.lackFoundationNormative) {
+          errors.push("Complete el campo de fundamentación normativa | ")
+        }
+        if (nonexistence.lackFoundationNormative === "Si" && !nonexistence.reasonsNormative) {
+          errors.push("Ingrese las razones de la fundamentación normativa | ")
         }
         if (!nonexistence.normative_calificacion) {
-          errors.push('Califique la fundamentación normativa | ');
+          errors.push("Califique la fundamentación normativa | ")
         }
-        // Similar validations for factual and motivation fields
         if (!nonexistence.lackFoundationFactual) {
-          errors.push('Complete el campo de fundamentación fáctica | ');
+          errors.push("Complete el campo de fundamentación fáctica | ")
         }
-        if (!nonexistence.lackMotivation) {
-          errors.push('Complete el campo de motivación | ');
-        }
-        break;
+        break
 
-      case 'insufficiency':
-        const insufficiency = section.value;
+      case "insufficiency":
+        const insufficiency = section.value
         if (!insufficiency.lackFoundationNormative) {
-          errors.push('Complete el campo de fundamentación normativa | ');
+          errors.push("Complete el campo de fundamentación normativa | ")
         }
-        if (insufficiency.lackFoundationNormative === 'Si' && !insufficiency.reasonsNormative) {
-          errors.push('Ingrese las razones de la fundamentación normativa | ');
+        if (insufficiency.lackFoundationNormative === "Si" && !insufficiency.reasonsNormative) {
+          errors.push("Ingrese las razones de la fundamentación normativa | ")
         }
-        // Similar validations for factual and motivation fields
-        break;
+        break
 
-      case 'appearance':
-        const appearance = section.value;
-        if (!appearance.appearanceReason) {
-          errors.push('Complete el motivo de apariencia | ');
-        }
+      case "appearance":
+        const appearance = section.value
         if (!appearance.motivationalHabit) {
-          errors.push('Complete el hábito motivacional | ');
+          errors.push("Complete el hábito motivacional | ")
         }
-
-        // Validate incoherence subsection
-        const incoherence = appearance.incoherence;
+        const incoherence = appearance.incoherence
         if (incoherence) {
           if (!incoherence.existsLogicalNormative) {
-            errors.push('Complete el campo de incoherencia lógica normativa | ');
+            errors.push("Complete el campo de incoherencia lógica normativa | ")
           }
-          // Add more specific validations for incoherence fields
         }
-
-        // Validate inatinence subsection
-        const inatinence = appearance.inatinence;
+        const inatinence = appearance.inatinence
         if (inatinence) {
           if (!inatinence.existsInatinenceJuridical) {
-            errors.push('Complete el campo de inatinencia jurídica | ');
+            errors.push("Complete el campo de inatinencia jurídica | ")
           }
-          // Add more specific validations for inatinence fields
         }
-        break;
+        break
     }
 
-    return errors;
+    return errors
   }
 
   validateAllSections(): boolean {
-    let isValid = true;
+    let isValid = true
     this.sectionErrors = {
       motivationType: [],
       nonexistence: [],
       insufficiency: [],
-      appearance: []
-    };
-
-    // Validate each section
-    Object.keys(this.sectionErrors).forEach(sectionName => {
-      const errors = this.validateSection(sectionName);
-      if (errors.length > 0) {
-        this.sectionErrors[sectionName] = errors;
-        isValid = false;
-      }
-    });
-
-    // Show error messages if there are any
-    if (!isValid) {
-      let errorMessage = '';
-      Object.entries(this.sectionErrors).forEach(([section, errors]) => {
-        if (errors.length > 0) {
-          errorMessage += `\n${this.getSectionTitle(section)}:\n`;
-          errors.forEach(error => {
-            errorMessage += `- ${error}\n`;
-          });
-        }
-      });
-      this.mostrarMensajeError(errorMessage.trim());
+      appearance: [],
+      finalMotivation: [],
     }
 
-    return isValid;
+    Object.keys(this.sectionErrors).forEach((sectionName) => {
+      const errors = this.validateSection(sectionName)
+      if (errors.length > 0) {
+        this.sectionErrors[sectionName] = errors
+        isValid = false
+      }
+    })
+
+    if (!isValid) {
+      let errorMessage = ""
+      Object.entries(this.sectionErrors).forEach(([section, errors]) => {
+        if (errors.length > 0) {
+          errorMessage += `\n${this.getSectionTitle(section)}:\n`
+          errors.forEach((error) => {
+            errorMessage += `- ${error}\n`
+          })
+        }
+      })
+      this.mostrarMensajeError(errorMessage.trim())
+    }
+
+    return isValid
   }
 
   getSectionTitle(section: string): string {
     switch (section) {
-      case 'motivationType':
-        return 'Tipo de Motivación';
-      case 'nonexistence':
-        return 'Inexistencia';
-      case 'insufficiency':
-        return 'Insuficiencia';
-      case 'appearance':
-        return 'Apariencia';
+      case "motivationType":
+        return "Tipo de Motivación"
+      case "nonexistence":
+        return "Inexistencia"
+      case "insufficiency":
+        return "Insuficiencia"
+      case "appearance":
+        return "Apariencia"
+      case "finalMotivation":
+        return "Evaluación Final - Déficit de Motivación"
       default:
-        return section;
+        return section
     }
   }
-
 }
 
-
 interface evaluacionData {
-  numero_proceso: string;
-  motivationType: string;
+  numero_proceso: string
+  motivationType: string
+  finalMotivationDeficit?: string // NUEVO CAMPO
+  finalMotivationReasons?: string // NUEVO CAMPO
   inexistencia?: {
-    faltaFundamentacionNormativa: string;
-    motivoFundamentacionNormativa: string;
-    normativa_calificacion: string;
-    normativa_retroalimentacion: string;
-    faltaFundamentacionFactica: string;
-    motivoFundamentacionFactica: string;
-    factica_calificacion: string;
-    factica_retroalimentacion: string;
-    deficitMotivacion: string;
-    motivoDeficitMotivacion: string;
-    motivacion_calificacion: string;
-    motivacion_retroalimentacion: string;
-  };
+    faltaFundamentacionNormativa: string
+    motivoFundamentacionNormativa: string
+    normativa_calificacion: string
+    normativa_retroalimentacion: string
+    faltaFundamentacionFactica: string
+    motivoFundamentacionFactica: string
+    factica_calificacion: string
+    factica_retroalimentacion: string
+    // REMOVIDOS: deficitMotivacion, motivoDeficitMotivacion, motivacion_calificacion, motivacion_retroalimentacion
+  }
   insuficiencia?: {
-    faltaFundamentacionNormativa: string;
-    motivoFundamentacionNormativa: string;
-    normativa_calificacion: string;
-    normativa_retroalimentacion: string;
-    faltaFundamentacionFactica: string;
-    motivoFundamentacionFactica: string;
-    factica_calificacion: string;
-    factica_retroalimentacion: string;
-    deficitMotivacion: string;
-    motivoDeficitMotivacion: string;
-    motivacioncalificacion: string;
-    motivacionretroalimentacion: string;
-  };
+    faltaFundamentacionNormativa: string
+    motivoFundamentacionNormativa: string
+    normativa_calificacion: string
+    normativa_retroalimentacion: string
+    faltaFundamentacionFactica: string
+    motivoFundamentacionFactica: string
+    factica_calificacion: string
+    factica_retroalimentacion: string
+    // REMOVIDOS: deficitMotivacion, motivoDeficitMotivacion, motivacioncalificacion, motivacionretroalimentacion
+  }
   apariencia?: {
-    motivoApariencia: string;
-    vicioMotivacional: string;
+    motivoApariencia: string
+    vicioMotivacional: string
     incoherenciaJuridica: {
-      incoherenciaLogicaNormativa: string;
-      motivoLogicaNormativa: string;
-      incoherenciaDecisionalNormativa: string;
-      motivoDecisionalNormativa: string;
-      incoherenciaLogicaFactica: string;
-      motivoLogicaFactica: string;
-      incoherenciaDecisionalFactica: string;
-      motivoDecisionalFactica: string;
-      deficitMotivacion: string;
-      motivoDeficitMotivacion: string;
-    };
-  };
+      incoherenciaLogicaNormativa: string
+      motivoLogicaNormativa: string
+      incoherenciaDecisionalNormativa: string
+      motivoDecisionalNormativa: string
+      incoherenciaLogicaFactica: string
+      motivoLogicaFactica: string
+      incoherenciaDecisionalFactica: string
+      motivoDecisionalFactica: string
+      // REMOVIDOS: deficitMotivacion, motivoDeficitMotivacion
+    }
+  }
 }
