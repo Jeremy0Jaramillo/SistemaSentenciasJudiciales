@@ -17,6 +17,7 @@ interface Sentencia {
   estado?: 'aceptar' | 'negar' | null;
   razon?: string;
   isLocked?: boolean;
+  periodo_academico?: string;
 }
 
 @Component({
@@ -82,7 +83,41 @@ export class SentenciasPageComponent implements OnInit {
       .pipe(
         map((docentes: any[]) => docentes.sort((a, b) => a.name.localeCompare(b.name)))
       );
+
+      this.asignarPeriodoAcademico();
   }
+
+asignarPeriodoAcademico() {
+  const hoy = new Date();
+  const mes = hoy.getMonth() + 1;
+  const anio = hoy.getFullYear();
+
+  let nombreBase = '';
+  let nombreCompleto = '';
+
+  if (mes >= 4 && mes <= 9) {
+    nombreBase = 'abril - agosto';
+    nombreCompleto = `${nombreBase} ${anio}`;
+  } else {
+    nombreBase = 'octubre - febrero';
+    const siguienteAnio = anio + 1;
+    nombreCompleto = `octubre ${anio} - febrero ${siguienteAnio}`;
+  }
+
+  this.firestore.collection('periodoAcademico', ref =>
+    ref.where('nombre', '==', nombreBase)
+  ).get().subscribe(snapshot => {
+    if (!snapshot.empty) {
+      // Si el periodo base existe, usamos el nombre completo con año
+      this.sentencia.periodo_academico = nombreCompleto;
+    } else {
+      console.warn(`El periodo académico "${nombreBase}" no está registrado en la base de datos.`);
+    }
+  });
+}
+
+
+
 
   actualizarCorreoDocente() {
     const docenteSeleccionado = this.docentesLista.find(doc => doc.name === this.sentencia.nombre_docente);

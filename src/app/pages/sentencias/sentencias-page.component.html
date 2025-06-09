@@ -49,10 +49,17 @@
     </div>
 
     <div class="dato-sent">
-      <label class="estudiante" for="email_docente">4. Correo del docente:</label><br>
+      <label class="estudiante" for="email_docente">5. Correo del docente:</label><br>
       <input class="estudiante" type="email" id="email_docente" name="email_docente"
         [(ngModel)]="sentencia.email_docente" readonly><br>
     </div>
+
+    <div class="dato-sent">
+      <label class="periodo-academico" for="periodo">6. Periodo Académico:</label><br>
+      <input class="periodo-academico" type="text" id="periodo" name="periodo" [(ngModel)]="sentencia.periodo_academico"
+        readonly><br>
+    </div>
+
 
 
 
