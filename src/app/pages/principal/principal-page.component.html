@@ -7,9 +7,14 @@
 </div>
 
 <!-- Solo visible para el administrador -->
+<!-- Carga de docente en CSV -->
 <div *ngIf="userRole === 'administrador'" class="admin-panel">
   <label for="csvInput" class="btn-cargar-docentes">Cargar docentes CSV</label>
   <input type="file" id="csvInput" (change)="onFileSelected($event)" accept=".csv" style="display: none;">
+</div>
+<!-- Generacón de reporte de las sentencias -->
+<div *ngIf="userRole === 'administrador'" class="admin-panel">
+  <button class="btn-cargar-docentes" (click)="generarReporteCSV()">Generar reporte de sentencias (CSV)</button >
 </div>
 <div *ngIf="alert"
   [ngClass]="{'success-notification': alertype === 'success', 'error-notification': alertype === 'error'}"

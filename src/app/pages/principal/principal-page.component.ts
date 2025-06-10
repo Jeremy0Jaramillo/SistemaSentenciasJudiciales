@@ -6,6 +6,7 @@ import { Observable, combineLatest, of, BehaviorSubject } from 'rxjs';
 import { switchMap, map, startWith } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import * as Papa from 'papaparse'; // Asegúrate de instalar papaparse con `npm install papaparse`
+import { saveAs } from 'file-saver'; // Asegúrate de instalar file-saver con `npm install file-saver`
 
 interface Sentencia {
   id: any;
@@ -758,4 +759,89 @@ eliminarSentenciaConfirmada() {
       console.error('Error al verificar duplicados:', error);
     }
   }
+
+async generarReporteCSV() {
+  try {
+    const sentenciasSnap = await this.firestore.collection('sentencias').get().toPromise();
+    const sentencias = sentenciasSnap?.docs.map(doc => doc.data()) || [];
+
+    const usuariosSnap = await this.firestore.collection('users').get().toPromise();
+    const usuarios = usuariosSnap?.docs.map(doc => doc.data()) || [];
+
+    const locksSnap = await this.firestore.collection('locks').get().toPromise();
+    const locks = locksSnap?.docs.map(doc => doc.data()) || [];
+
+    const filas = [
+      ['Nombre docente', 'Correo docente', 'Nombre estudiante', 'Correo estudiante', 'Número de proceso', 'Estado']
+    ];
+
+    for (const sentencia of sentencias) {
+      const s = sentencia as any;
+      const nombreDocente = s.nombre_docente || '';
+      const nombreEstudiante = s.nombre_estudiante || '';
+      const correoEstudiante = s.email_estudiante || '';
+      const numeroProceso = s.numero_proceso || '';
+      const estadoOriginal = s.estado || '';
+
+      let correoDocente = s.correo_docente || '';
+
+      if (!correoDocente) {
+        const usuarioDocente = usuarios.find((u: any) => u.name === nombreDocente) as { email?: string } | undefined;
+        correoDocente = usuarioDocente?.email || 'No encontrado';
+      }
+
+      const lock = locks.find((l: any) => l.numero_proceso === numeroProceso) as { locked?: boolean } | undefined;
+      const locked = lock?.locked === true;
+      const estadoFinal = locked ? 'finalizado' : estadoOriginal;
+
+      // Escapar comillas dobles en los campos para evitar problemas en CSV
+      const escaparCampo = (campo: string): string => {
+        if (campo.includes(',') || campo.includes('"') || campo.includes('\n')) {
+          return `"${campo.replace(/"/g, '""')}"`;
+        }
+        return campo;
+      };
+
+      filas.push([
+        escaparCampo(nombreDocente),
+        escaparCampo(correoDocente),
+        escaparCampo(nombreEstudiante),
+        escaparCampo(correoEstudiante),
+        escaparCampo(numeroProceso),
+        escaparCampo(estadoFinal)
+      ]);
+    }
+
+    // Agregar BOM para soportar caracteres especiales (tildes, ñ, etc.)
+    const BOM = '\uFEFF';
+
+    // Crear contenido CSV con separación correcta
+    const csvContent = BOM + filas.map(fila => fila.join(',')).join('\r\n');
+
+    // Crear blob con encoding UTF-8
+    const blob = new Blob([csvContent], { 
+      type: 'text/csv;charset=utf-8;' 
+    });
+
+    // Generar nombre del archivo con formato: reporte_sentencias_dd-mm-yyyy
+    const fecha = new Date();
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const año = fecha.getFullYear();
+    const fechaStr = `${dia}-${mes}-${año}`;
+    const nombreArchivo = `reporte_sentencias_${fechaStr}.csv`;
+
+    // Descargar archivo
+    saveAs(blob, nombreArchivo);
+    
+    console.log(`Reporte generado exitosamente: ${nombreArchivo}`);
+    
+  } catch (error) {
+    console.error('Error generando el reporte:', error);
+    // Opcional: mostrar mensaje de error al usuario
+    // this.mostrarError('Error al generar el reporte CSV');
+  }
+}
+
+
 }
