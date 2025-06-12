@@ -21,7 +21,7 @@ interface Sentencia {
   estado?: 'aceptar' | 'negar' | null;
   razon?: string;
   isLocked?: boolean; // Esta propiedad parece venir de tu HTML original, la mantengo
-  isLockedForAcceptance?: boolean; // Indica si los botones de aceptar/negar deben estar deshabilitados
+  isLockedForAcceptance?: boolean; // Indica si los botones de aceptar/negar deben estar deshabilitadoszzz
 }
 
 @Component({
@@ -772,29 +772,37 @@ async generarReporteCSV() {
     const locks = locksSnap?.docs.map(doc => doc.data()) || [];
 
     const filas = [
-      ['Nombre docente', 'Correo docente', 'Nombre estudiante', 'Correo estudiante', 'Número de proceso', 'Estado']
+      ['Nombre docente', 'Correo docente', 'Nombre estudiante', 'Correo estudiante', 'Número de proceso', 'Estado', 'Periodo académico']
     ];
 
     for (const sentencia of sentencias) {
       const s = sentencia as any;
+
       const nombreDocente = s.nombre_docente || '';
       const nombreEstudiante = s.nombre_estudiante || '';
-      const correoEstudiante = s.email_estudiante || '';
+
+      // Tomar correo estudiante desde email_estudiante o email
+      const correoEstudiante = s.email_estudiante || s.email || '';
+
       const numeroProceso = s.numero_proceso || '';
       const estadoOriginal = s.estado || '';
+      const periodoAcademico = s.periodo_academico || '';
 
+      // Prioridad: usar correo_docente si ya está en la sentencia
       let correoDocente = s.correo_docente || '';
 
+      // Si no existe, buscar por nombre en 'users'
       if (!correoDocente) {
         const usuarioDocente = usuarios.find((u: any) => u.name === nombreDocente) as { email?: string } | undefined;
         correoDocente = usuarioDocente?.email || 'No encontrado';
       }
 
+      // Verificar si está bloqueado (locked === true en colección locks)
       const lock = locks.find((l: any) => l.numero_proceso === numeroProceso) as { locked?: boolean } | undefined;
       const locked = lock?.locked === true;
       const estadoFinal = locked ? 'finalizado' : estadoOriginal;
 
-      // Escapar comillas dobles en los campos para evitar problemas en CSV
+      // Escapar campos para evitar errores en CSV
       const escaparCampo = (campo: string): string => {
         if (campo.includes(',') || campo.includes('"') || campo.includes('\n')) {
           return `"${campo.replace(/"/g, '""')}"`;
@@ -808,22 +816,16 @@ async generarReporteCSV() {
         escaparCampo(nombreEstudiante),
         escaparCampo(correoEstudiante),
         escaparCampo(numeroProceso),
-        escaparCampo(estadoFinal)
+        escaparCampo(estadoFinal),
+        escaparCampo(periodoAcademico)
       ]);
     }
 
-    // Agregar BOM para soportar caracteres especiales (tildes, ñ, etc.)
+    // BOM para caracteres especiales
     const BOM = '\uFEFF';
-
-    // Crear contenido CSV con separación correcta
     const csvContent = BOM + filas.map(fila => fila.join(',')).join('\r\n');
 
-    // Crear blob con encoding UTF-8
-    const blob = new Blob([csvContent], { 
-      type: 'text/csv;charset=utf-8;' 
-    });
-
-    // Generar nombre del archivo con formato: reporte_sentencias_dd-mm-yyyy
+    // Fecha para el nombre del archivo
     const fecha = new Date();
     const dia = fecha.getDate().toString().padStart(2, '0');
     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -831,17 +833,15 @@ async generarReporteCSV() {
     const fechaStr = `${dia}-${mes}-${año}`;
     const nombreArchivo = `reporte_sentencias_${fechaStr}.csv`;
 
-    // Descargar archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, nombreArchivo);
-    
     console.log(`Reporte generado exitosamente: ${nombreArchivo}`);
-    
+
   } catch (error) {
     console.error('Error generando el reporte:', error);
-    // Opcional: mostrar mensaje de error al usuario
-    // this.mostrarError('Error al generar el reporte CSV');
   }
 }
+
 
 
 }
