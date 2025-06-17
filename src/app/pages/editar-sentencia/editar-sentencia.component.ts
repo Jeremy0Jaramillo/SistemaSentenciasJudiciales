@@ -40,6 +40,10 @@ export class EditarSentenciaComponent implements OnInit {
   mostrarMensajeExito: boolean = false;
   alertas: string[] = [];
   docentesLista: any[] = [];
+  continuaDocente: boolean = true;
+nuevoDocente: string = '';
+nuevoEmailDocente: string = '';
+
 
   constructor(
     private route: ActivatedRoute,
@@ -211,75 +215,78 @@ async submitForm(): Promise<void> {
   this.alertas = [];
   this.cargando = true;
 
-  console.log('💾 Iniciando actualización de sentencia...');
-
   // Validación: no permitir agregar si ya existe una sentencia aprobada con el mismo número de proceso
   await new Promise<void>((resolve) => {
-    this.firestore.collection('sentencias', ref =>
-      ref.where('numero_proceso', '==', this.sentencia.numero_proceso)
-    ).get().subscribe(querySnapshot => {
-      const yaExisteAprobada = querySnapshot.docs.some(doc => (doc.data() as any)['estado'] === 'aceptar');
-      if (yaExisteAprobada) {
-        this.alertas.push('El número de proceso ya fue aprobado y no se puede volver a subir.');
-        this.cargando = false;
-        resolve();
-        return;
-      }
-      // Si no existe aprobada, continuar con el flujo normal
-      if (this.archivo) {
-        console.log('📤 Subiendo nuevo archivo...');
-        const filePath = `sentencias/${this.archivo.name}_${Date.now()}`;
-        const fileRef = this.storage.ref(filePath);
-        const uploadTask = this.storage.upload(filePath, this.archivo);
-
-        uploadTask.snapshotChanges().pipe(
-          finalize(() => {
-            fileRef.getDownloadURL().subscribe(url => {
-              console.log('✅ Archivo subido, URL:', url);
-              this.sentencia.archivoURL = url;
-              this.actualizarSentencia();
-              resolve();
-            });
-          })
-        ).subscribe();
-      } else {
-        console.log('📝 Actualizando sin cambio de archivo...');
-        this.actualizarSentencia();
-        resolve();
-      }
+  this.firestore.collection('sentencias', ref =>
+    ref.where('numero_proceso', '==', this.sentencia.numero_proceso)
+  ).get().subscribe(querySnapshot => {
+    const yaExisteAprobada = querySnapshot.docs.some(doc => {
+      const data = doc.data() as any;
+      // Ignorar la sentencia actual (la que se está editando)
+      return doc.id !== this.sentenciaId && data['estado'] === 'aceptar';
     });
+
+    if (yaExisteAprobada) {
+      this.alertas.push('El número de proceso ya fue aprobado y no se puede volver a subir.');
+      this.cargando = false;
+      resolve();
+      return;
+    }
+
+    // Si no hay conflicto, seguir con el flujo
+    if (this.archivo) {
+      const filePath = `sentencias/${this.archivo.name}_${Date.now()}`;
+      const fileRef = this.storage.ref(filePath);
+      const uploadTask = this.storage.upload(filePath, this.archivo);
+
+      uploadTask.snapshotChanges().pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe(url => {
+            console.log('✅ Archivo subido, URL:', url);
+            this.sentencia.archivoURL = url;
+            this.actualizarSentencia();
+            resolve();
+          });
+        })
+      ).subscribe();
+    } else {
+      this.actualizarSentencia();
+      resolve();
+    }
   });
+});
 }
 
-  actualizarSentencia(): void {
-    console.log('🔄 Actualizando documento con ID:', this.sentenciaId);
-    console.log('📋 Datos a actualizar:', {
-      numero_proceso: this.sentencia.numero_proceso,
-      asunto: this.sentencia.asunto,
-      nombre_docente: this.sentencia.nombre_docente,
-      email_docente: this.sentencia.email_docente,
-      archivoURL: this.sentencia.archivoURL
-    });
+actualizarSentencia(): void {
+  const datosActualizados: any = {
+    numero_proceso: this.sentencia.numero_proceso,
+    asunto: this.sentencia.asunto,
+    archivoURL: this.sentencia.archivoURL || null,
+    fecha_actualizacion: new Date()
+  };
 
-    this.firestore.collection('sentencias').doc(this.sentenciaId).update({
-      numero_proceso: this.sentencia.numero_proceso,
-      asunto: this.sentencia.asunto,
-      nombre_docente: this.sentencia.nombre_docente,
-      email_docente: this.sentencia.email_docente,
-      archivoURL: this.sentencia.archivoURL || null,
-      fecha_actualizacion: new Date() // Agregar timestamp de actualización
-    }).then(() => {
-      console.log('✅ Sentencia actualizada correctamente');
+  if (this.continuaDocente) {
+    datosActualizados.nombre_docente = this.sentencia.nombre_docente;
+    datosActualizados.email_docente = this.sentencia.email_docente;
+  } else {
+    datosActualizados.nombre_docente_antiguo = this.sentencia.nombre_docente;
+    datosActualizados.email_docente_antiguo = this.sentencia.email_docente;
+    datosActualizados.nombre_docente = this.nuevoDocente;
+    datosActualizados.email_docente = this.nuevoEmailDocente;
+  }
+
+  this.firestore.collection('sentencias').doc(this.sentenciaId).update(datosActualizados)
+    .then(() => {
       this.cargando = false;
       this.mensajeExito = 'Sentencia actualizada correctamente';
       this.mostrarMensajeExito = true;
       setTimeout(() => this.router.navigate(['/principal']), 2000);
     }).catch(error => {
-      console.error('❌ Error actualizando sentencia:', error);
       this.alertas.push('Hubo un error al actualizar la sentencia: ' + error.message);
       this.cargando = false;
     });
-  }
+}
+
 
   cancelar(): void {
     this.router.navigate(['/principal']);
@@ -303,4 +310,11 @@ async submitForm(): Promise<void> {
     const input = event.target;
     this.sentencia.numero_proceso = input.value.replace(/[^0-9-]/g, '');
   }
+
+  actualizarCorreoNuevoDocente(): void {
+  const docente = this.docentesLista.find(d => d.name === this.nuevoDocente);
+  this.nuevoEmailDocente = docente ? docente.email : '';
+  console.log('📧 Nuevo email del docente:', this.nuevoEmailDocente);
+}
+
 }
