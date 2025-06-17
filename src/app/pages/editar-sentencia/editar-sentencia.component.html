@@ -12,13 +12,13 @@
 
   <form (ngSubmit)="submitForm()" *ngIf="sentencia">
 
-    <div class="dato-sent">
+    <div class="dato-sent" *ngIf="currentUserRole === 'administrador' || currentUserRole === 'docente'">
       <label>¿El docente actual continúa con la sentencia?</label><br>
       <input type="radio" name="continua_docente" [(ngModel)]="continuaDocente" [value]="true"> Sí
       <input type="radio" name="continua_docente" [(ngModel)]="continuaDocente" [value]="false"> No
     </div>
 
-    <div *ngIf="!continuaDocente">
+    <div *ngIf="!continuaDocente && (currentUserRole === 'administrador' || currentUserRole === 'docente')">
       <div class="dato-sent">
         <label for="nuevo_docente">Nuevo docente:</label><br>
         <select class="docente" id="nuevo_docente" name="nuevo_docente" [(ngModel)]="nuevoDocente"

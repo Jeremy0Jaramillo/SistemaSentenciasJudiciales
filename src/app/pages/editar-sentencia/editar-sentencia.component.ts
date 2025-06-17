@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { finalize } from 'rxjs/operators'
+import { AngularFireAuth } from '@angular/fire/compat/auth'; // Importar AngularFireAuth
 
 interface Sentencia {
   numero_proceso: string;
@@ -41,18 +42,32 @@ export class EditarSentenciaComponent implements OnInit {
   alertas: string[] = [];
   docentesLista: any[] = [];
   continuaDocente: boolean = true;
-nuevoDocente: string = '';
-nuevoEmailDocente: string = '';
+  nuevoDocente: string = '';
+  nuevoEmailDocente: string = '';
 
+  currentUserRole: string | null = null; // Variable para almacenar el rol del usuario actual
 
   constructor(
     private route: ActivatedRoute,
     private firestore: AngularFirestore,
     private storage: AngularFireStorage,
-    private router: Router
+    private router: Router,
+    private afAuth: AngularFireAuth // Inyectar AngularFireAuth
   ) { }
 
   ngOnInit(): void {
+    // Obtener el rol del usuario actual al iniciar el componente
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.firestore.collection('users').doc(user.uid).valueChanges().subscribe((userData: any) => {
+          this.currentUserRole = userData?.role;
+          console.log('User role in EditarSentenciaComponent:', this.currentUserRole);
+        });
+      } else {
+        this.currentUserRole = null;
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
       console.log('🔍 Parámetros recibidos en editar-sentencia:', params);
 
@@ -176,8 +191,8 @@ nuevoEmailDocente: string = '';
           }
 
           this.alertas.push(`No se encontró la sentencia para editar con los criterios:
-          Número de proceso: ${numeroProceso}
-          Email estudiante: ${emailEstudiante}`);
+            Número de proceso: ${numeroProceso}
+            Email estudiante: ${emailEstudiante}`);
 
           setTimeout(() => {
             this.router.navigate(['/principal']);
@@ -211,81 +226,81 @@ nuevoEmailDocente: string = '';
     }
   }
 
-async submitForm(): Promise<void> {
-  this.alertas = [];
-  this.cargando = true;
+  async submitForm(): Promise<void> {
+    this.alertas = [];
+    this.cargando = true;
 
-  // Validación: no permitir agregar si ya existe una sentencia aprobada con el mismo número de proceso
-  await new Promise<void>((resolve) => {
-  this.firestore.collection('sentencias', ref =>
-    ref.where('numero_proceso', '==', this.sentencia.numero_proceso)
-  ).get().subscribe(querySnapshot => {
-    const yaExisteAprobada = querySnapshot.docs.some(doc => {
-      const data = doc.data() as any;
-      // Ignorar la sentencia actual (la que se está editando)
-      return doc.id !== this.sentenciaId && data['estado'] === 'aceptar';
+    // Validación: no permitir agregar si ya existe una sentencia aprobada con el mismo número de proceso
+    await new Promise<void>((resolve) => {
+      this.firestore.collection('sentencias', ref =>
+        ref.where('numero_proceso', '==', this.sentencia.numero_proceso)
+      ).get().subscribe(querySnapshot => {
+        const yaExisteAprobada = querySnapshot.docs.some(doc => {
+          const data = doc.data() as any;
+          // Ignorar la sentencia actual (la que se está editando)
+          return doc.id !== this.sentenciaId && data['estado'] === 'aceptar';
+        });
+
+        if (yaExisteAprobada) {
+          this.alertas.push('El número de proceso ya fue aprobado y no se puede volver a subir.');
+          this.cargando = false;
+          resolve();
+          return;
+        }
+
+        // Si no hay conflicto, seguir con el flujo
+        if (this.archivo) {
+          const filePath = `sentencias/${this.archivo.name}_${Date.now()}`;
+          const fileRef = this.storage.ref(filePath);
+          const uploadTask = this.storage.upload(filePath, this.archivo);
+
+          uploadTask.snapshotChanges().pipe(
+            finalize(() => {
+              fileRef.getDownloadURL().subscribe(url => {
+                console.log('✅ Archivo subido, URL:', url);
+                this.sentencia.archivoURL = url;
+                this.actualizarSentencia();
+                resolve();
+              });
+            })
+          ).subscribe();
+        } else {
+          this.actualizarSentencia();
+          resolve();
+        }
+      });
     });
-
-    if (yaExisteAprobada) {
-      this.alertas.push('El número de proceso ya fue aprobado y no se puede volver a subir.');
-      this.cargando = false;
-      resolve();
-      return;
-    }
-
-    // Si no hay conflicto, seguir con el flujo
-    if (this.archivo) {
-      const filePath = `sentencias/${this.archivo.name}_${Date.now()}`;
-      const fileRef = this.storage.ref(filePath);
-      const uploadTask = this.storage.upload(filePath, this.archivo);
-
-      uploadTask.snapshotChanges().pipe(
-        finalize(() => {
-          fileRef.getDownloadURL().subscribe(url => {
-            console.log('✅ Archivo subido, URL:', url);
-            this.sentencia.archivoURL = url;
-            this.actualizarSentencia();
-            resolve();
-          });
-        })
-      ).subscribe();
-    } else {
-      this.actualizarSentencia();
-      resolve();
-    }
-  });
-});
-}
-
-actualizarSentencia(): void {
-  const datosActualizados: any = {
-    numero_proceso: this.sentencia.numero_proceso,
-    asunto: this.sentencia.asunto,
-    archivoURL: this.sentencia.archivoURL || null,
-    fecha_actualizacion: new Date()
-  };
-
-  if (this.continuaDocente) {
-    datosActualizados.nombre_docente = this.sentencia.nombre_docente;
-    datosActualizados.email_docente = this.sentencia.email_docente;
-  } else {
-    datosActualizados.nombre_docente_antiguo = this.sentencia.nombre_docente;
-    datosActualizados.email_docente_antiguo = this.sentencia.email_docente;
-    datosActualizados.nombre_docente = this.nuevoDocente;
-    datosActualizados.email_docente = this.nuevoEmailDocente;
   }
 
-  this.firestore.collection('sentencias').doc(this.sentenciaId).update(datosActualizados)
-    .then(() => {
-      this.cargando = false;
-      this.mensajeExito = 'Sentencia actualizada correctamente';
-      this.mostrarMensajeExito = true;
-      setTimeout(() => this.router.navigate(['/principal']), 2000);
-    }).catch(error => {
-      this.alertas.push('Hubo un error al actualizar la sentencia: ' + error.message);
-      this.cargando = false;
-    });
-}
+  actualizarSentencia(): void {
+    const datosActualizados: any = {
+      numero_proceso: this.sentencia.numero_proceso,
+      asunto: this.sentencia.asunto,
+      archivoURL: this.sentencia.archivoURL || null,
+      fecha_actualizacion: new Date()
+    };
+
+    if (this.continuaDocente) {
+      datosActualizados.nombre_docente = this.sentencia.nombre_docente;
+      datosActualizados.email_docente = this.sentencia.email_docente;
+    } else {
+      datosActualizados.nombre_docente_antiguo = this.sentencia.nombre_docente;
+      datosActualizados.email_docente_antiguo = this.sentencia.email_docente;
+      datosActualizados.nombre_docente = this.nuevoDocente;
+      datosActualizados.email_docente = this.nuevoEmailDocente;
+    }
+
+    this.firestore.collection('sentencias').doc(this.sentenciaId).update(datosActualizados)
+      .then(() => {
+        this.cargando = false;
+        this.mensajeExito = 'Sentencia actualizada correctamente';
+        this.mostrarMensajeExito = true;
+        setTimeout(() => this.router.navigate(['/principal']), 2000);
+      }).catch(error => {
+        this.alertas.push('Hubo un error al actualizar la sentencia: ' + error.message);
+        this.cargando = false;
+      });
+  }
 
 
   cancelar(): void {
@@ -312,9 +327,9 @@ actualizarSentencia(): void {
   }
 
   actualizarCorreoNuevoDocente(): void {
-  const docente = this.docentesLista.find(d => d.name === this.nuevoDocente);
-  this.nuevoEmailDocente = docente ? docente.email : '';
-  console.log('📧 Nuevo email del docente:', this.nuevoEmailDocente);
-}
+    const docente = this.docentesLista.find(d => d.name === this.nuevoDocente);
+    this.nuevoEmailDocente = docente ? docente.email : '';
+    console.log('📧 Nuevo email del docente:', this.nuevoEmailDocente);
+  }
 
 }
