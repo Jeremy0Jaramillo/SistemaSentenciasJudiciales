@@ -376,64 +376,53 @@ export class AnalisisComponent implements OnInit {
     }
   }
 
-  submitForm() {
+    submitForm() {
     const normativasArray = this.analisisForm.get('normativas') as FormArray;
     const facticasArray = this.analisisForm.get('facticas') as FormArray;
 
-    if (this.analisisForm.valid) {
-      // console.log('Formulario válido, enviando...');
-      // Lógica para enviar
-    } else {
-      // console.error('Formulario no válido');
-    }
-    
-    if (this.analisisForm.valid) {
-      this.isSubmitting = true;
-      this.cargando = true;
+    // Quitar validaciones estrictas temporalmente
+    this.isSubmitting = true;
+    this.cargando = true;
+
+    // Obtener los valores de normativas y facticas
+    const normativasValue = this.analisisForm.get('normativas')?.value;
+    const facticasValue = this.analisisForm.get('facticas')?.value;
+
+    // Crear el objeto con todos los datos, incluyendo normativas y facticas
+    const analisisData = {
+      ...this.analisisForm.value,
+      normativas: normativasValue, // Asegúrate de incluir las normativas
+      facticas: facticasValue, // Asegúrate de incluir las facticas
+      problem_question: {
+        ...this.analisisForm.get('problem_question')?.value,
+      },
+      problem_decision: {
+        ...this.analisisForm.get('problem_decision')?.value,
+      },
+      saved: true,
+      timestamp: new Date() // Agregamos un timestamp para asegurar que se detecte el cambio
+    };
   
-      // Obtener los valores de normativas y facticas
-      const normativasValue = this.analisisForm.get('normativas')?.value;
-      const facticasValue = this.analisisForm.get('facticas')?.value;
-  
-      // Crear el objeto con todos los datos, incluyendo normativas y facticas
-      const analisisData = {
-        ...this.analisisForm.value,
-        normativas: normativasValue, // Asegúrate de incluir las normativas
-        facticas: facticasValue, // Asegúrate de incluir las facticas
-        problem_question: {
-          ...this.analisisForm.get('problem_question')?.value,
-        },
-        problem_decision: {
-          ...this.analisisForm.get('problem_decision')?.value,
-        },
-        saved: true,
-        timestamp: new Date() // Agregamos un timestamp para asegurar que se detecte el cambio
-      };
-    
-      // Guardar los datos en Firestore
-      this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
-        .then(() => {
-          this.saved = true;
-          this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
-          this.cargando = false;
-          this.mostrarMensajeExito('Guardado con éxito');
-          
-          // Forzamos la recarga de la página después de guardar
-          setTimeout(() => {
-            this.isSubmitting = false;
-            window.location.reload();
-          }, 1000);
-        })
-        .catch(error => {
-          // console.error("Error al guardar el documento: ", error);
-          this.cargando = false;
-          this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+    // Guardar los datos en Firestore
+    this.firestore.collection('analisis').doc(this.numero_proceso).set(analisisData)
+      .then(() => {
+        this.saved = true;
+        this.analisisForm.patchValue({ saved: true }, { emitEvent: false });
+        this.cargando = false;
+        this.mostrarMensajeExito('Guardado con éxito');
+        
+        // Forzamos la recarga de la página después de guardar
+        setTimeout(() => {
           this.isSubmitting = false;
-        });
-    } else {
-      this.isSubmitting = false;
-      this.mostrarMensajeError('Llene todos los campos requeridos.');
-    }
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(error => {
+        // console.error("Error al guardar el documento: ", error);
+        this.cargando = false;
+        this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+        this.isSubmitting = false;
+      });
   }
   
   
@@ -486,6 +475,26 @@ export class AnalisisComponent implements OnInit {
     } else {
       this.mostrarMensajeError('Por favor, complete todos los campos obligatorios antes de continuar.');
     }
+  }
+
+  guardarYContinuar(event: Event) {
+    event.preventDefault();
+
+    // Quitar validaciones estrictas temporalmente
+    // Primero guardar
+    this.submitForm();
+    
+    // Luego navegar después de un breve delay para asegurar que se guarde
+    setTimeout(() => {
+      this.router.navigate(['/analisis2'], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente
+        }
+      });
+    }, 1500);
   }
 
   toggleCalificar(index: number, type: string) {

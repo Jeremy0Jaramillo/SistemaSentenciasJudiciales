@@ -207,25 +207,29 @@ export class Analisis2Component implements OnInit {
       }
     });
 
-    if(this.analisis2Form.valid){
-      this.isSubmitting = true;
-      this.cargando = true;
-      this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
-      .then(() => {
-        this.saved = true;
-        this.cargando = false;
+    // Quitar validaciones estrictas temporalmente
+    // if(this.analisis2Form.valid){
+    this.isSubmitting = true;
+    this.cargando = true;
+    this.firestore.collection('analisis2').doc(this.numero_proceso).set(analisisData)
+    .then(() => {
+      this.saved = true;
+      this.cargando = false;
+      this.mostrarMensajeExito('Guardado con éxito');
+      setTimeout(() => {
         window.location.reload();
-      })
-      .catch(error => {
-        // console.error("Error saving document: ", error);
-        this.cargando = false;
-        this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
-        this.isSubmitting = false;
-      });
-    } else {
-      this.isSubmitting = false;  
-      this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar');
-    }
+      }, 1000);
+    })
+    .catch(error => {
+      // console.error("Error saving document: ", error);
+      this.cargando = false;
+      this.mostrarMensajeError('Error al guardar. Por favor, intente de nuevo.');
+      this.isSubmitting = false;
+    });
+    // } else {
+    //   this.isSubmitting = false;  
+    //   this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar');
+    // }
   }
 
   mostrarMensajeExito(mensaje: string) {
@@ -255,28 +259,35 @@ export class Analisis2Component implements OnInit {
 
   redirectToEvaluacion(event: Event) {
     event.preventDefault();
-    // console.log('Estado de docenteSaved:', this.docenteSaved); // Log para depuración
-    if (this.analisis2Form.valid) {
-      if (this.analisis2Form.dirty) {
-        this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
-        return;
+    // Quitar validaciones estrictas temporalmente
+    this.router.navigate(['/evaluacion'], {
+      queryParams: {
+        numero_proceso: this.numero_proceso,
+        asunto: this.asunto,
+        estudiante: this.estudiante,
+        docente: this.docente
       }
-      if (this.docenteSaved) {
-        this.router.navigate(['/evaluacion'], {
-          queryParams: {
-            numero_proceso: this.numero_proceso,
-            asunto: this.asunto,
-            estudiante: this.estudiante,
-            docente: this.docente
-          }
-        });
-      } else {
-        // console.log('Datos no guardados, mostrando alerta');
-        this.mostrarMensajeError('Por favor, guarde los cambios antes de continuar.');
-      }
-    } else {
-      this.mostrarMensajeError('Por favor, complete todos los campos obligatorios.');
-    }
+    });
+  }
+
+  guardarYContinuar(event: Event) {
+    event.preventDefault();
+    
+    // Quitar validaciones estrictas temporalmente
+    // Primero guardar
+    this.submitForm();
+    
+    // Luego navegar después de un breve delay para asegurar que se guarde
+    setTimeout(() => {
+      this.router.navigate(['/evaluacion'], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente
+        }
+      });
+    }, 1500);
   }
 
 checkDocenteSaved() {

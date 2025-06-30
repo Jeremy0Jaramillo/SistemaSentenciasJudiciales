@@ -25,6 +25,8 @@ export class Evaluacion2Component implements OnInit {
   evaluacion2Form: FormGroup;
   mensajeError: string = '';
   mostrarMensaje: boolean = false;
+  mensajeExito: string = '';
+  mostrarMensajeExito: boolean = false;
   sections = [
     //SECCION 1: "Fundamentacion normativa correcta"
     {
@@ -102,6 +104,23 @@ export class Evaluacion2Component implements OnInit {
     if (this.docenteSaved) {
       this.router.navigate(['/principal']);
     }
+  }
+
+  guardarYFinalizar(event: Event) {
+    event.preventDefault();
+    
+    // Quitar validaciones estrictas temporalmente
+    // Mostrar loading y guardar
+    this.cargando = true;
+    this.submitForm();
+    
+    // Mostrar mensaje de éxito después de guardar
+    setTimeout(() => {
+      this.mostrarMensajeExitoFuncion('Se ha guardado la sección');
+      setTimeout(() => {
+        this.router.navigate(['/principal']);
+      }, 2000);
+    }, 1500);
   }
 
   formatQuestion(question: string): string {
@@ -206,35 +225,49 @@ export class Evaluacion2Component implements OnInit {
   }
 
   submitForm() {
-    if (this.evaluacion2Form.valid) {
-      this.isSubmitting =true;
-      this.cargando = true;
-      const analisisData = this.evaluacion2Form.value;
-      analisisData.saved = true;
-      this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
-        .then(() => {
-          if (this.isDocente) {
-            this.docenteSaved = true;
-          }
-          this.cargando = false;
-          this.saved = true;
-          this.evaluacion2Form.patchValue({ saved: true });
-          // console.log('Form submitted and saved:', analisisData);
+    // Quitar validaciones estrictas temporalmente
+    // if (this.evaluacion2Form.valid) {
+    this.isSubmitting = true;
+    this.cargando = true;
+    const analisisData = this.evaluacion2Form.value;
+    analisisData.saved = true;
+    this.firestore.collection('evaluacion2').doc(this.numero_proceso).set(analisisData)
+      .then(() => {
+        if (this.isDocente) {
+          this.docenteSaved = true;
+        }
+        this.cargando = false;
+        this.saved = true;
+        this.evaluacion2Form.patchValue({ saved: true });
+        // console.log('Form submitted and saved:', analisisData);
+        this.mostrarMensajeExitoFuncion('Se ha guardado la sección');
+        setTimeout(() => {
           window.location.reload();
-        })
-        .catch(error => {
-          // console.error("Error saving document: ", error);
-          this.cargando = false;
-        });
-    } else {
-      this.isSubmitting = false;
-      this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar.');
-    }
+        }, 1000);
+      })
+      .catch(error => {
+        // console.error("Error saving document: ", error);
+        this.cargando = false;
+      });
+    // } else {
+    //   this.isSubmitting = false;
+    //   this.mostrarMensajeError('Por favor, llene todos los campos antes de guardar.');
+    // }
   }
 
   mostrarMensajeError(mensaje: string) {
     this.mensajeError = mensaje;
     this.mostrarMensaje = true;
+  }
+
+  mostrarMensajeExitoFuncion(mensaje: string) {
+    this.mensajeExito = mensaje;
+    this.mostrarMensajeExito = true;
+    this.cargando = false;
+    setTimeout(() => {
+      this.mostrarMensajeExito = false;
+      this.mensajeExito = '';
+    }, 3000);
   }
 
   loadCalificaciones(data: any) {

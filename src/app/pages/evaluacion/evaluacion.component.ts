@@ -796,20 +796,21 @@ export class EvaluacionComponent implements OnInit {
 
   // MODIFICADO: Función submitForm con validación estricta
   submitForm() {
+    // Quitar validaciones estrictas temporalmente
     // NUEVO: Validación específica para estudiantes - REQUIERE TODAS LAS SECCIONES
-    if (!this.isDocente) {
-      if (!this.isFormCompleteForStudent()) {
-        const incompleteDetails = this.getDetailedIncompleteSections()
-        this.mostrarMensajeError(`Complete TODAS las secciones antes de guardar:\n\n${incompleteDetails}`)
-        this.showValidationErrors = true
-        return
-      }
-    } else {
-      // Validación original para docentes
-      if (!this.validateAllSections()) {
-        return
-      }
-    }
+    // if (!this.isDocente) {
+    //   if (!this.isFormCompleteForStudent()) {
+    //     const incompleteDetails = this.getDetailedIncompleteSections()
+    //     this.mostrarMensajeError(`Complete TODAS las secciones antes de guardar:\n\n${incompleteDetails}`)
+    //     this.showValidationErrors = true
+    //     return
+    //   }
+    // } else {
+    //   // Validación original para docentes
+    //   if (!this.validateAllSections()) {
+    //     return
+    //   }
+    // }
 
     this.isSubmitting = true
     this.cargando = true
@@ -876,19 +877,20 @@ export class EvaluacionComponent implements OnInit {
 
   // MODIFICADO: redirectToEvaluacion2 con validación estricta
   redirectToEvaluacion2(event: Event) {
+    // Quitar validaciones estrictas temporalmente
     // MODIFICADO: Verificar cambios no guardados y formulario completo - TODAS LAS SECCIONES
-    if (!this.isDocente) {
-      if (this.hasUnsavedChanges) {
-        this.mostrarMensajeError("Guarde los cambios antes de continuar")
-        return
-      }
+    // if (!this.isDocente) {
+    //   if (this.hasUnsavedChanges) {
+    //     this.mostrarMensajeError("Guarde los cambios antes de continuar")
+    //     return
+    //   }
 
-      if (!this.isFormCompleteForStudent()) {
-        const incompleteDetails = this.getDetailedIncompleteSections()
-        this.mostrarMensajeError(`Complete TODAS las secciones antes de continuar:\n\n${incompleteDetails}`)
-        return
-      }
-    }
+    //   if (!this.isFormCompleteForStudent()) {
+    //     const incompleteDetails = this.getDetailedIncompleteSections()
+    //     this.mostrarMensajeError(`Complete TODAS las secciones antes de continuar:\n\n${incompleteDetails}`)
+    //     return
+    //   }
+    // }
 
     this.router.navigate(["/evaluacion2"], {
       queryParams: {
@@ -898,6 +900,26 @@ export class EvaluacionComponent implements OnInit {
         docente: this.docente,
       },
     })
+  }
+
+  guardarYContinuar(event: Event) {
+    event.preventDefault();
+    
+    // Quitar validaciones estrictas temporalmente
+    // Primero guardar
+    this.submitForm();
+    
+    // Luego navegar después de un breve delay para asegurar que se guarde
+    setTimeout(() => {
+      this.router.navigate(["/evaluacion2"], {
+        queryParams: {
+          numero_proceso: this.numero_proceso,
+          asunto: this.asunto,
+          estudiante: this.estudiante,
+          docente: this.docente,
+        },
+      });
+    }, 1500);
   }
 
   getAppearanceSubsectionDetails(habit: string)
