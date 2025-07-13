@@ -14,7 +14,7 @@
 </div>
 <!-- Generacón de reporte de las sentencias -->
 <div *ngIf="userRole === 'administrador'" class="admin-panel">
-  <button class="btn-cargar-docentes" (click)="generarReporteCSV()">Generar reporte de sentencias (CSV)</button >
+  <button class="btn-cargar-docentes" (click)="generarReporteExcel()">Generar reporte de sentencias (Excel)</button >
 </div>
 <div *ngIf="alert"
   [ngClass]="{'success-notification': alertype === 'success', 'error-notification': alertype === 'error'}"
@@ -25,6 +25,12 @@
 <div class="search-bar" *ngIf="userRole === 'docente' || userRole === 'administrador'">
   <input class="search" type="text" [(ngModel)]="searchText" (input)="onSearchTextChanged()"
     [placeholder]="userRole === 'administrador' ? 'Buscar sentencia' : 'Buscar por nombre de estudiante'" />
+  <button *ngIf="isSearchMode" (click)="limpiarBusquedaGeneral()" class="bttn-clear" style="margin-left: 10px;">Limpiar búsqueda</button>
+</div>
+
+<!-- Indicador de búsqueda activa -->
+<div *ngIf="isSearchMode && searchResults.length > 0" class="search-indicator" style="background-color: #e3f2fd; padding: 10px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #2196f3;">
+  <strong>Búsqueda activa:</strong> Mostrando {{ searchResults.length }} resultado(s) para "{{ searchText }}"
 </div>
 
 <div *ngIf="userRole === 'estudiante'" class="busqueda-proceso">
@@ -64,11 +70,19 @@
 
 <div class="sentencias">
 
-  <div *ngIf="(filteredSentencias$ | async)?.length === 0" class="no-sentencias">
+  <div *ngIf="pagedSentencias.length === 0 && !isSearchMode && !loadingPage" class="no-sentencias">
     No hay sentencias disponibles.
   </div>
 
-  <div *ngFor="let sentencia of filteredSentencias$ | async" class="sent">
+  <div *ngIf="pagedSentencias.length === 0 && isSearchMode && !loadingPage" class="no-sentencias">
+    No se encontraron sentencias que coincidan con "{{ searchText }}".
+  </div>
+
+  <div *ngIf="loadingPage" class="no-sentencias">
+    Cargando sentencias...
+  </div>
+
+  <div *ngFor="let sentencia of pagedSentencias" class="sent">
 
     <div class="proceso">
       <p><strong>Numero de Proceso:</strong> {{ sentencia.numero_proceso }}</p>
@@ -112,9 +126,13 @@
           <button (click)="abrirRazon(sentencia, 'negar')" class="bttn-reject">Negar</button>
         </ng-container>
         <ng-template #lockedButtons>
-          <button class="bttn-accept" [disabled]="true">Aceptar</button>
-          <button class="bttn-reject" [disabled]="true">Negar</button>
-          <p class="locked-message">Este número de proceso ya ha sido aceptado.</p>
+          <div class="locked-section" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="locked-btns" style="display: flex; flex-direction: row; align-items: center;">
+              <button class="bttn-accept" [disabled]="true">Aceptar</button>
+              <button class="bttn-reject" [disabled]="true">Negar</button>
+            </div>
+            <p class="locked-message">Este número de proceso ya ha sido aceptado.</p>
+          </div>
         </ng-template>
       </ng-container>
 
@@ -125,7 +143,7 @@
     </div>
     <!-- O si prefieres mantener el método original, asegúrate de que el número de proceso sea único -->
     <button class="bttn-edit" style="margin-top: 5px;"
-      (click)="editarSentencia(sentencia.numero_proceso, sentencia.email_estudiante, sentencia.email_docente)">Editar</button>
+      (click)="editarSentencia(sentencia.numero_proceso, sentencia.email_estudiante, sentencia.email_docente)">Editar Sentencia</button>
 
     <div class="overlay" *ngIf="showEditarEstadoOverlay">
       <div class="overlay-content">
@@ -197,6 +215,23 @@
         <button class="bttn-reject" (click)="cancelarEliminacion()">Cancelar</button>
       </div>
     </div>
+  </div>
+
+  <!-- Controles de paginación -->
+  <div class="pagination-controls" *ngIf="pagedSentencias.length > 0" style="display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 10px;">
+    <!-- Controles para modo de búsqueda -->
+    <ng-container *ngIf="isSearchMode">
+      <button (click)="prevSearchPage()" [disabled]="isFirstPage || loadingPage" class="bttn-stnd">Anterior</button>
+      <span style="font-weight: bold;">Página {{ currentPage }} de {{ totalPages }} ({{ searchResults.length }} resultados)</span>
+      <button (click)="nextSearchPage()" [disabled]="!hasMorePages || loadingPage" class="bttn-stnd">Siguiente</button>
+    </ng-container>
+    
+    <!-- Controles para modo normal de paginación -->
+    <ng-container *ngIf="!isSearchMode">
+      <button (click)="prevPage()" [disabled]="isFirstPage || loadingPage" class="bttn-stnd">Anterior</button>
+      <span style="font-weight: bold;">Página {{ currentPage }}</span>
+      <button (click)="nextPage()" [disabled]="isLastPage || loadingPage" class="bttn-stnd">Siguiente</button>
+    </ng-container>
   </div>
 
 </div>

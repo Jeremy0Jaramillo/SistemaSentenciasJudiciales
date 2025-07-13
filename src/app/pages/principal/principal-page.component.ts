@@ -3,10 +3,11 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { Observable, combineLatest, of, BehaviorSubject } from 'rxjs';
-import { switchMap, map, startWith } from 'rxjs/operators';
+import { switchMap, map, startWith, take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import * as Papa from 'papaparse'; // Asegúrate de instalar papaparse con `npm install papaparse`
 import { saveAs } from 'file-saver'; // Asegúrate de instalar file-saver con `npm install file-saver`
+import * as XLSX from 'xlsx'; // Para generar archivos Excel
 
 interface Sentencia {
   id: any;
@@ -56,20 +57,35 @@ export class PrincipalPageComponent implements OnInit {
   userName: string = "";
   userEmail: string = "";
   showOverlay = false;
-  selectedSentencia: Sentencia | null = null;
+  selectedSentencia: Sentencia | null = null;  // Variables de paginación
+  pageSize = 20;
+  currentPage = 1;
+  visitedPages: any[] = []; // Array de documentos visitados
+  isLastPage = false;
+  isFirstPage = true;
+  pagedSentencias: Sentencia[] = [];
+  loadingPage = false;
+  
+  // Variables para manejar búsqueda
+  isSearchMode = false;
+  searchResults: Sentencia[] = [];
+  totalPages = 0;
+  hasMorePages = false;
 
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private router: Router
   ) {
-    // Configurar filteredSentencias$ para que reaccione a cambios en _allSentencias y searchSubject
+    // Configurar filteredSentencias$ para que solo procese isLockedForAcceptance
     this.filteredSentencias$ = combineLatest([
       this._allSentencias.asObservable(),
       this.searchSubject.asObservable()
     ]).pipe(
       map(([sentencias, searchText]) => {
-        // Paso 1: Identificar todos los numero_proceso que ya tienen una sentencia 'aceptar'
+        console.log('🔍 Constructor - Total sentencias:', sentencias.length);
+        
+        // Solo procesar isLockedForAcceptance, la búsqueda se maneja en onSearchTextChanged
         const acceptedProcessNumbers = new Set<string>();
         sentencias.forEach(s => {
           if (s.estado === 'aceptar') {
@@ -77,7 +93,6 @@ export class PrincipalPageComponent implements OnInit {
           }
         });
 
-        // Paso 2: Mapear las sentencias para añadir la bandera isLockedForAcceptance
         const processedSentencias = sentencias.map(s => {
           const isLocked = acceptedProcessNumbers.has(s.numero_proceso);
           return {
@@ -86,28 +101,7 @@ export class PrincipalPageComponent implements OnInit {
           };
         });
 
-        // Paso 3: Aplicar lógica de filtrado por búsqueda (searchText)
-        let filtered = processedSentencias;
-        if (searchText) {
-          if (this.userRole === 'estudiante') {
-            filtered = filtered.filter(s =>
-              s.email_estudiante?.toLowerCase().includes(searchText.toLowerCase())
-            );
-          } else if (this.userRole === 'docente') {
-            filtered = filtered.filter(s =>
-              s.nombre_estudiante?.toLowerCase().includes(searchText.toLowerCase()) ||
-              s.numero_proceso.toLowerCase().includes(searchText.toLowerCase()) ||
-              s.asunto?.toLowerCase().includes(searchText.toLowerCase())
-            );
-          } else if (this.userRole === 'administrador') {
-            filtered = filtered.filter(s =>
-              Object.values(s).some(value =>
-                value?.toString().toLowerCase().includes(searchText.toLowerCase())
-              )
-            );
-          }
-        }
-        return filtered;
+        return processedSentencias;
       })
     );
   }
@@ -317,6 +311,11 @@ export class PrincipalPageComponent implements OnInit {
       // Directamente actualizamos el BehaviorSubject con las sentencias cargadas
       this._allSentencias.next(sentencias);
       this.searchSubject.next(this.searchText); // trigger initial filter
+      
+      // Solo cargar paginación si no estamos en modo de búsqueda
+      if (!this.isSearchMode) {
+        this.loadPagedSentencias('init');
+      }
     });
   }
 
@@ -367,7 +366,58 @@ export class PrincipalPageComponent implements OnInit {
   }
 
   onSearchTextChanged() {
-    // Simplemente actualiza el BehaviorSubject para que filteredSentencias$ reaccione
+    console.log('🔍 onSearchTextChanged llamado con:', this.searchText);
+    console.log('🔍 Rol de usuario actual:', this.userRole);
+    
+    // Resetear paginación cuando se inicia una búsqueda
+    if (this.searchText.trim() && this.userRole) {
+      console.log('🔍 Activando modo de búsqueda');
+      this.currentPage = 1;
+      this.isSearchMode = true;
+      
+      // Obtener todas las sentencias procesadas del observable
+      this.filteredSentencias$.pipe(take(1)).subscribe(processedSentencias => {
+        console.log('🔍 Total sentencias procesadas disponibles:', processedSentencias.length);
+        
+        // Aplicar filtro según el rol
+        let filtered: Sentencia[] = [];
+        
+        if (this.userRole === 'estudiante') {
+          filtered = processedSentencias.filter(s =>
+            s.email_estudiante?.toLowerCase().includes(this.searchText.toLowerCase())
+          );
+          console.log('🔍 Filtro estudiante - Resultados:', filtered.length);
+        } else if (this.userRole === 'docente') {
+          filtered = processedSentencias.filter(s =>
+            s.nombre_estudiante?.toLowerCase().includes(this.searchText.toLowerCase()) ||
+            s.numero_proceso.toLowerCase().includes(this.searchText.toLowerCase()) ||
+            s.asunto?.toLowerCase().includes(this.searchText.toLowerCase())
+          );
+          console.log('🔍 Filtro docente - Resultados:', filtered.length);
+        } else if (this.userRole === 'administrador') {
+          filtered = processedSentencias.filter(s =>
+            Object.values(s).some(value =>
+              value?.toString().toLowerCase().includes(this.searchText.toLowerCase())
+            )
+          );
+          console.log('🔍 Filtro administrador - Resultados:', filtered.length);
+        }
+        
+        // Actualizar resultados de búsqueda
+        this.searchResults = filtered;
+        console.log('🔍 Resultados de búsqueda guardados:', this.searchResults.length);
+        this.loadSearchResults();
+      });
+      
+    } else {
+      console.log('🔍 Desactivando modo de búsqueda');
+      this.isSearchMode = false;
+      this.searchResults = [];
+      // Volver a la paginación normal
+      this.loadPagedSentencias('init');
+    }
+    
+    // Actualizar el BehaviorSubject para mantener la consistencia
     this.searchSubject.next(this.searchText);
   }
 
@@ -385,6 +435,17 @@ export class PrincipalPageComponent implements OnInit {
     this.numeroProcesoBusqueda = '';
     this.sentenciaEncontrada = null;
     this.mostrarMensajeBusqueda = false;
+  }
+
+  // Método para limpiar la búsqueda general
+  limpiarBusquedaGeneral() {
+    console.log('🔍 Limpiando búsqueda general');
+    this.searchText = '';
+    this.isSearchMode = false;
+    this.searchResults = [];
+    this.currentPage = 1;
+    this.searchSubject.next('');
+    this.loadPagedSentencias('init');
   }
 
   validarBusquedaProceso(event: KeyboardEvent): boolean {
@@ -760,8 +821,10 @@ export class PrincipalPageComponent implements OnInit {
     }
   }
 
-  async generarReporteCSV() {
+  async generarReporteExcel() {
     try {
+      console.log('📊 Iniciando generación de reporte Excel...');
+      
       const sentenciasSnap = await this.firestore.collection('sentencias').get().toPromise();
       const sentencias = sentenciasSnap?.docs.map(doc => doc.data()) || [];
 
@@ -771,77 +834,281 @@ export class PrincipalPageComponent implements OnInit {
       const locksSnap = await this.firestore.collection('locks').get().toPromise();
       const locks = locksSnap?.docs.map(doc => doc.data()) || [];
 
-      const filas = [
-        ['Nombre docente', 'Correo docente', 'Nombre estudiante', 'Correo estudiante', 'Número de proceso', 'Estado', 'Periodo académico']
-      ];
+      console.log(`📊 Procesando ${sentencias.length} sentencias...`);
 
+      // Preparar datos para Excel
+      const datosExcel = [];
+
+      // Agregar encabezados
+      datosExcel.push([
+        'Nombre docente',
+        'Correo docente', 
+        'Nombre estudiante',
+        'Correo estudiante',
+        'Número de proceso',
+        'Asunto',
+        'Estado',
+        'Razón',
+        'Periodo académico',
+        'Nombre docente antiguo',
+        'Correo docente antiguo',
+        'Fecha de actualización',
+        'Actualizado por'
+      ]);
+
+      // Procesar cada sentencia
       for (const sentencia of sentencias) {
         const s = sentencia as any;
 
         const nombreDocente = s.nombre_docente || '';
         const nombreEstudiante = s.nombre_estudiante || '';
-
-        // Tomar correo estudiante desde email_estudiante o email
         const correoEstudiante = s.email_estudiante || s.email || '';
-
         const numeroProceso = s.numero_proceso || '';
-        const estadoOriginal = s.estado || '';
+        const asunto = s.asunto || '';
+        const estadoOriginal = s.estado || 'Pendiente';
+        const razon = s.razon || '';
         const periodoAcademico = s.periodo_academico || '';
-
-        // Prioridad: usar correo_docente si ya está en la sentencia
+        
         let correoDocente = s.correo_docente || '';
-
-        // Si no existe, buscar por nombre en 'users'
         if (!correoDocente) {
           const usuarioDocente = usuarios.find((u: any) => u.name === nombreDocente) as { email?: string } | undefined;
           correoDocente = usuarioDocente?.email || 'No encontrado';
         }
-
-        // Verificar si está bloqueado (locked === true en colección locks)
+        
         const lock = locks.find((l: any) => l.numero_proceso === numeroProceso) as { locked?: boolean } | undefined;
         const locked = lock?.locked === true;
-        const estadoFinal = locked ? 'finalizado' : estadoOriginal;
+        const estadoFinal = locked ? 'Finalizado' : estadoOriginal;
 
-        // Escapar campos para evitar errores en CSV
-        const escaparCampo = (campo: string): string => {
-          if (campo.includes(',') || campo.includes('"') || campo.includes('\n')) {
-            return `"${campo.replace(/"/g, '""')}"`;
-          }
-          return campo;
-        };
+        // Campos de docente antiguo
+        const nombreDocenteAntiguo = s.nombre_docente_antiguo || '';
+        const correoDocenteAntiguo = s.email_docente_antiguo || '';
+        
+        // Fechas
+        const fechaActualizacion = s.fecha_actualizacion ? 
+          new Date(s.fecha_actualizacion.toDate ? s.fecha_actualizacion.toDate() : s.fecha_actualizacion).toLocaleDateString('es-ES') : '';
+        const actualizadoPor = s.actualizado_por || s.editado_por || '';
 
-        filas.push([
-          escaparCampo(nombreDocente),
-          escaparCampo(correoDocente),
-          escaparCampo(nombreEstudiante),
-          escaparCampo(correoEstudiante),
-          escaparCampo(numeroProceso),
-          escaparCampo(estadoFinal),
-          escaparCampo(periodoAcademico)
+        datosExcel.push([
+          nombreDocente,
+          correoDocente,
+          nombreEstudiante,
+          correoEstudiante,
+          numeroProceso,
+          asunto,
+          estadoFinal,
+          razon,
+          periodoAcademico,
+          nombreDocenteAntiguo,
+          correoDocenteAntiguo,
+          fechaActualizacion,
+          actualizadoPor
         ]);
       }
 
-      // BOM para caracteres especiales
-      const BOM = '\uFEFF';
-      const csvContent = BOM + filas.map(fila => fila.join(',')).join('\r\n');
+      // Crear libro de Excel
+      const workbook = XLSX.utils.book_new();
+      
+      // Crear hoja de datos
+      const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+      
+      // Configurar estilos para los encabezados
+      const headerStyle = {
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        fill: { fgColor: { rgb: "4472C4" } },
+        alignment: { horizontal: "center", vertical: "center" }
+      };
 
-      // Fecha para el nombre del archivo
+      // Aplicar estilos a los encabezados (primera fila)
+      const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (!worksheet[cellAddress]) {
+          worksheet[cellAddress] = { v: '' };
+        }
+        worksheet[cellAddress].s = headerStyle;
+      }
+
+      // Ajustar ancho de columnas
+      const columnWidths = [
+        { wch: 20 }, // Nombre docente
+        { wch: 25 }, // Correo docente
+        { wch: 20 }, // Nombre estudiante
+        { wch: 25 }, // Correo estudiante
+        { wch: 15 }, // Número de proceso
+        { wch: 30 }, // Asunto
+        { wch: 12 }, // Estado
+        { wch: 40 }, // Razón
+        { wch: 15 }, // Periodo académico
+        { wch: 20 }, // Nombre docente antiguo
+        { wch: 25 }, // Correo docente antiguo
+        { wch: 15 }, // Fecha de actualización
+        { wch: 20 }  // Actualizado por
+      ];
+      worksheet['!cols'] = columnWidths;
+
+      // Agregar la hoja al libro
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Sentencias');
+
+      // Generar nombre del archivo con fecha
       const fecha = new Date();
       const dia = fecha.getDate().toString().padStart(2, '0');
       const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
       const año = fecha.getFullYear();
-      const fechaStr = `${dia}-${mes}-${año}`;
-      const nombreArchivo = `reporte_sentencias_${fechaStr}.csv`;
+      const hora = fecha.getHours().toString().padStart(2, '0');
+      const minuto = fecha.getMinutes().toString().padStart(2, '0');
+      const fechaStr = `${dia}-${mes}-${año}_${hora}-${minuto}`;
+      const nombreArchivo = `reporte_sentencias_${fechaStr}.xlsx`;
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      // Generar el archivo Excel
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      
+      // Descargar el archivo
       saveAs(blob, nombreArchivo);
-      console.log(`Reporte generado exitosamente: ${nombreArchivo}`);
+      
+      console.log(`✅ Reporte Excel generado exitosamente: ${nombreArchivo}`);
+      this.showNotification(`Reporte Excel generado: ${nombreArchivo}`, 'success');
 
     } catch (error) {
-      console.error('Error generando el reporte:', error);
+      console.error('❌ Error generando el reporte Excel:', error);
+      this.showNotification('Error al generar el reporte Excel.', 'error');
     }
   }
 
+  loadPagedSentencias(direction: 'init' | 'next' | 'prev' = 'init') {
+    this.loadingPage = true;
+    let queryFn: any;
+    let userFilter = (ref: any) => ref;
 
+    if (this.userRole === 'estudiante' && this.userEmail) {
+      userFilter = (ref: any) => ref.where('email_estudiante', '==', this.userEmail);
+    } else if (this.userRole === 'docente' && this.userEmail) {
+      userFilter = (ref: any) => ref.where('email_docente', '==', this.userEmail);
+    }
 
+    if (direction === 'init') {
+      queryFn = (ref: any) => userFilter(ref.orderBy('numero_proceso').limit(this.pageSize));
+      this.visitedPages = []; // Limpiar array al inicializar
+      this.currentPage = 1; // Resetear página actual
+    } else if (direction === 'next') {
+      const lastDoc = this.visitedPages[this.visitedPages.length - 1];
+      if (!lastDoc) return;
+      queryFn = (ref: any) => userFilter(ref.orderBy('numero_proceso').startAfter(lastDoc).limit(this.pageSize));
+    } else if (direction === 'prev') {
+      // Para prev, necesitamos el documento anterior al primer documento de la página actual
+      if (this.visitedPages.length < 2) return;
+      const prevDoc = this.visitedPages[this.visitedPages.length - 2];
+      queryFn = (ref: any) => userFilter(ref.orderBy('numero_proceso').endBefore(prevDoc).limitToLast(this.pageSize));
+    }
+
+    this.firestore.collection('sentencias', queryFn).get().subscribe(snapshot => {
+      const sentencias = snapshot.docs.map(doc => ({ ...(doc.data() as Sentencia), id: doc.id }));
+      this.pagedSentencias = sentencias;
+      
+      // Actualizar array de páginas visitadas
+      if (sentencias.length > 0) {
+        if (direction === 'init') {
+          this.visitedPages = [snapshot.docs[snapshot.docs.length - 1]];
+        } else if (direction === 'next') {
+          this.visitedPages.push(snapshot.docs[snapshot.docs.length - 1]);
+        } else if (direction === 'prev') {
+          // Remover el último documento del array
+          this.visitedPages.pop();
+        }
+      }
+      
+      // Corregir el cálculo del estado de paginación
+      this.isFirstPage = this.visitedPages.length <= 1;
+      this.isLastPage = sentencias.length < this.pageSize;
+      
+      this.loadingPage = false;
+    });
+  }
+
+  // Métodos de navegación
+  nextPage() {
+    if (this.isLastPage) return;
+    this.currentPage++;
+    this.loadPagedSentencias('next');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+  }
+
+  prevPage() {
+    if (this.isFirstPage || this.visitedPages.length < 2) return;
+    this.currentPage--;
+    this.loadPagedSentencias('prev');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+  }
+
+  // Método para cargar resultados de búsqueda
+  loadSearchResults() {
+    console.log('🔍 loadSearchResults llamado');
+    console.log('🔍 isSearchMode:', this.isSearchMode);
+    console.log('🔍 searchResults.length:', this.searchResults.length);
+    
+    if (this.isSearchMode && this.searchResults.length > 0) {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      this.pagedSentencias = this.searchResults.slice(startIndex, endIndex);
+      
+      console.log('🔍 Página actual:', this.currentPage);
+      console.log('🔍 startIndex:', startIndex, 'endIndex:', endIndex);
+      console.log('🔍 pagedSentencias.length:', this.pagedSentencias.length);
+      
+      // Actualizar estado de paginación para búsqueda
+      this.isFirstPage = this.currentPage === 1;
+      this.isLastPage = endIndex >= this.searchResults.length;
+      this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+      this.hasMorePages = this.currentPage < this.totalPages;
+      
+      console.log('🔍 Estado paginación - isFirstPage:', this.isFirstPage, 'isLastPage:', this.isLastPage);
+      console.log('🔍 Estado paginación - totalPages:', this.totalPages, 'hasMorePages:', this.hasMorePages);
+    } else if (this.isSearchMode && this.searchResults.length === 0) {
+      console.log('🔍 No hay resultados de búsqueda');
+      this.pagedSentencias = [];
+      this.isFirstPage = true;
+      this.isLastPage = true;
+      this.totalPages = 0;
+      this.hasMorePages = false;
+    }
+  }
+
+  // Método para navegar en resultados de búsqueda
+  nextSearchPage() {
+    if (this.isSearchMode && this.hasMorePages) {
+      this.currentPage++;
+      this.loadSearchResults();
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    }
+  }
+
+  prevSearchPage() {
+    if (this.isSearchMode && !this.isFirstPage) {
+      this.currentPage--;
+      this.loadSearchResults();
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    }
+  }
+
+  // Método para debuggear datos
+  debugData() {
+    console.log('🔍 === DEBUG DATA ===');
+    console.log('🔍 userRole:', this.userRole);
+    console.log('🔍 userEmail:', this.userEmail);
+    console.log('🔍 searchText:', this.searchText);
+    console.log('🔍 isSearchMode:', this.isSearchMode);
+    console.log('🔍 searchResults.length:', this.searchResults.length);
+    console.log('🔍 pagedSentencias.length:', this.pagedSentencias.length);
+    
+    const allSentencias = this._allSentencias.getValue();
+    console.log('🔍 Total sentencias cargadas:', allSentencias.length);
+    
+    if (allSentencias.length > 0) {
+      console.log('🔍 Primera sentencia de ejemplo:', allSentencias[0]);
+    }
+    
+    if (this.searchResults.length > 0) {
+      console.log('🔍 Primer resultado de búsqueda:', this.searchResults[0]);
+    }
+  }
 }
